@@ -51,13 +51,15 @@ jobs:
             @capacitor/android@^7
 
       # 6. Build React/Vite application
-      - name: Build web application
+      - name: Install dependencies & build web bundle
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
         run: |
+          npm install --no-package-lock --no-audit --no-fund
           npm run build
+
 
       # 7. Initialize Capacitor configuration if missing
       - name: Configure Capacitor
