@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed-variant": "#004b73", "error": "#ba1a1a", "on-error": "#ffffff", "secondary-fixed": "#cce5ff", "surface-variant": "#dde3eb", "on-primary-fixed": "#001b3b", "primary-container": "#0f294a", "on-secondary-fixed": "#001d31", "on-tertiary": "#ffffff", "surface": "#f6f9ff", "tertiary-fixed-dim": "#68dba9", "on-secondary": "#ffffff", "on-tertiary-fixed-variant": "#005137", "secondary": "#006398", "outline-variant": "#c4c6cf", "surface-container-low": "#eef4fc", "inverse-on-surface": "#ebf1f9", "primary": "#00142f", "on-secondary-container": "#00476e", "surface-container-highest": "#dde3eb", "surface-bright": "#f6f9ff", "surface-container-high": "#e3e9f1", "on-surface": "#161c22", "surface-container": "#e8eef6", "on-tertiary-fixed": "#002114", "outline": "#74777f", "surface-dim": "#d4dbe2", "primary-fixed": "#d5e3ff", "tertiary": "#00190e", "secondary-fixed-dim": "#93ccff", "error-container": "#ffdad6", "secondary-container": "#5bb8fe", "inverse-surface": "#2b3137", "on-error-container": "#93000a", "primary-fixed-dim": "#b0c8f1", "inverse-primary": "#b0c8f1", "on-primary-container": "#7a91b7", "tertiary-container": "#00301f", "on-primary-fixed-variant": "#30476a", "on-surface-variant": "#44474e", "on-primary": "#ffffff", "surface-tint": "#485f83", "background": "#f6f9ff", "surface-container-lowest": "#ffffff", "on-background": "#161c22", "on-tertiary-container": "#24a375", "tertiary-fixed": "#85f8c4" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-lg": "1.5rem", "margin": "1rem", "space-xs": "0.25rem", "margin-lg": "2.5rem", "space-sm": "0.5rem", "space-xl": "2.5rem", "space-md": "1rem", "gutter": "1rem", "gutter-lg": "1.5rem" }, "fontFamily": { "label-md": ["Inter"], "headline-lg": ["Inter"], "code-sm": ["JetBrains Mono"], "body-lg": ["Inter"], "body-sm": ["Inter"], "headline-md": ["Inter"], "body-md": ["Inter"], "headline-xl": ["Inter"], "title-sm": ["Inter"] }, "fontSize": { "label-md": ["13px", {"lineHeight": "16px", "fontWeight": "500"}], "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}], "code-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}], "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}], "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}], "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}], "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}], "headline-xl": ["32px", {"lineHeight": "40px", "fontWeight": "700"}], "title-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 px-space-md flex flex-col justify-center gap-1"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><img alt="Unified Health Wallet Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UEeCMXWx_KyfPSFXl_7Xnyw6xiGxsXYtFZfvOlmrThD9Y5gI39WASSy4UCR8pzXKcVHITkEH7rBTxTsUAcPmuvvHef6ay0ADlbij4x8fzFFaWm266sa8cKlEfEN2u5H5DXytbfZUisS0-78EG5aPh0czYQ7-bEyYn4TJJNcBDW58I99-GkbfGSpRPddIW2yO2DmP0WSd_3ZkQ7nU6YQn0QAU-CcUPRTcrNq5cC5JrIv_0JHoNsmAbvFMg"/><div class="flex flex-col"><span class="font-title-sm text-title-sm text-primary tracking-tight leading-none">Health Wallet</span><span class="font-code-sm text-code-sm text-on-surface-variant uppercase tracking-wider mt-0.5">Vaccination Wallet</span></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-low"><span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container animate-pulse"></span><span class="font-code-sm text-code-sm text-on-secondary-fixed-variant tracking-tight uppercase">HL7 FHIR • Encrypted</span></div><button aria-label="Notifications" class="relative w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error"></span></button><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7079lg9thvT8G_fhrVp86CAXur9AskAW4BgOV9EqTYAFjTuAflrzD8vX2Z0_REW-piNOeSG0kuZW7S0FdzYuBhltIriOSROiLfWxgkfiaaYWNjwgTXysnaQOYFfSQkKx2Uo8MUOg605hEVwJoTcxSQBRnEmlKn8NNLwz4cVJbLaHx2gCGobdcQv3f34eyIJN1Qad5poxC5RtqBdr-c-whGtynYYZY0PkBdh_ayW8271Bi80NbOsIdGQ"/></div></div><div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><span class="font-code-sm text-code-sm px-1.5 py-0.2 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-semibold tracking-wider">DEMO PATIENT DATA</span></div><span class="font-code-sm text-code-sm text-outline">SHA-256: 8F4E••C91A</span></div></div></header><main class="flex flex-col relative w-full px-space-md pt-20 pb-28 bg-surface min-h-screen"><div class="flex flex-col w-full gap-space-lg">
+<!-- Top Utility Contextual Pill -->
+<div class="flex items-center justify-between px-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span>
+<span class="font-code-sm text-code-sm text-on-secondary-fixed-variant uppercase tracking-wider">SMART® Health Card Active</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[14px] text-secondary">sync_saved_locally</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant font-medium">Offline Cached</span>
+</div>
+</div>
+<!-- Digital SMART Health Card Hero Display -->
+<div class="relative w-full rounded-xl bg-gradient-to-br from-primary via-primary-container to-primary text-on-primary p-space-md shadow-xl overflow-hidden">
+<!-- Cryptographic Watermark Graphic Overlay -->
+<div class="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-secondary/15 blur-2xl pointer-events-none"></div>
+<div class="absolute right-3 bottom-3 opacity-10 pointer-events-none">
+<svg fill="none" height="120" stroke="currentColor" stroke-width="1" viewbox="0 0 24 24" width="120">
+<path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"></path>
+<path d="M9 12l2 2 4-4"></path>
+</svg>
+</div>
+<!-- Header Section of Pass -->
+<div class="relative z-10 flex items-start justify-between gap-space-sm mb-space-md">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-container text-[18px]">verified</span>
+<span class="font-code-sm text-code-sm uppercase tracking-wider text-secondary-fixed">W3C Verifiable Credential</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-surface-container-lowest font-semibold leading-snug">Official Digital Vaccination Credential</h2>
+<p class="font-body-sm text-body-sm text-on-primary-container">State Dept of Public Health • Public Key Infrastructure</p>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-0.5 rounded bg-surface-container-lowest/15 text-surface-container-lowest font-mono tracking-tight shrink-0">FHIR R4</span>
+</div>
+<!-- Patient Identifier Box -->
+<div class="relative z-10 bg-primary/60 rounded-lg p-space-sm mb-space-md backdrop-blur-sm flex items-center justify-between">
+<div>
+<p class="font-code-sm text-code-sm text-on-primary-container uppercase">Subject / Legal Identity</p>
+<p class="font-headline-md text-headline-md text-surface-container-lowest font-semibold tracking-tight">Eleanor Vance</p>
+<p class="font-body-sm text-body-sm text-secondary-fixed-dim">DOB: 03/14/1989 • ID: #US-WA-890214-E</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary-container text-[22px]">badge</span>
+</div>
+</div>
+<!-- Scannable SMART Health Card QR Code Modular Plate -->
+<div class="relative z-10 bg-surface-container-lowest rounded-lg p-space-md flex flex-col items-center justify-center text-on-surface shadow-md">
+<div class="w-full flex items-center justify-between mb-2">
+<span class="font-code-sm text-code-sm text-secondary font-semibold uppercase">shc:/ SMART Health Spec v1.1</span>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+<span class="font-code-sm text-code-sm text-outline">SHA-256 Validated</span>
+</div>
+</div>
+<!-- High Contrast QR Code Canvas Wrapper -->
+<div class="p-2 bg-surface-container-lowest rounded flex items-center justify-center shadow-inner">
+<svg class="w-44 h-44" fill="none" viewbox="0 0 100 100">
+<!-- Outer Position Marker Top Left -->
+<rect fill="#00142f" height="26" rx="2" width="26" x="5" y="5"></rect>
+<rect fill="#ffffff" height="18" rx="1" width="18" x="9" y="9"></rect>
+<rect fill="#00142f" height="10" width="10" x="13" y="13"></rect>
+<!-- Outer Position Marker Top Right -->
+<rect fill="#00142f" height="26" rx="2" width="26" x="69" y="5"></rect>
+<rect fill="#ffffff" height="18" rx="1" width="18" x="73" y="9"></rect>
+<rect fill="#00142f" height="10" width="10" x="77" y="13"></rect>
+<!-- Outer Position Marker Bottom Left -->
+<rect fill="#00142f" height="26" rx="2" width="26" x="5" y="69"></rect>
+<rect fill="#ffffff" height="18" rx="1" width="18" x="9" y="73"></rect>
+<rect fill="#00142f" height="10" width="10" x="13" y="77"></rect>
+<!-- Simulated High-Density Cryptographic Payload Matrix -->
+<rect fill="#00142f" height="5" width="5" x="36" y="6"></rect>
+<rect fill="#00142f" height="5" width="6" x="44" y="6"></rect>
+<rect fill="#00142f" height="4" width="8" x="56" y="8"></rect>
+<rect fill="#00142f" height="6" width="7" x="35" y="14"></rect>
+<rect fill="#00142f" height="5" width="5" x="47" y="14"></rect>
+<rect fill="#00142f" height="5" width="6" x="58" y="16"></rect>
+<rect fill="#00142f" height="5" width="9" x="37" y="24"></rect>
+<rect fill="#00142f" height="6" width="5" x="51" y="23"></rect>
+<rect fill="#00142f" height="5" width="5" x="6" y="36"></rect>
+<rect fill="#00142f" height="6" width="6" x="14" y="37"></rect>
+<rect fill="#00142f" height="5" width="8" x="23" y="35"></rect>
+<rect fill="#00142f" height="8" width="5" x="35" y="35"></rect>
+<rect fill="#00142f" height="5" width="12" x="44" y="35"></rect>
+<rect fill="#00142f" height="5" width="7" x="62" y="36"></rect>
+<rect fill="#00142f" height="6" width="6" x="73" y="35"></rect>
+<rect fill="#00142f" height="5" width="8" x="85" y="36"></rect>
+<rect fill="#00142f" height="5" width="7" x="7" y="45"></rect>
+<rect fill="#00142f" height="6" width="5" x="17" y="46"></rect>
+<rect fill="#00142f" height="5" width="5" x="26" y="44"></rect>
+<rect fill="#00142f" height="6" width="7" x="37" y="46"></rect>
+<rect fill="#00142f" height="7" width="7" x="49" y="44"></rect>
+<rect fill="#00142f" height="5" width="5" x="61" y="45"></rect>
+<rect fill="#00142f" height="5" width="10" x="70" y="45"></rect>
+<rect fill="#00142f" height="7" width="6" x="86" y="46"></rect>
+<rect fill="#00142f" height="6" width="6" x="6" y="56"></rect>
+<rect fill="#00142f" height="5" width="5" x="16" y="55"></rect>
+<rect fill="#00142f" height="6" width="6" x="26" y="56"></rect>
+<rect fill="#00142f" height="5" width="6" x="36" y="55"></rect>
+<rect fill="#00142f" height="6" width="9" x="46" y="56"></rect>
+<rect fill="#00142f" height="5" width="6" x="58" y="55"></rect>
+<rect fill="#00142f" height="6" width="7" x="68" y="56"></rect>
+<rect fill="#00142f" height="5" width="6" x="79" y="55"></rect>
+<rect fill="#00142f" height="6" width="5" x="89" y="56"></rect>
+<rect fill="#00142f" height="6" width="6" x="36" y="68"></rect>
+<rect fill="#00142f" height="6" width="5" x="47" y="67"></rect>
+<rect fill="#00142f" height="5" width="7" x="56" y="68"></rect>
+<rect fill="#00142f" height="6" width="6" x="68" y="67"></rect>
+<rect fill="#00142f" height="5" width="6" x="78" y="68"></rect>
+<rect fill="#00142f" height="6" width="5" x="88" y="67"></rect>
+<rect fill="#00142f" height="5" width="5" x="37" y="78"></rect>
+<rect fill="#00142f" height="6" width="8" x="46" y="78"></rect>
+<rect fill="#00142f" height="6" width="6" x="58" y="79"></rect>
+<rect fill="#00142f" height="6" width="5" x="68" y="77"></rect>
+<rect fill="#00142f" height="6" width="8" x="77" y="78"></rect>
+<rect fill="#00142f" height="5" width="5" x="89" y="79"></rect>
+<rect fill="#00142f" height="6" width="7" x="36" y="87"></rect>
+<rect fill="#00142f" height="5" width="6" x="47" y="88"></rect>
+<rect fill="#00142f" height="6" width="6" x="57" y="87"></rect>
+<rect fill="#00142f" height="6" width="6" x="68" y="87"></rect>
+<rect fill="#00142f" height="5" width="7" x="78" y="88"></rect>
+<rect fill="#00142f" height="6" width="5" x="89" y="87"></rect>
+</svg>
+</div>
+<div class="mt-2 text-center">
+<span class="font-code-sm text-code-sm text-outline tracking-tight">SIG: 7a8f9c102b4e89df...ecd301</span>
+</div>
+</div>
+<!-- Quick Action Credential Utility Buttons -->
+<div class="relative z-10 grid grid-cols-2 gap-space-xs mt-space-md">
+<button class="h-12 px-space-sm bg-secondary-container hover:bg-secondary text-primary font-label-md text-label-md font-semibold rounded flex items-center justify-center gap-1.5 transition-colors" id="saveWalletBtn">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+<span>Save to Wallet</span>
+</button>
+<button class="h-12 px-space-sm bg-surface-container-lowest/15 hover:bg-surface-container-lowest/25 text-surface-container-lowest font-label-md text-label-md font-semibold rounded flex items-center justify-center gap-1.5 transition-colors" id="shareQrBtn">
+<span class="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+<span>Share Pass</span>
+</button>
+</div>
+</div>
+<!-- Interactive Feedback Banner (Hidden by default) -->
+<div class="hidden px-space-md py-space-sm bg-secondary-fixed text-on-secondary-fixed-variant rounded flex items-center justify-between shadow-sm" id="actionFeedback">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="font-label-md text-label-md font-medium" id="feedbackText">Action completed</span>
+</div>
+<button class="text-on-secondary-fixed-variant hover:opacity-75" id="closeFeedback">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+<!-- Clinical Notice & Verification Footnote -->
+<div class="flex items-center gap-2 p-space-sm rounded bg-surface-container-low">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0">lock</span>
+<p class="font-code-sm text-code-sm text-on-surface-variant leading-relaxed">
+      All records signed with 2048-bit RSA keys issued under the State Clinical Trust Registry. Anchored by PKI signatures and W3C VC standards.
+    </p>
+</div>
+<!-- Intelligent Vaccination Schedule & Due Tracker Section -->
+<div class="flex flex-col gap-space-md">
+<div class="flex items-end justify-between">
+<div>
+<span class="font-code-sm text-code-sm text-secondary uppercase font-semibold">Proactive Immunization Engine</span>
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Recommended &amp; Due</h3>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant">CDC Schedule 2024</span>
+</div>
+<!-- Tracker Card 1: Tdap (High Priority) -->
+<div class="w-full bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-error"></div>
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-1.5">
+<span class="font-code-sm text-code-sm px-1.5 py-0.2 rounded bg-error-container text-on-error-container font-semibold uppercase">High Priority</span>
+<span class="font-code-sm text-code-sm text-outline">CVX 115</span>
+</div>
+<h4 class="font-title-sm text-title-sm text-primary font-semibold mt-1">Tdap Booster</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tetanus, Diphtheria, Acellular Pertussis</p>
+</div>
+<div class="text-right">
+<span class="font-label-md text-label-md text-error font-semibold block">Due Nov 2024</span>
+<span class="font-code-sm text-code-sm text-outline">10-Yr Interval</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded p-space-sm flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">history</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Last dose: Oct 14, 2014</span>
+</div>
+<span class="font-code-sm text-code-sm text-outline font-medium">Expired 1 mo</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs pt-1">
+<button class="clinic-btn h-11 px-space-sm bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-medium rounded flex items-center justify-center gap-1.5 transition-colors" data-vaccine="Tdap Booster">
+<span class="material-symbols-outlined text-[16px]">local_hospital</span>
+<span>Find Clinic</span>
+</button>
+<button class="log-btn h-11 px-space-sm bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md font-medium rounded flex items-center justify-center gap-1.5 transition-colors" data-vaccine="Tdap Booster">
+<span class="material-symbols-outlined text-[16px]">edit_calendar</span>
+<span>Log Vaccine</span>
+</button>
+</div>
+</div>
+<!-- Tracker Card 2: Annual Flu Season -->
+<div class="w-full bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-1.5">
+<span class="font-code-sm text-code-sm px-1.5 py-0.2 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-semibold uppercase">Seasonal</span>
+<span class="font-code-sm text-code-sm text-outline">CVX 158</span>
+</div>
+<h4 class="font-title-sm text-title-sm text-primary font-semibold mt-1">Annual Influenza (Flu) 2024-2025</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Quadrivalent Formulation (Inactivated)</p>
+</div>
+<div class="text-right">
+<span class="font-label-md text-label-md text-secondary font-semibold block">Fall / Winter</span>
+<span class="font-code-sm text-code-sm text-outline">Seasonal Window</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded p-space-sm flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">info</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Optimal protection: Oct - Dec</span>
+</div>
+<span class="font-code-sm text-code-sm text-on-secondary-fixed-variant font-medium">Eligible</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs pt-1">
+<button class="clinic-btn h-11 px-space-sm bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-medium rounded flex items-center justify-center gap-1.5 transition-colors" data-vaccine="Annual Influenza">
+<span class="material-symbols-outlined text-[16px]">map</span>
+<span>Find Nearby</span>
+</button>
+<button class="mark-received-btn h-11 px-space-sm bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md font-medium rounded flex items-center justify-center gap-1.5 transition-colors" data-vaccine="Annual Influenza">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Mark Received</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Administered Vaccines History Section (Structured Cards) -->
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm text-secondary uppercase font-semibold">Immunization Ledger</span>
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Administered History</h3>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-medium">3 Verified Entries</span>
+</div>
+<!-- History Record 1: COVID-19 Booster -->
+<div class="w-full bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="font-code-sm text-code-sm text-on-tertiary-container font-semibold uppercase">Active Immunity Verified</span>
+</div>
+<h4 class="font-title-sm text-title-sm text-primary font-semibold">COVID-19 Bivalent mRNA Booster</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Moderna (Spikevax) • Dose 3</p>
+</div>
+<button aria-label="Toggle details" class="accordion-toggle w-8 h-8 rounded bg-surface-container-low flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200">expand_more</span>
+</button>
+</div>
+<!-- Clinical Spec Grid -->
+<div class="grid grid-cols-2 gap-2 p-space-sm bg-surface-container-low rounded text-left">
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Administered</span>
+<span class="font-label-md text-label-md text-primary font-medium">Oct 12, 2023</span>
+</div>
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Lot Identifier</span>
+<span class="font-code-sm text-code-sm text-primary font-bold font-mono">KP9218</span>
+</div>
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Facility / Provider</span>
+<span class="font-body-sm text-body-sm text-on-surface truncate">CVS Pharmacy #4021</span>
+</div>
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">IIS Registry State</span>
+<span class="font-body-sm text-body-sm text-on-surface">WA DOH-IIS</span>
+</div>
+</div>
+<!-- Expandable Cryptographic Metadata (Collapsible) -->
+<div class="record-details hidden flex-col gap-2 pt-2 bg-surface-container-lowest">
+<div class="p-2 bg-surface-container rounded flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-code-sm text-code-sm text-secondary font-mono">FHIR Immunization ID</span>
+<span class="font-code-sm text-code-sm text-outline font-mono">imm-mod-889104</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-code-sm text-code-sm text-secondary font-mono">NDC Product Code</span>
+<span class="font-code-sm text-code-sm text-outline font-mono">80777-273-99</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-code-sm text-code-sm text-secondary font-mono">Clinician Signature</span>
+<span class="font-code-sm text-code-sm text-outline font-mono">Dr. R. Patel, PharmD</span>
+</div>
+</div>
+</div>
+</div>
+<!-- History Record 2: Hepatitis B Series -->
+<div class="w-full bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="font-code-sm text-code-sm text-on-tertiary-container font-semibold uppercase">Lifetime Immunity Verified</span>
+</div>
+<h4 class="font-title-sm text-title-sm text-primary font-semibold">Hepatitis B Series (3 Doses Complete)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Engerix-B (GlaxoSmithKline)</p>
+</div>
+<button aria-label="Toggle details" class="accordion-toggle w-8 h-8 rounded bg-surface-container-low flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200">expand_more</span>
+</button>
+</div>
+<!-- Clinical Spec Grid -->
+<div class="grid grid-cols-2 gap-2 p-space-sm bg-surface-container-low rounded text-left">
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Series Completion</span>
+<span class="font-label-md text-label-md text-primary font-medium">May 19, 2019</span>
+</div>
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Serology Titer</span>
+<span class="font-code-sm text-code-sm text-primary font-bold font-mono">Anti-HBs &gt; 100 mIU/mL</span>
+</div>
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Administering Clinic</span>
+<span class="font-body-sm text-body-sm text-on-surface truncate">UW Medicine Primary Care</span>
+</div>
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">CVX Code</span>
+<span class="font-body-sm text-body-sm text-on-surface font-mono">45 (Hep B, adult)</span>
+</div>
+</div>
+<div class="record-details hidden flex-col gap-2 pt-2 bg-surface-container-lowest">
+<div class="p-2 bg-surface-container rounded flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-code-sm text-code-sm text-secondary font-mono">Dose 1 Date</span>
+<span class="font-code-sm text-code-sm text-outline font-mono">Nov 15, 2018</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-code-sm text-code-sm text-secondary font-mono">Dose 2 Date</span>
+<span class="font-code-sm text-code-sm text-outline font-mono">Dec 18, 2018</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-code-sm text-code-sm text-secondary font-mono">Dose 3 Date</span>
+<span class="font-code-sm text-code-sm text-outline font-mono">May 19, 2019</span>
+</div>
+</div>
+</div>
+</div>
+<!-- History Record 3: MMR -->
+<div class="w-full bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-1.5 mb-1">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="font-code-sm text-code-sm text-on-tertiary-container font-semibold uppercase">Verified Immunity</span>
+</div>
+<h4 class="font-title-sm text-title-sm text-primary font-semibold">MMR (Measles, Mumps, Rubella)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">M-M-R II (Merck &amp; Co.) • 2 Doses Complete</p>
+</div>
+<button aria-label="Toggle details" class="accordion-toggle w-8 h-8 rounded bg-surface-container-low flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200">expand_more</span>
+</button>
+</div>
+<!-- Clinical Spec Grid -->
+<div class="grid grid-cols-2 gap-2 p-space-sm bg-surface-container-low rounded text-left">
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Last Verified</span>
+<span class="font-label-md text-label-md text-primary font-medium">Aug 22, 2007</span>
+</div>
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Status</span>
+<span class="font-code-sm text-code-sm text-primary font-bold">Documented Series</span>
+</div>
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Registry Origin</span>
+<span class="font-body-sm text-body-sm text-on-surface">Pediatric IIS Record</span>
+</div>
+<div>
+<span class="font-code-sm text-code-sm text-outline uppercase block">Clinical Policy</span>
+<span class="font-body-sm text-body-sm text-on-surface">No Booster Required</span>
+</div>
+</div>
+<div class="record-details hidden flex-col gap-2 pt-2 bg-surface-container-lowest">
+<div class="p-2 bg-surface-container rounded flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-code-sm text-code-sm text-secondary font-mono">Dose 1 (12 mos)</span>
+<span class="font-code-sm text-code-sm text-outline font-mono">Mar 20, 1990</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-code-sm text-code-sm text-secondary font-mono">Dose 2 (School Entry)</span>
+<span class="font-code-sm text-code-sm text-outline font-mono">Aug 22, 1994</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-code-sm text-code-sm text-secondary font-mono">CVX Code</span>
+<span class="font-code-sm text-code-sm text-outline font-mono">03 (MMR)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Clinical Import Utility Bottom Card -->
+<div class="w-full bg-surface-container-low rounded-lg p-space-md flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">add_a_photo</span>
+</div>
+<div>
+<h4 class="font-title-sm text-title-sm text-primary font-semibold">Import Paper Card</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">OCR scan with clinical signature validation</p>
+</div>
+</div>
+<button class="h-10 px-space-sm bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-medium rounded flex items-center justify-center gap-1 transition-colors" id="importRecordBtn">
+<span>Scan</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+<script>
+  (function() {
+    const feedbackBanner = document.getElementById('actionFeedback');
+    const feedbackText = document.getElementById('feedbackText');
+    const closeFeedback = document.getElementById('closeFeedback');
+
+    function showNotice(msg) {
+      if (!feedbackBanner || !feedbackText) return;
+      feedbackText.textContent = msg;
+      feedbackBanner.classList.remove('hidden');
+      setTimeout(() => {
+        feedbackBanner.classList.add('hidden');
+      }, 4000);
+    }
+
+    if (closeFeedback) {
+      closeFeedback.addEventListener('click', () => {
+        feedbackBanner.classList.add('hidden');
+      });
+    }
+
+    // Wallet Save Action
+    const saveWalletBtn = document.getElementById('saveWalletBtn');
+    if (saveWalletBtn) {
+      saveWalletBtn.addEventListener('click', () => {
+        showNotice('SMART Health Card pass exported to Apple / Google Wallet format.');
+      });
+    }
+
+    // Share Action
+    const shareQrBtn = document.getElementById('shareQrBtn');
+    if (shareQrBtn) {
+      shareQrBtn.addEventListener('click', () => {
+        showNotice('Cryptographic QR Code presented in high-brightness verification mode.');
+      });
+    }
+
+    // Clinic lookup
+    const clinicButtons = document.querySelectorAll('.clinic-btn');
+    clinicButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const vaccine = e.currentTarget.getAttribute('data-vaccine');
+        showNotice(`Querying certified ${vaccine} providers within 10 miles...`);
+      });
+    });
+
+    // Mark received
+    const markButtons = document.querySelectorAll('.mark-received-btn, .log-btn');
+    markButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const vaccine = e.currentTarget.getAttribute('data-vaccine');
+        showNotice(`Opened clinical logging wizard for ${vaccine}.`);
+      });
+    });
+
+    // Scan Paper Card
+    const importRecordBtn = document.getElementById('importRecordBtn');
+    if (importRecordBtn) {
+      importRecordBtn.addEventListener('click', () => {
+        showNotice('Camera initialized for CDC Vaccination Record Card parsing.');
+      });
+    }
+
+    // Accordion expand/collapse
+    const toggles = document.querySelectorAll('.accordion-toggle');
+    toggles.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const card = e.currentTarget.closest('.bg-surface-container-lowest');
+        const details = card.querySelector('.record-details');
+        const icon = e.currentTarget.querySelector('.material-symbols-outlined');
+        if (details) {
+          const isHidden = details.classList.contains('hidden');
+          if (isHidden) {
+            details.classList.remove('hidden');
+            details.classList.add('flex');
+            icon.style.transform = 'rotate(180deg)';
+          } else {
+            details.classList.add('hidden');
+            details.classList.remove('flex');
+            icon.style.transform = 'rotate(0deg)';
+          }
+        }
+      });
+    });
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(15,41,74,0.06)]" data-active-classes="text-secondary bg-surface-container-low font-semibold"><div class="flex justify-between items-center h-16 px-space-xs"><a class="flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded text-on-surface-variant hover:text-primary transition-colors min-h-[48px]" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-md text-[11px] leading-tight">Home</span></a><a class="flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded text-on-surface-variant hover:text-primary transition-colors min-h-[48px]" data-path="medical-records" href="#"><span class="material-symbols-outlined text-[20px]">folder_shared</span><span class="font-label-md text-[11px] leading-tight">Records</span></a><a aria-current="page" class="flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded transition-colors min-h-[48px] text-secondary bg-surface-container-low font-semibold" data-path="vaccination-wallet" href="#"><span class="material-symbols-outlined text-[20px]">vaccines</span><span class="font-label-md text-[11px] leading-tight">Vaccines</span></a><a class="flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded text-on-surface-variant hover:text-primary transition-colors min-h-[48px]" data-path="access-and-share" href="#"><span class="material-symbols-outlined text-[20px]">share</span><span class="font-label-md text-[11px] leading-tight">Sharing</span></a><a class="flex-1 flex flex-col items-center justify-center gap-0.5 py-1.5 rounded text-on-surface-variant hover:text-primary transition-colors min-h-[48px]" data-path="audit-and-verification" href="#"><span class="material-symbols-outlined text-[20px]">verified_user</span><span class="font-label-md text-[11px] leading-tight">Security</span></a></div></nav></body></html>

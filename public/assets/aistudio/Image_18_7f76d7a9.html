@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "inverse-primary": "#b0c8f1", "error": "#ba1a1a", "surface-bright": "#f6f9ff", "on-primary-fixed-variant": "#30476a", "on-tertiary": "#ffffff", "outline-variant": "#c4c6cf", "on-surface": "#161c22", "surface-container-highest": "#dde3eb", "on-error": "#ffffff", "tertiary-fixed": "#85f8c4", "primary-container": "#0f294a", "on-primary-container": "#7a91b7", "surface": "#f6f9ff", "surface-container-low": "#eef4fc", "tertiary-fixed-dim": "#68dba9", "on-primary-fixed": "#001b3b", "surface-dim": "#d4dbe2", "on-tertiary-fixed-variant": "#005137", "on-surface-variant": "#44474e", "on-error-container": "#93000a", "surface-container": "#e8eef6", "on-tertiary-container": "#24a375", "inverse-on-surface": "#ebf1f9", "on-secondary-container": "#00476e", "primary-fixed": "#d5e3ff", "on-secondary-fixed": "#001d31", "background": "#f6f9ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed": "#002114", "secondary-fixed": "#cce5ff", "on-secondary": "#ffffff", "on-secondary-fixed-variant": "#004b73", "primary": "#00142f", "secondary-container": "#5bb8fe", "on-primary": "#ffffff", "tertiary": "#00190e", "surface-variant": "#dde3eb", "secondary": "#006398", "on-background": "#161c22", "error-container": "#ffdad6", "surface-tint": "#485f83", "secondary-fixed-dim": "#93ccff", "outline": "#74777f", "primary-fixed-dim": "#b0c8f1", "surface-container-high": "#e3e9f1", "tertiary-container": "#00301f", "inverse-surface": "#2b3137" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "gutter-lg": "1.5rem", "space-lg": "1.5rem", "space-xl": "2.5rem", "space-sm": "0.5rem", "margin-lg": "2.5rem", "space-md": "1rem", "space-xs": "0.25rem", "margin": "1rem", "gutter": "1rem" }, "fontFamily": { "body-lg": ["Inter"], "headline-md": ["Inter"], "title-sm": ["Inter"], "body-md": ["Inter"], "code-sm": ["JetBrains Mono"], "label-md": ["Inter"], "body-sm": ["Inter"], "headline-lg": ["Inter"], "headline-xl": ["Inter"] }, "fontSize": { "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "title-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "code-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }], "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "headline-xl": ["32px", { "lineHeight": "40px", "fontWeight": "700" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface min-h-full flex flex-col antialiased selection:bg-secondary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(15,41,74,0.04)]"><div class="h-16 px-gutter flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><div class="w-9 h-9 rounded bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[20px]">account_balance_wallet</span></div><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-title-sm text-title-sm text-primary truncate leading-tight tracking-tight">Health Wallet</span></div><div class="flex items-center gap-space-xs mt-0.5"><div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container-low"><span class="w-1.5 h-1.5 rounded-full bg-[#059669] flex-shrink-0 animate-pulse"></span><span class="font-code-sm text-code-sm text-secondary uppercase tracking-wider">HL7 FHIR Encrypted</span></div></div></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><button aria-label="Alerts and notifications" class="w-11 h-11 flex items-center justify-center rounded text-on-surface-variant hover:text-primary transition-colors focus:outline-none"><span class="material-symbols-outlined text-[22px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full px-gutter pt-16 pb-24 bg-surface"><div class="flex flex-col w-full pb-8 space-y-space-md">
+<!-- 1. Environment & Demo Notice Banner -->
+<div class="w-full bg-primary text-on-primary rounded-xl p-space-sm flex items-center justify-between shadow-sm transition-all duration-300" id="demo-banner">
+<div class="flex items-center gap-space-xs min-w-0 pr-2">
+<div class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-ping flex-shrink-0"></div>
+<div class="flex flex-col min-w-0">
+<span class="font-code-sm text-code-sm text-tertiary-fixed truncate tracking-tight uppercase">HL7 FHIR Connected • 256-bit AES</span>
+<span class="font-body-sm text-[11px] text-inverse-primary truncate">Fictional Demo Dataset • MRN UH-8842</span>
+</div>
+</div>
+<button aria-label="Dismiss banner" class="p-1 rounded text-inverse-primary hover:text-white transition-colors" onclick="document.getElementById('demo-banner').style.display='none'">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- 2. Patient Profile Summary Card (Bento Level 1) -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-28 h-28 bg-surface-container-low rounded-full pointer-events-none opacity-60"></div>
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="relative w-12 h-12 rounded-xl bg-surface-container flex-shrink-0 overflow-hidden shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Close up professional portrait of Eleanor Vance, a 35-year-old woman smiling warmly with natural lighting, clinical clarity, subtle navy tones, clean background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW8htpWDxKNOGv1d3KabOymyRl20onAyVxPOB9HXzrLV5hr1X-ajCH9ErTZAHrJBK5lh2FV-ZhUetgjtJaciT3XZHQdKour6mc_4cXpdA5cHIbDZXqWcHbDw_rVz7fPKTrjQ27S5AQgIzdQq9hfDNNG2Jz3E7Q3mn-Y3KMwXmxf9LDI7d4l9bpXWC2gn9UZ_DP66eDW6lhwzL8tZSuQRduJGzr2UXd0pzZoJWcZP68aOdW5VaikQ7e_A"/>
+<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#059669] rounded-full border-2 border-surface-container-lowest"></div>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-sm text-title-sm text-primary font-bold truncate">Eleanor Vance</span>
+<span class="material-symbols-outlined text-secondary text-[18px]" style="font-variation-settings: 'FILL' 1;" title="Verified Patient Identity">verified</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-body-sm text-body-sm text-on-surface-variant">35 Years</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-code-sm text-code-sm text-secondary uppercase font-semibold">#UH-8842-DEMO</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[16px]">fingerprint</span>
+<span class="font-code-sm text-[10px] text-secondary font-bold tracking-wider">KYC VERIFIED</span>
+</div>
+</div>
+<!-- Quick Clinical Tags -->
+<div class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-surface-container-low">
+<div class="bg-surface-container-low px-2.5 py-1.5 rounded-lg flex items-center justify-between">
+<span class="font-body-sm text-[11px] text-on-surface-variant">Blood Type</span>
+<span class="font-title-sm text-label-md text-primary font-bold">A Rh+</span>
+</div>
+<div class="bg-error-container text-on-error-container px-2.5 py-1.5 rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-error">warning</span>
+<span class="font-body-sm text-[11px] font-medium">Allergy</span>
+</div>
+<span class="font-code-sm text-[11px] font-bold truncate max-w-[85px]" title="Penicillin G/V">Penicillin G</span>
+</div>
+</div>
+</div>
+<!-- 3. Quick Action Grid (Tactile Touchpoints) -->
+<div class="w-full">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-sm text-label-md uppercase tracking-wider text-on-surface-variant font-bold">Quick Actions</span>
+<span class="font-code-sm text-[11px] text-secondary">FHIR v4.0.1</span>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<!-- Upload Record -->
+<button class="bg-surface-container-lowest hover:bg-surface-container-low transition-all duration-150 p-2.5 rounded-xl flex flex-col items-center justify-center text-center gap-1.5 shadow-sm active:scale-95">
+<div class="w-9 h-9 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">cloud_upload</span>
+</div>
+<span class="font-label-md text-[11px] text-primary font-medium">Upload Doc</span>
+</button>
+<!-- Add Vaccine -->
+<button class="bg-surface-container-lowest hover:bg-surface-container-low transition-all duration-150 p-2.5 rounded-xl flex flex-col items-center justify-center text-center gap-1.5 shadow-sm active:scale-95">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">vaccines</span>
+</div>
+<span class="font-label-md text-[11px] text-primary font-medium">Log Vaccine</span>
+</button>
+<!-- Share Records -->
+<button class="bg-surface-container-lowest hover:bg-surface-container-low transition-all duration-150 p-2.5 rounded-xl flex flex-col items-center justify-center text-center gap-1.5 shadow-sm active:scale-95">
+<div class="w-9 h-9 rounded-lg bg-secondary-fixed flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</div>
+<span class="font-label-md text-[11px] text-primary font-medium">Share Access</span>
+</button>
+<!-- Verify Hash -->
+<button class="bg-surface-container-lowest hover:bg-surface-container-low transition-all duration-150 p-2.5 rounded-xl flex flex-col items-center justify-center text-center gap-1.5 shadow-sm active:scale-95">
+<div class="w-9 h-9 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-[20px]">gavel</span>
+</div>
+<span class="font-label-md text-[11px] text-primary font-medium">Verify Proof</span>
+</button>
+<!-- Health History -->
+<button class="bg-surface-container-lowest hover:bg-surface-container-low transition-all duration-150 p-2.5 rounded-xl flex flex-col items-center justify-center text-center gap-1.5 shadow-sm active:scale-95">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">history_edu</span>
+</div>
+<span class="font-label-md text-[11px] text-primary font-medium">Full History</span>
+</button>
+<!-- Export JSON -->
+<button class="bg-surface-container-lowest hover:bg-surface-container-low transition-all duration-150 p-2.5 rounded-xl flex flex-col items-center justify-center text-center gap-1.5 shadow-sm active:scale-95">
+<div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">code</span>
+</div>
+<span class="font-label-md text-[11px] text-primary font-medium">Export FHIR</span>
+</button>
+</div>
+</div>
+<!-- 4. Overview Statistics Grid (2x2 Cards with visual spark) -->
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Card 1: Total Records -->
+<div class="bg-surface-container-lowest rounded-xl p-3 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-[10px] uppercase text-on-surface-variant tracking-wider font-semibold">Records</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">inventory_2</span>
+</div>
+<div class="my-1.5 flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">24</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">entries</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+<span class="font-code-sm text-[10px] text-[#059669] font-medium">100% SHA Sealed</span>
+</div>
+</div>
+<!-- Card 2: Vaccines Status -->
+<div class="bg-surface-container-lowest rounded-xl p-3 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-[10px] uppercase text-on-surface-variant tracking-wider font-semibold">Immunizations</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">shield_with_heart</span>
+</div>
+<div class="my-1.5 flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">8</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">/ 10 completed</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 flex overflow-hidden">
+<div class="bg-[#059669] h-full" style="width: 80%"></div>
+<div class="bg-secondary h-full" style="width: 10%"></div>
+<div class="bg-error h-full" style="width: 10%"></div>
+</div>
+</div>
+<!-- Card 3: Active Shares -->
+<div class="bg-surface-container-lowest rounded-xl p-3 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-[10px] uppercase text-on-surface-variant tracking-wider font-semibold">Active Consents</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">vpn_key</span>
+</div>
+<div class="my-1.5 flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">2</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">providers</span>
+</div>
+<span class="font-body-sm text-[10px] text-on-surface-variant truncate">Dr. Chen &amp; Quest Lab</span>
+</div>
+<!-- Card 4: Action Alerts -->
+<div class="bg-surface-container-lowest rounded-xl p-3 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-[10px] uppercase text-on-surface-variant tracking-wider font-semibold">Attention</span>
+<span class="material-symbols-outlined text-error text-[16px]">notification_important</span>
+</div>
+<div class="my-1.5 flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg font-bold text-error">2</span>
+<span class="font-body-sm text-[11px] text-error font-medium">Pending Tasks</span>
+</div>
+<span class="font-body-sm text-[10px] text-error truncate font-medium">Tdap due &amp; Fasting Lab</span>
+</div>
+</div>
+<!-- 5. Reminders & Clinical Action Center -->
+<div class="flex flex-col space-y-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]">event_upcoming</span>
+<span class="font-title-sm text-title-sm text-primary font-bold">Clinical Action Center</span>
+</div>
+<span class="bg-error-container text-error font-code-sm text-[10px] px-2 py-0.5 rounded-full font-bold">1 URGENT</span>
+</div>
+<!-- Urgent Card: Tdap -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm border-l-4 border-error relative overflow-hidden">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-title-sm text-body-lg font-bold text-primary">Tdap Booster Overdue</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">CDC 10-Year Decennial Revaccination Protocol</p>
+</div>
+<span class="bg-error/10 text-error font-code-sm text-[10px] px-2 py-1 rounded font-bold">OVERDUE</span>
+</div>
+<div class="flex items-center gap-2 mt-3 text-on-surface-variant font-code-sm text-[11px]">
+<span class="material-symbols-outlined text-[15px]">history</span>
+<span>Last administered: Oct 14, 2014 (Metro Health)</span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-3">
+<button class="bg-primary text-on-primary py-2 px-3 rounded text-label-md font-medium flex items-center justify-center gap-1 active:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span>Find Clinic</span>
+</button>
+<button class="bg-surface-container hover:bg-surface-container-high text-primary py-2 px-3 rounded text-label-md font-medium flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit_calendar</span>
+<span>Log Dose</span>
+</button>
+</div>
+</div>
+<!-- Scheduled Card: Fasting Metabolic Panel -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm border-l-4 border-secondary">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-title-sm text-body-lg font-bold text-primary">Fasting Metabolic Panel</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Order #L-99210 • Quest Diagnostics</p>
+</div>
+<span class="bg-secondary-fixed text-on-secondary-fixed-variant font-code-sm text-[10px] px-2 py-1 rounded font-bold">NOV 15</span>
+</div>
+<div class="flex items-center gap-2 mt-2 bg-surface-container-low p-2 rounded text-on-surface font-body-sm text-[11px]">
+<span class="material-symbols-outlined text-secondary text-[16px]">info</span>
+<span>Fast for 12 hours prior to draw. Water permitted.</span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-3">
+<button class="bg-surface-container-low hover:bg-surface-container text-primary py-2 px-3 rounded text-label-md font-medium flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">description</span>
+<span>View Prep</span>
+</button>
+<button class="bg-surface-container-low hover:bg-surface-container text-primary py-2 px-3 rounded text-label-md font-medium flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>Add to Cal</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 6. Vaccination Status Snapshot (SMART Health Card Pass Style) -->
+<div class="w-full bg-primary-container text-on-primary-container rounded-xl p-space-md shadow-md relative overflow-hidden">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-tertiary-fixed text-[20px]">qr_code_2</span>
+<span class="font-title-sm text-title-sm text-white font-bold">SMART® Health Pass</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-tint/30 text-white font-code-sm text-[10px] px-2 py-0.5 rounded">
+<span>W3C VC Spec</span>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface/10 rounded-lg p-3">
+<!-- Mini QR Representation -->
+<div class="w-16 h-16 bg-white rounded-lg p-1 flex-shrink-0 flex items-center justify-center shadow-inner">
+<svg class="w-full h-full text-primary" fill="currentColor" viewbox="0 0 44 44">
+<path d="M0 0h16v16H0V0zm4 4v8h8V4H4zm24-4h16v16H28V0zm4 4v8h8V4h-8zM0 28h16v16H0V28zm4 4v8h8v-8H4zm28 0h4v4h-4v-4zm8 0h4v8h-4v-8zm-8 8h4v4h-4v-4zm4-4h4v4h-4v-4zm-8-8h4v4h-4v-4zm12 8h4v4h-4v-4zM20 4h4v8h-4V4zm-4 8h8v4h-8v-4zm4 8h4v4h-4v-4zm8-4h4v8h-4v-8zm-8 8h4v8h-4v-8z"></path>
+</svg>
+</div>
+<div class="flex flex-col justify-center min-w-0">
+<span class="font-label-md text-white font-bold text-label-md">Eleanor Vance</span>
+<span class="font-code-sm text-[10px] text-inverse-primary truncate">Issuer: California Dept Public Health</span>
+<div class="flex items-center gap-2 mt-1.5">
+<span class="text-[11px] bg-[#059669] text-white px-1.5 py-0.5 rounded font-code-sm font-semibold">8 Valid</span>
+<span class="text-[11px] bg-secondary text-white px-1.5 py-0.5 rounded font-code-sm font-semibold">1 Scheduled</span>
+</div>
+</div>
+</div>
+<div class="mt-3 flex items-center justify-between text-inverse-primary hover:text-white transition-colors cursor-pointer pt-1">
+<span class="font-label-md text-[13px] font-medium">Open Full Vaccine Wallet</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</div>
+</div>
+<!-- 7. Recent Medical Documents List -->
+<div class="flex flex-col space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[20px]">folder_open</span>
+<span class="font-title-sm text-title-sm text-primary font-bold">Medical Documents</span>
+</div>
+<span class="font-code-sm text-[11px] text-secondary font-medium">24 Total</span>
+</div>
+<!-- Search Input for ICD-10, clinician, or document -->
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-lowest text-primary placeholder:text-on-surface-variant/70 pl-10 pr-4 py-2 rounded-xl text-body-sm font-body-sm focus:outline-none focus:ring-2 focus:ring-secondary shadow-sm transition-all" placeholder="Search by ICD-10, LOINC, doctor..." type="text"/>
+</div>
+<!-- Filter Pills -->
+<div class="flex items-center gap-1.5 overflow-x-auto py-1 no-scrollbar">
+<button class="bg-primary text-on-primary px-3 py-1 rounded-full text-label-md font-medium whitespace-nowrap shadow-sm">All (24)</button>
+<button class="bg-surface-container-lowest hover:bg-surface-container text-on-surface px-3 py-1 rounded-full text-label-md font-medium whitespace-nowrap shadow-sm">Labs</button>
+<button class="bg-surface-container-lowest hover:bg-surface-container text-on-surface px-3 py-1 rounded-full text-label-md font-medium whitespace-nowrap shadow-sm">Imaging</button>
+<button class="bg-surface-container-lowest hover:bg-surface-container text-on-surface px-3 py-1 rounded-full text-label-md font-medium whitespace-nowrap shadow-sm">Notes</button>
+<button class="bg-surface-container-lowest hover:bg-surface-container text-on-surface px-3 py-1 rounded-full text-label-md font-medium whitespace-nowrap shadow-sm">Rx Orders</button>
+</div>
+<!-- Document Cards -->
+<div class="space-y-2.5">
+<!-- Doc 1: CMP -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm hover:shadow transition-shadow">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">biotech</span>
+</div>
+<div class="min-w-0">
+<h4 class="font-title-sm text-body-lg font-bold text-primary truncate">Comprehensive Metabolic Panel</h4>
+<p class="font-code-sm text-[11px] text-on-surface-variant font-medium">LOINC 24331-1 • Nov 02, 2024</p>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-0.5">Dr. Sarah Jenkins • University Health</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer text-[20px]">more_vert</span>
+</div>
+<div class="mt-3 pt-2.5 border-t border-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+<span class="font-code-sm text-[10px] text-secondary uppercase font-semibold">SHA-256 e4a9c...</span>
+</div>
+<button class="text-secondary font-label-md text-[12px] font-semibold flex items-center gap-0.5 hover:underline">
+<span>View PDF</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</div>
+</div>
+<!-- Doc 2: Chest X-Ray -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm hover:shadow transition-shadow">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">radiology</span>
+</div>
+<div class="min-w-0">
+<h4 class="font-title-sm text-body-lg font-bold text-primary truncate">Chest X-Ray 2-View (DICOM)</h4>
+<p class="font-code-sm text-[11px] text-on-surface-variant font-medium">CPT 71046 • Sep 12, 2024</p>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-0.5">Adv Imaging Center • Normal Clear</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer text-[20px]">more_vert</span>
+</div>
+<div class="mt-3 pt-2.5 border-t border-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+<span class="font-code-sm text-[10px] text-[#059669] uppercase font-semibold">Cryptographically Sealed</span>
+</div>
+<button class="text-secondary font-label-md text-[12px] font-semibold flex items-center gap-0.5 hover:underline">
+<span>View PACS</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</div>
+</div>
+<!-- Doc 3: Annual Wellness -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm hover:shadow transition-shadow">
+<div class="flex items-start justify-between">
+<div class="flex items-start gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">clinical_notes</span>
+</div>
+<div class="min-w-0">
+<h4 class="font-title-sm text-body-lg font-bold text-primary truncate">Annual Wellness Encounter</h4>
+<p class="font-code-sm text-[11px] text-on-surface-variant font-medium">ICD-10 Z00.00 • Aug 15, 2024</p>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-0.5">Dr. Aris Thorne • City Medical Group</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer text-[20px]">more_vert</span>
+</div>
+<div class="mt-3 pt-2.5 border-t border-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+<span class="font-code-sm text-[10px] text-secondary uppercase font-semibold">FHIR Resource Bundle</span>
+</div>
+<button class="text-secondary font-label-md text-[12px] font-semibold flex items-center gap-0.5 hover:underline">
+<span>Summary</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 8. Recent Activity & Access History (Audit Trail) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]">security</span>
+<span class="font-title-sm text-title-sm text-primary font-bold">Access Ledger &amp; Telemetry</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-2 py-0.5 rounded text-secondary font-code-sm text-[10px] font-bold">
+<span>IMMUTABLE</span>
+</div>
+</div>
+<!-- Timeline Audit Items -->
+<div class="space-y-3 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container">
+<!-- Event 1 -->
+<div class="flex items-start gap-3 relative">
+<div class="w-6 h-6 rounded-full bg-secondary-fixed text-secondary flex items-center justify-center flex-shrink-0 z-10">
+<span class="material-symbols-outlined text-[14px]">file_download</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-sm text-label-md text-primary font-bold">FHIR Observation Exported</span>
+<span class="font-code-sm text-[10px] text-on-surface-variant">Today 10:14 AM</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Signed bundle exported via Patient Portal OAuth2</span>
+</div>
+</div>
+<!-- Event 2 -->
+<div class="flex items-start gap-3 relative">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest text-primary flex items-center justify-center flex-shrink-0 z-10">
+<span class="material-symbols-outlined text-[14px]">lock_open</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-sm text-label-md text-primary font-bold">Provider Access Session</span>
+<span class="font-code-sm text-[10px] text-on-surface-variant">Yesterday 3:45 PM</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Dr. Robert Chen (Cardiology) viewed lab series</span>
+</div>
+</div>
+<!-- Event 3 -->
+<div class="flex items-start gap-3 relative">
+<div class="w-6 h-6 rounded-full bg-tertiary-fixed text-on-tertiary-container flex items-center justify-center flex-shrink-0 z-10">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-sm text-label-md text-primary font-bold">Hash Integrity Verified</span>
+<span class="font-code-sm text-[10px] text-on-surface-variant">Oct 28</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Automated Merkle root sync passed 0 conflicts</span>
+</div>
+</div>
+</div>
+<!-- Link to full ledger -->
+<a class="mt-4 pt-3 border-t border-surface-container flex items-center justify-center gap-1.5 text-secondary hover:text-primary transition-colors" href="#">
+<span class="font-label-md text-[12px] font-bold">View Full Security Ledger</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</div>
+<!-- Safe area bottom padding spacer -->
+<div class="h-4 w-full"></div>
+</div>
+<script>
+  // Simple interactive feedback for action buttons
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      // Add a subtle tactile ripple feedback
+      this.classList.add('opacity-80');
+      setTimeout(() => {
+        this.classList.remove('opacity-80');
+      }, 150);
+    });
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(15,41,74,0.05)]" data-active-classes="text-primary font-title-sm"><div class="h-16 px-gutter flex items-center justify-between"><a aria-current="page" class="flex-1 min-w-[48px] h-12 flex flex-col items-center justify-center gap-0.5 transition-colors text-primary font-title-sm" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">home</span><span class="font-body-sm text-body-sm">Home</span></a><a class="flex-1 min-w-[48px] h-12 flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-primary transition-colors" data-path="records" href="#"><span class="material-symbols-outlined text-[22px]">folder_shared</span><span class="font-body-sm text-body-sm">Records</span></a><a class="flex-1 min-w-[48px] h-12 flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-primary transition-colors" data-path="vaccines" href="#"><span class="material-symbols-outlined text-[22px]">vaccines</span><span class="font-body-sm text-body-sm">Vaccines</span></a><a class="flex-1 min-w-[48px] h-12 flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-primary transition-colors" data-path="sharing" href="#"><span class="material-symbols-outlined text-[22px]">share</span><span class="font-body-sm text-body-sm">Sharing</span></a><a class="flex-1 min-w-[48px] h-12 flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-primary transition-colors" data-path="security" href="#"><span class="material-symbols-outlined text-[22px]">verified_user</span><span class="font-body-sm text-body-sm">Security</span></a></div></nav></body></html>

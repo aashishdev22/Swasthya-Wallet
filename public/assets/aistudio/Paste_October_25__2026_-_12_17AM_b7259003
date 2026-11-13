@@ -1,0 +1,1042 @@
+<!-- Patient Registration & Account Creation -->
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"inverse-on-surface":"#ebf1f9","on-primary":"#ffffff","primary-fixed":"#d5e3ff","inverse-surface":"#2b3137","on-secondary-container":"#00476e","surface-container-lowest":"#ffffff","on-tertiary":"#ffffff","primary-container":"#0f294a","tertiary-fixed-dim":"#68dba9","on-secondary-fixed":"#001d31","tertiary":"#00190e","secondary-fixed":"#cce5ff","error":"#ba1a1a","on-primary-fixed-variant":"#30476a","surface-container-highest":"#dde3eb","inverse-primary":"#b0c8f1","surface-tint":"#485f83","on-surface":"#161c22","on-background":"#161c22","surface-dim":"#d4dbe2","surface-variant":"#dde3eb","surface-bright":"#f6f9ff","on-error":"#ffffff","on-tertiary-container":"#24a375","on-tertiary-fixed":"#002114","primary":"#00142f","tertiary-fixed":"#85f8c4","outline":"#74777f","on-primary-fixed":"#001b3b","surface-container":"#e8eef6","surface-container-high":"#e3e9f1","secondary":"#006398","primary-fixed-dim":"#b0c8f1","on-secondary":"#ffffff","background":"#f6f9ff","secondary-fixed-dim":"#93ccff","on-error-container":"#93000a","on-surface-variant":"#44474e","surface":"#f6f9ff","tertiary-container":"#00301f","secondary-container":"#5bb8fe","on-secondary-fixed-variant":"#004b73","on-tertiary-fixed-variant":"#005137","on-primary-container":"#7a91b7","error-container":"#ffdad6","surface-container-low":"#eef4fc","outline-variant":"#c4c6cf"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-lg":"1.5rem","space-xl":"2.5rem","space-md":"1rem","gutter-lg":"1.5rem","gutter":"1rem","space-xs":"0.25rem","margin-lg":"2.5rem","margin":"1rem","space-sm":"0.5rem"},"fontFamily":{"headline-lg":["Inter"],"body-sm":["Inter"],"label-md":["Inter"],"body-lg":["Inter"],"headline-md":["Inter"],"headline-xl":["Inter"],"body-md":["Inter"],"code-sm":["JetBrains Mono"],"title-sm":["Inter"]},"fontSize":{"headline-lg":["24px",{"lineHeight":"32px","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"label-md":["13px",{"lineHeight":"16px","fontWeight":"500"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],"headline-xl":["32px",{"lineHeight":"40px","fontWeight":"700"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"code-sm":["11px",{"lineHeight":"14px","fontWeight":"500"}],"title-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface min-h-screen flex flex-col justify-between selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 max-w-7xl mx-auto px-margin-lg flex items-center justify-between"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[20px]">health_metrics</span></div><div class="flex flex-col"><span class="font-headline-md text-headline-md tracking-tight text-primary leading-none">Unified Health Wallet</span><span class="font-body-sm text-body-sm text-on-surface-variant">Cryptographic Clinical Trust Engine</span></div></div><div class="hidden lg:flex items-center gap-space-xs ml-space-sm"><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-lg bg-surface-container-low"><span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span><span class="font-code-sm text-code-sm text-on-surface tracking-wider uppercase">HL7 FHIR v4.0.1</span></div><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-lg bg-surface-container-low"><span class="material-symbols-outlined text-secondary text-[14px]">verified_user</span><span class="font-code-sm text-code-sm text-on-surface tracking-wider uppercase">HIPAA COMPLIANT</span></div><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-lg bg-secondary-fixed"><span class="font-code-sm text-code-sm text-on-secondary-fixed tracking-wider uppercase">SANDBOX DEMO</span></div></div></div><div class="flex items-center gap-space-lg"><nav class="hidden md:flex items-center gap-space-md" data-active-classes="bg-surface-container-high text-on-surface font-semibold rounded-lg"><a class="px-space-sm py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="clinical-login" href="#">Authentication Gate</a><a aria-current="page" class="px-space-sm py-1.5 transition-colors bg-surface-container-high text-on-surface font-semibold rounded-lg" data-path="identity-verification" href="#">Identity Assurance</a><a class="px-space-sm py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="security-protocols" href="#">FHIR Compliance</a></nav><div class="flex items-center gap-space-sm pl-space-md"><div class="hidden sm:flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container"><span class="material-symbols-outlined text-on-surface-variant text-[16px]">lock</span><span class="font-code-sm text-code-sm text-on-surface tracking-widest uppercase">SHA-256</span></div><a class="hidden sm:inline-flex items-center gap-space-xs font-label-md text-label-md text-secondary hover:text-primary transition-colors" data-path="public-portal-redirect" href="#">Portal Return</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-surface flex-1 flex flex-col justify-center"><div class="flex flex-col w-full">
+<!-- Status Context Ribbon -->
+<div class="w-full bg-primary-container text-on-primary py-space-sm shadow-sm">
+<div class="max-w-7xl mx-auto px-margin-lg flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span>
+<span class="font-code-sm text-code-sm tracking-wider uppercase font-semibold text-primary-fixed">
+          PATIENT ONBOARDING • IDENTITY VERIFICATION STAGE (NIST SP 800-63-3)
+        </span>
+</div>
+<div class="flex items-center gap-space-sm text-on-primary-container">
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed">enhanced_encryption</span>
+<span class="font-code-sm text-code-sm uppercase tracking-widest text-primary-fixed">IAL-2 / AAL-3 PROVISIONING</span>
+</div>
+</div>
+</div>
+<!-- Primary Interactive Canvas -->
+<div class="max-w-7xl mx-auto px-margin-lg py-space-xl w-full">
+<!-- Asymmetric Hero / Onboarding Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- Left Column: Trust Infrastructure, Biometrics & Cryptographic Proof Engine -->
+<div class="lg:col-span-5 flex flex-col gap-space-lg">
+<!-- Identity Persona Preview Card -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-md relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary-fixed/20 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="px-space-sm py-0.5 rounded bg-surface-container font-code-sm text-code-sm text-secondary uppercase font-semibold tracking-wider">
+              CLIENT-SIDE KEY DERIVATION
+            </span>
+<div class="flex items-center gap-1 text-on-surface-variant font-code-sm text-code-sm">
+<span class="material-symbols-outlined text-[14px] text-on-tertiary-container">verified</span>
+<span>ZERO-KNOWLEDGE</span>
+</div>
+</div>
+<!-- Synthetic Patient Identity Imagery -->
+<div class="relative rounded-lg overflow-hidden mb-space-md bg-surface-container-low h-48">
+<img class="w-full h-full object-cover" data-alt="Modern clinical biometric verification scanner rendering with deep navy background, luminous cyan telemetry lines, and a medical hologram interface displaying zero-knowledge cryptographic encryption keys for patient Eleanor Vance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN7CsfjDcBMqKC5rwbAB2TdgHvpNMk0qHPq1_278Wu9Iz_oj1rigvwD1AAmEnVRNbB5_pFrotQIEizWoSs8Wtb5QWBtth-zUWVTCWVKpAzfCxJd4g_HYQrJkptJKkj3qsivlVmtVDM-22JKF_Gp_iKElZ6Hy0Mci-ykc2Zo-xX0Ms5T6V3NoDkEpZun14j7QbMMUDR5uVAxlQGUT5RYu8pCtuQIJgoi4sJGg68pTiqwiBTvqJJHaMjzA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent flex flex-col justify-end p-space-md">
+<span class="font-code-sm text-code-sm text-secondary-fixed tracking-widest uppercase">Vault Schema</span>
+<span class="font-headline-md text-headline-md text-on-primary">W3C Decentralized ID</span>
+<span class="font-code-sm text-code-sm text-on-primary-container truncate font-mono">did:health:sha256:8f2a...c014e</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-md">
+            Your Health Wallet operates on patient-owned public-key infrastructure. Clinical records are decrypted exclusively in your local device enclave.
+          </p>
+<!-- Cryptographic Enclave Specifications -->
+<div class="space-y-space-xs font-code-sm text-code-sm bg-surface-container-low p-space-sm rounded-lg text-on-surface">
+<div class="flex justify-between items-center py-1">
+<span class="text-on-surface-variant uppercase">Key Cipher:</span>
+<span class="font-semibold text-primary">AES-GCM-256 (WebCrypto)</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span class="text-on-surface-variant uppercase">Key Derivation:</span>
+<span class="font-semibold text-primary">PBKDF2 • 600,000 Rounds</span>
+</div>
+<div class="flex justify-between items-center py-1">
+<span class="text-on-surface-variant uppercase">Interoperability:</span>
+<span class="font-semibold text-secondary">HL7 FHIR Release 4.0.1</span>
+</div>
+</div>
+</div>
+<!-- Sandbox Simulation Banner -->
+<div class="bg-surface-container p-space-md rounded-xl flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">science</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-primary">Interactive Sandbox Mode</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Registration executes client-side simulation. No production PHI (Protected Health Information) is permanently persisted to federal registries.
+            </p>
+</div>
+</div>
+</div>
+<!-- Right Column: Registration Form Protocol -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-space-lg lg:p-space-xl rounded-xl shadow-md">
+<!-- Header Group -->
+<div class="mb-space-lg">
+<div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container-low text-secondary mb-space-sm">
+<span class="material-symbols-outlined text-[16px]">how_to_reg</span>
+<span class="font-code-sm text-code-sm uppercase tracking-wider font-semibold">Step 01 • Identity Provisioning</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary tracking-tight">Create Your Health Wallet</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-1">
+            Establish your cryptographically secured, patient-controlled medical record vault.
+          </p>
+</div>
+<!-- Registration Form -->
+<form class="flex flex-col gap-space-md" id="vaultRegistrationForm" onsubmit="event.preventDefault(); handleRegistrationSubmit();">
+<!-- Full Name & Date of Birth (2-col desktop) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Full Legal Name -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="legalName">
+<span>Full Legal Name</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant uppercase">Legal ID Match</span>
+</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md px-space-md py-3 rounded outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#006398] transition-all" id="legalName" placeholder="e.g. Eleanor Vance" required="" type="text"/>
+</div>
+</div>
+<!-- Date of Birth -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="dob">
+<span>Date of Birth</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant uppercase">ISO 8601</span>
+</label>
+<input class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md px-space-md py-3 rounded outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#006398] transition-all" id="dob" required="" type="date"/>
+</div>
+</div>
+<!-- Email & MFA Mobile -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Email -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface" for="email">
+                Email Address
+              </label>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md pl-space-md pr-10 py-3 rounded outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#006398] transition-all" id="email" placeholder="eleanor.vance@clinicaltrust.org" required="" type="email"/>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant absolute right-3 pointer-events-none">mail</span>
+</div>
+</div>
+<!-- Mobile Phone (MFA) -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="phone">
+<span>Mobile Number</span>
+<span class="font-code-sm text-code-sm text-secondary font-semibold uppercase">MFA Required</span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md pl-space-md pr-10 py-3 rounded outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#006398] transition-all" id="phone" placeholder="+1 (555) 234-8901" required="" type="tel"/>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant absolute right-3 pointer-events-none">smartphone</span>
+</div>
+</div>
+</div>
+<!-- Master Vault Password -->
+<div class="flex flex-col gap-1.5 pt-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface" for="masterPassword">
+                Master Vault Password
+              </label>
+<span class="font-code-sm text-code-sm font-semibold uppercase text-error" id="strengthText">Unacceptable (0/4)</span>
+</div>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md pl-space-md pr-10 py-3 rounded outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#006398] transition-all" id="masterPassword" oninput="evaluatePasswordStrength(this.value)" placeholder="••••••••••••••••" required="" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute right-3 text-on-surface-variant hover:text-primary transition-colors focus:outline-none" onclick="togglePasswordVisibility('masterPassword', this)" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+<!-- Password Strength Indicator Bars -->
+<div class="grid grid-cols-4 gap-1.5 mt-1">
+<div class="h-1 rounded-full bg-surface-container-highest transition-colors" id="bar-1"></div>
+<div class="h-1 rounded-full bg-surface-container-highest transition-colors" id="bar-2"></div>
+<div class="h-1 rounded-full bg-surface-container-highest transition-colors" id="bar-3"></div>
+<div class="h-1 rounded-full bg-surface-container-highest transition-colors" id="bar-4"></div>
+</div>
+<!-- Password Criteria Checklist -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-code-sm text-code-sm">
+<div class="flex items-center gap-1 text-on-surface-variant" id="rule-length">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+<span>12+ chars</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant" id="rule-upper">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+<span>Uppercase</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant" id="rule-number">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+<span>Number</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant" id="rule-symbol">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+<span>Symbol</span>
+</div>
+</div>
+</div>
+<!-- Confirm Password -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="confirmPassword">
+<span>Confirm Password</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant uppercase" id="matchFeedback"></span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low text-on-surface font-body-md text-body-md pl-space-md pr-10 py-3 rounded outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#006398] transition-all" id="confirmPassword" oninput="validateMatch()" placeholder="••••••••••••••••" required="" type="password"/>
+<button aria-label="Toggle confirm password visibility" class="absolute right-3 text-on-surface-variant hover:text-primary transition-colors focus:outline-none" onclick="togglePasswordVisibility('confirmPassword', this)" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Legal Consent Checkbox -->
+<div class="p-space-md bg-surface-container-low rounded-lg mt-space-xs">
+<label class="flex items-start gap-space-sm cursor-pointer select-none">
+<input class="mt-1 w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer accent-[#006398]" id="legalConsent" required="" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface leading-normal">
+                I consent to local cryptographic key generation and acknowledge the 
+                <a class="text-secondary font-semibold hover:underline" href="#">HIPAA &amp; FHIR Privacy Terms</a>.
+                I understand the health authority holds zero escrow of my master private keys.
+              </span>
+</label>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full h-12 bg-primary text-on-primary hover:bg-primary-container font-headline-md text-headline-md font-semibold rounded flex items-center justify-center gap-space-sm shadow-sm transition-colors mt-space-sm focus:outline-none focus:ring-2 focus:ring-secondary" id="submitBtn" type="submit">
+<span class="material-symbols-outlined text-[20px]">enhanced_encryption</span>
+<span>Create Secure Health Wallet</span>
+</button>
+<!-- Status Dispatch Simulation (Hidden State) -->
+<div class="hidden p-space-md rounded bg-secondary-fixed text-on-secondary-fixed font-code-sm text-code-sm flex items-center justify-between" id="registrationFeedback">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+<span>DERIVING CRYPTOGRAPHIC KEYS &amp; SEEDING RECORD ENCLAVE...</span>
+</div>
+<span class="font-semibold text-primary">HL7 COMPLIANT</span>
+</div>
+<!-- Secondary Return Action -->
+<div class="flex items-center justify-center pt-space-xs">
+<span class="font-body-md text-body-md text-on-surface-variant mr-1">Already registered?</span>
+<a class="font-title-sm text-title-sm text-secondary hover:text-primary transition-colors flex items-center gap-0.5" data-path="clinical-login" href="#">
+<span>Sign In</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</form>
+</div>
+</div>
+</div>
+<!-- Inline Script for Verification Telemetry -->
+<script>
+    function togglePasswordVisibility(fieldId, triggerBtn) {
+      const input = document.getElementById(fieldId);
+      const icon = triggerBtn.querySelector('.material-symbols-outlined');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
+
+    function evaluatePasswordStrength(pass) {
+      const lengthCheck = pass.length >= 12;
+      const upperCheck = /[A-Z]/.test(pass);
+      const numberCheck = /[0-9]/.test(pass);
+      const symbolCheck = /[^A-Za-z0-9]/.test(pass);
+
+      updateRule('rule-length', lengthCheck);
+      updateRule('rule-upper', upperCheck);
+      updateRule('rule-number', numberCheck);
+      updateRule('rule-symbol', symbolCheck);
+
+      const score = [lengthCheck, upperCheck, numberCheck, symbolCheck].filter(Boolean).length;
+      
+      const bars = [document.getElementById('bar-1'), document.getElementById('bar-2'), document.getElementById('bar-3'), document.getElementById('bar-4')];
+      const strengthText = document.getElementById('strengthText');
+
+      bars.forEach(b => b.className = 'h-1 rounded-full bg-surface-container-highest transition-colors');
+
+      if (score === 0) {
+        strengthText.textContent = 'Unacceptable (0/4)';
+        strengthText.className = 'font-code-sm text-code-sm font-semibold uppercase text-error';
+      } else if (score <= 2) {
+        strengthText.textContent = 'Weak (' + score + '/4)';
+        strengthText.className = 'font-code-sm text-code-sm font-semibold uppercase text-error';
+        for (let i = 0; i < score; i++) bars[i].className = 'h-1 rounded-full bg-error transition-colors';
+      } else if (score === 3) {
+        strengthText.textContent = 'Good (3/4)';
+        strengthText.className = 'font-code-sm text-code-sm font-semibold uppercase text-secondary';
+        for (let i = 0; i < score; i++) bars[i].className = 'h-1 rounded-full bg-secondary-container transition-colors';
+      } else if (score === 4) {
+        strengthText.textContent = 'Vault Grade (4/4)';
+        strengthText.className = 'font-code-sm text-code-sm font-semibold uppercase text-on-tertiary-container';
+        for (let i = 0; i < score; i++) bars[i].className = 'h-1 rounded-full bg-on-tertiary-container transition-colors';
+      }
+
+      validateMatch();
+    }
+
+    function updateRule(elementId, passed) {
+      const el = document.getElementById(elementId);
+      const icon = el.querySelector('.material-symbols-outlined');
+      if (passed) {
+        el.className = 'flex items-center gap-1 text-on-tertiary-container font-semibold';
+        icon.textContent = 'check_circle';
+      } else {
+        el.className = 'flex items-center gap-1 text-on-surface-variant';
+        icon.textContent = 'cancel';
+      }
+    }
+
+    function validateMatch() {
+      const p1 = document.getElementById('masterPassword').value;
+      const p2 = document.getElementById('confirmPassword').value;
+      const feedback = document.getElementById('matchFeedback');
+      
+      if (!p2) {
+        feedback.textContent = '';
+        return;
+      }
+      if (p1 === p2) {
+        feedback.textContent = 'Key Match Verified';
+        feedback.className = 'font-code-sm text-code-sm text-on-tertiary-container uppercase font-semibold';
+      } else {
+        feedback.textContent = 'Keys Do Not Match';
+        feedback.className = 'font-code-sm text-code-sm text-error uppercase font-semibold';
+      }
+    }
+
+    function handleRegistrationSubmit() {
+      const feedback = document.getElementById('registrationFeedback');
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-70');
+      feedback.classList.remove('hidden');
+
+      setTimeout(() => {
+        feedback.innerHTML = '<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">verified</span> CRYPTOGRAPHIC ENCLAVE GENERATED &bull; REDIRECTING...</span><span class="font-semibold text-primary">AAL-3 CERTIFIED</span>';
+        setTimeout(() => {
+          window.location.hash = 'clinical-login';
+        }, 1200);
+      }, 1500);
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-low py-space-lg mt-auto"><div class="max-w-7xl mx-auto px-margin-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex flex-col gap-1 text-center md:text-left"><div class="flex flex-wrap items-center justify-center md:justify-start gap-space-sm text-on-surface-variant"><span class="font-code-sm text-code-sm font-semibold uppercase tracking-wider text-primary">NIST SP 800-63-3 (AAL3/IAL2)</span><span class="text-outline-variant">•</span><span class="font-code-sm text-code-sm uppercase tracking-wider">45 CFR § 164.312 HIPAA Safeguards</span><span class="text-outline-variant">•</span><span class="font-code-sm text-code-sm uppercase tracking-wider">OAuth 2.0 / SMART on FHIR</span></div><p class="font-body-sm text-body-sm text-on-surface-variant">Protected Health Information is secured under federal civil &amp; cryptographic compliance mandates. Unauthorized access attempts are monitored and recorded.</p></div><div class="flex items-center gap-space-md"><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors px-space-sm py-1 rounded-lg" data-path="public-portal-redirect" href="#">Public Gateway</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors px-space-sm py-1 rounded-lg" data-path="security-protocols" href="#">Security Assurance</a></div></div></footer></body></html>
+
+<!-- Password Recovery & Vault Access -->
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"inverse-on-surface":"#ebf1f9","on-primary":"#ffffff","primary-fixed":"#d5e3ff","inverse-surface":"#2b3137","on-secondary-container":"#00476e","surface-container-lowest":"#ffffff","on-tertiary":"#ffffff","primary-container":"#0f294a","tertiary-fixed-dim":"#68dba9","on-secondary-fixed":"#001d31","tertiary":"#00190e","secondary-fixed":"#cce5ff","error":"#ba1a1a","on-primary-fixed-variant":"#30476a","surface-container-highest":"#dde3eb","inverse-primary":"#b0c8f1","surface-tint":"#485f83","on-surface":"#161c22","on-background":"#161c22","surface-dim":"#d4dbe2","surface-variant":"#dde3eb","surface-bright":"#f6f9ff","on-error":"#ffffff","on-tertiary-container":"#24a375","on-tertiary-fixed":"#002114","primary":"#00142f","tertiary-fixed":"#85f8c4","outline":"#74777f","on-primary-fixed":"#001b3b","surface-container":"#e8eef6","surface-container-high":"#e3e9f1","secondary":"#006398","primary-fixed-dim":"#b0c8f1","on-secondary":"#ffffff","background":"#f6f9ff","secondary-fixed-dim":"#93ccff","on-error-container":"#93000a","on-surface-variant":"#44474e","surface":"#f6f9ff","tertiary-container":"#00301f","secondary-container":"#5bb8fe","on-secondary-fixed-variant":"#004b73","on-tertiary-fixed-variant":"#005137","on-primary-container":"#7a91b7","error-container":"#ffdad6","surface-container-low":"#eef4fc","outline-variant":"#c4c6cf"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-lg":"1.5rem","space-xl":"2.5rem","space-md":"1rem","gutter-lg":"1.5rem","gutter":"1rem","space-xs":"0.25rem","margin-lg":"2.5rem","margin":"1rem","space-sm":"0.5rem"},"fontFamily":{"headline-lg":["Inter"],"body-sm":["Inter"],"label-md":["Inter"],"body-lg":["Inter"],"headline-md":["Inter"],"headline-xl":["Inter"],"body-md":["Inter"],"code-sm":["JetBrains Mono"],"title-sm":["Inter"]},"fontSize":{"headline-lg":["24px",{"lineHeight":"32px","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"label-md":["13px",{"lineHeight":"16px","fontWeight":"500"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],"headline-xl":["32px",{"lineHeight":"40px","fontWeight":"700"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"code-sm":["11px",{"lineHeight":"14px","fontWeight":"500"}],"title-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface min-h-screen flex flex-col justify-between selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 max-w-7xl mx-auto px-margin-lg flex items-center justify-between"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[20px]">health_metrics</span></div><div class="flex flex-col"><span class="font-headline-md text-headline-md tracking-tight text-primary leading-none">Unified Health Wallet</span><span class="font-body-sm text-body-sm text-on-surface-variant">Cryptographic Clinical Trust Engine</span></div></div><div class="hidden lg:flex items-center gap-space-xs ml-space-sm"><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-lg bg-surface-container-low"><span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span><span class="font-code-sm text-code-sm text-on-surface tracking-wider uppercase">HL7 FHIR v4.0.1</span></div><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-lg bg-surface-container-low"><span class="material-symbols-outlined text-secondary text-[14px]">verified_user</span><span class="font-code-sm text-code-sm text-on-surface tracking-wider uppercase">HIPAA COMPLIANT</span></div><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-lg bg-secondary-fixed"><span class="font-code-sm text-code-sm text-on-secondary-fixed tracking-wider uppercase">SANDBOX DEMO</span></div></div></div><div class="flex items-center gap-space-lg"><nav class="hidden md:flex items-center gap-space-md" data-active-classes="bg-surface-container-high text-on-surface font-semibold rounded-lg"><a class="px-space-sm py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="clinical-login" href="#">Authentication Gate</a><a class="px-space-sm py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="identity-verification" href="#">Identity Assurance</a><a aria-current="page" class="px-space-sm py-1.5 transition-colors bg-surface-container-high text-on-surface font-semibold rounded-lg" data-path="security-protocols" href="#">FHIR Compliance</a></nav><div class="flex items-center gap-space-sm pl-space-md"><div class="hidden sm:flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container"><span class="material-symbols-outlined text-on-surface-variant text-[16px]">lock</span><span class="font-code-sm text-code-sm text-on-surface tracking-widest uppercase">SHA-256</span></div><a class="hidden sm:inline-flex items-center gap-space-xs font-label-md text-label-md text-secondary hover:text-primary transition-colors" data-path="public-portal-redirect" href="#">Portal Return</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-surface flex-1 flex flex-col justify-center"><div class="flex flex-col w-full">
+<div class="max-w-7xl mx-auto w-full px-margin md:px-margin-lg py-space-lg md:py-space-xl">
+<!-- Top System Telemetry Bar (Institutional / Cryptographic Demarcation) -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low px-space-md py-space-sm rounded-xl mb-space-lg shadow-sm">
+<div class="flex items-center gap-space-sm">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span>
+<span class="font-code-sm text-code-sm text-primary tracking-wider uppercase font-semibold">ACCOUNT RECOVERY • ZERO-KNOWLEDGE RESET</span>
+</div>
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-code-sm text-code-sm">
+<span class="material-symbols-outlined text-[15px] text-secondary">encrypted</span>
+<span>NIST SP 800-63B SECURED</span>
+</div>
+<div class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface-variant font-code-sm text-code-sm uppercase">
+          SESSION ID: <span class="font-bold text-primary">REC-8924-F4</span>
+</div>
+</div>
+</div>
+<!-- Main Asymmetric Grid: Auth Panel + Cryptographic Status Panel -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Left Core Column: Form Card (7 cols) -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl p-space-lg md:p-space-xl shadow-md flex flex-col gap-space-lg">
+<!-- Section Title Header -->
+<div class="flex flex-col gap-space-xs">
+<div class="inline-flex items-center gap-space-xs text-secondary font-code-sm text-code-sm uppercase font-semibold tracking-widest">
+<span class="material-symbols-outlined text-[16px]">lock_reset</span>
+              Cryptographic Credential Restore
+            </div>
+<h1 class="font-headline-xl text-headline-xl text-primary tracking-tight">Reset Vault Access</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl">
+              Enter your registered email address or Medical Record Number (MRN) to receive a cryptographic access recovery link verified via your private clinical keypair.
+            </p>
+</div>
+<!-- Recovery Form -->
+<form class="flex flex-col gap-space-lg" id="recovery-form" onsubmit="event.preventDefault(); handleRecoverySubmit();">
+<!-- Patient Identifier Field -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface flex justify-between items-center" for="identifier">
+<span>Registered Email or Medical Record Number (MRN)</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">FORMAT: user@domain.org or MRN-XXXXXXXX</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left- space-md text-on-surface-variant text-[20px] pointer-events-none pl-3">badge</span>
+<input class="w-full pl-11 pr-space-md h-12 bg-surface-container-low rounded-lg text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all" id="identifier" placeholder="e.g. e.vance@clinical.org or MRN-9021482" required="" type="text" value="e.vance@bio-synthetics.org"/>
+</div>
+</div>
+<!-- Verification Delivery Method Selector -->
+<div class="flex flex-col gap-space-sm">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between">
+<span>Verification Delivery Method</span>
+<span class="font-code-sm text-code-sm text-secondary font-semibold">2-CHANNEL MFA</span>
+</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<!-- Method 1: Email -->
+<label class="relative flex items-start gap-space-sm p-space-md rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-all has-[:checked]:bg-secondary-fixed/30 has-[:checked]:shadow-sm">
+<input checked="" class="mt-1 accent-secondary cursor-pointer" name="delivery_channel" type="radio" value="email"/>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-primary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">mark_email_read</span>
+                      Secure Email Link
+                    </span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">e.vance@***.org</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">GPG-encrypted one-time reset payload.</span>
+</div>
+</label>
+<!-- Method 2: SMS -->
+<label class="relative flex items-start gap-space-sm p-space-md rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-all has-[:checked]:bg-secondary-fixed/30 has-[:checked]:shadow-sm">
+<input class="mt-1 accent-secondary cursor-pointer" name="delivery_channel" type="radio" value="sms"/>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-primary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">sms</span>
+                      Verified SMS Token
+                    </span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">+1 555-***-8842</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Shortcode OTP with 120s TTL window.</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Hardware Security Token / Captcha Challenge -->
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary font-semibold flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">key</span>
+                  Security Challenge &amp; FIDO2 Attestation
+                </span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface font-code-sm text-code-sm uppercase">WebAuthn Ready</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                To confirm physical possession without third-party trackers, authenticate via Passkey, biometric sensor, or cryptographic attestation challenge.
+              </p>
+<div class="flex flex-col sm:flex-row items-center gap-space-sm pt-space-xs">
+<button class="w-full sm:w-auto px-space-md h-10 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md flex items-center justify-center gap-space-xs transition-colors" id="fido-btn" onclick="simulateFidoChallenge()" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">fingerprint</span>
+<span id="fido-text">Attest via FIDO2 / Passkey</span>
+</button>
+<div class="hidden items-center gap-space-xs text-on-tertiary-container font-code-sm text-code-sm bg-surface-container-lowest px-space-sm py-1.5 rounded-lg shadow-sm" id="fido-status">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>HW Attestation Verified (Key ID: #9A2C)</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-md pt-space-sm">
+<button class="h-12 px-space-xl bg-primary-container text-on-primary rounded-lg font-label-md text-label-md flex items-center justify-center gap-space-sm hover:bg-primary transition-all shadow-sm active:scale-[0.99]" id="submit-btn" type="submit">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Send Recovery Key</span>
+</button>
+<a class="h-12 px-space-md rounded-lg text-primary font-label-md text-label-md flex items-center justify-center gap-space-xs hover:bg-surface-container transition-colors" data-path="clinical-login" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back to Sign In</span>
+</a>
+</div>
+</form>
+<!-- Interactive Simulated Dispatch Alert Container -->
+<div class="hidden transition-all duration-300" id="dispatch-success-box">
+<div class="bg-surface-container rounded-xl p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs text-on-tertiary-container">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+<span class="font-headline-md text-headline-md font-semibold text-primary">Recovery Dispatch Initiated</span>
+</div>
+<span class="font-code-sm text-code-sm px-space-sm py-0.5 rounded bg-surface-container-highest text-primary font-bold">200 OK</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+                Recovery dispatch initiated. Check demo inbox for signed reset token with asymmetric cryptographic proof.
+              </p>
+<!-- Simulated Token Payload Box -->
+<div class="bg-surface-container-lowest rounded-lg p-space-sm font-code-sm text-code-sm flex flex-col gap-1 text-on-surface-variant">
+<div class="flex justify-between items-center text-primary font-semibold">
+<span>DISPATCHED SIGNED TOKEN (SIMULATED):</span>
+<span>TTL: 14:59s</span>
+</div>
+<div class="text-secondary truncate select-all">
+                  eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNUk4tOTAyMTQ4MiIsImF1ZCI6Imh3LXJlY292ZXJ5LWdhdGUiLCJleHAiOjE3MTkwMzg1Mjl9...
+                </div>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-space-xs">
+<button class="px-space-sm py-1 text-on-surface-variant hover:text-on-surface font-label-md text-label-md" onclick="document.getElementById('dispatch-success-box').classList.add('hidden')" type="button">
+                  Dismiss Notice
+                </button>
+<a class="px-space-md py-1.5 bg-secondary text-on-secondary rounded-lg font-label-md text-label-md hover:bg-on-secondary-container transition-colors" data-path="clinical-login" href="#">
+                  Proceed to Login Gate
+                </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Institutional Identity Proof & Audit Sandbox Specs (5 cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<!-- Live Sandbox Verification Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-headline-md text-primary">Identity Assurance Engine</span>
+<span class="px-space-xs py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-code-sm text-code-sm uppercase font-semibold">IAL-2 LEVEL</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Under 45 CFR § 164.312 HIPAA Safeguards, clinical credential resets undergo strict identity attestation. No plain-text passwords or unprotected links are ever dispatched over unsecured networks.
+          </p>
+<!-- Cryptographic Hash Telemetry -->
+<div class="bg-surface-container-low rounded-lg p-space-sm flex flex-col gap-space-xs font-code-sm text-code-sm">
+<div class="text-on-surface-variant flex justify-between">
+<span>ACTIVE CLINICAL TENANT:</span>
+<span class="font-bold text-primary">PRESBYTERIAN / ST. JUDE FHIR-04</span>
+</div>
+<div class="text-on-surface-variant flex justify-between">
+<span>ZERO-KNOWLEDGE PROOF:</span>
+<span class="font-bold text-on-tertiary-container">zk-SNARK COMPLIANT</span>
+</div>
+<div class="text-on-surface-variant flex justify-between">
+<span>SHA-256 AUDIT DIGEST:</span>
+<span class="font-bold text-secondary truncate max-w-[170px]">3fa85f64-5717-4562-b3fc-2c963f66afa6</span>
+</div>
+</div>
+<!-- Protocol Guarantees List -->
+<div class="flex flex-col gap-space-sm pt-space-xs">
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">No Operator Access</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Support staff cannot view credentials or decrypt health payloads.</span>
+</div>
+</div>
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5">timer</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Deterministic Ephemeral TTL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Dispatched tokens automatically self-invalidate after exactly 15 minutes.</span>
+</div>
+</div>
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5">history_edu</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Immutable Access Audit</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Reset attempts are recorded to the institutional compliance ledger.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sandbox Demonstration Demarcation Banner -->
+<div class="bg-surface-container rounded-xl p-space-md flex flex-col gap-space-xs shadow-sm">
+<div class="flex items-center gap-space-xs text-primary font-semibold font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px] text-secondary">science</span>
+<span>Sandbox Mode Active</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            This verification instance operates against synthetic patient cohorts. Real PHI is never ingested or exposed. Submitting this form executes a sandboxed authorization event.
+          </p>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="font-code-sm text-code-sm text-secondary hover:text-primary underline cursor-pointer" onclick="populateDemoAccount()" type="button">
+              Autofill Test Clinical Identity
+            </button>
+<span class="text-outline-variant">•</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">STAGING HL7 GATE</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function simulateFidoChallenge() {
+    const fidoBtn = document.getElementById('fido-btn');
+    const fidoText = document.getElementById('fido-text');
+    const fidoStatus = document.getElementById('fido-status');
+
+    fidoText.textContent = "Scanning Authenticator...";
+    fidoBtn.classList.add('opacity-75');
+
+    setTimeout(() => {
+      fidoText.textContent = "Hardware Token Verified";
+      fidoBtn.classList.remove('opacity-75');
+      fidoBtn.classList.add('bg-surface-container-high');
+      fidoStatus.classList.remove('hidden');
+      fidoStatus.classList.add('flex');
+    }, 800);
+  }
+
+  function handleRecoverySubmit() {
+    const submitBtn = document.getElementById('submit-btn');
+    const box = document.getElementById('dispatch-success-box');
+    
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-60');
+    submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Transmitting Payload...</span>';
+
+    setTimeout(() => {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-60');
+      submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">send</span><span>Send Recovery Key</span>';
+      
+      box.classList.remove('hidden');
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 700);
+  }
+
+  function populateDemoAccount() {
+    const input = document.getElementById('identifier');
+    input.value = 'MRN-8402919-PROV';
+    input.focus();
+  }
+</script></main><footer class="w-full bg-surface-container-low py-space-lg mt-auto"><div class="max-w-7xl mx-auto px-margin-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex flex-col gap-1 text-center md:text-left"><div class="flex flex-wrap items-center justify-center md:justify-start gap-space-sm text-on-surface-variant"><span class="font-code-sm text-code-sm font-semibold uppercase tracking-wider text-primary">NIST SP 800-63-3 (AAL3/IAL2)</span><span class="text-outline-variant">•</span><span class="font-code-sm text-code-sm uppercase tracking-wider">45 CFR § 164.312 HIPAA Safeguards</span><span class="text-outline-variant">•</span><span class="font-code-sm text-code-sm uppercase tracking-wider">OAuth 2.0 / SMART on FHIR</span></div><p class="font-body-sm text-body-sm text-on-surface-variant">Protected Health Information is secured under federal civil &amp; cryptographic compliance mandates. Unauthorized access attempts are monitored and recorded.</p></div><div class="flex items-center gap-space-md"><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors px-space-sm py-1 rounded-lg" data-path="public-portal-redirect" href="#">Public Gateway</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors px-space-sm py-1 rounded-lg" data-path="security-protocols" href="#">Security Assurance</a></div></div></footer></body></html>
+
+<!-- Patient Sign In & Authentication -->
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"inverse-on-surface":"#ebf1f9","on-primary":"#ffffff","primary-fixed":"#d5e3ff","inverse-surface":"#2b3137","on-secondary-container":"#00476e","surface-container-lowest":"#ffffff","on-tertiary":"#ffffff","primary-container":"#0f294a","tertiary-fixed-dim":"#68dba9","on-secondary-fixed":"#001d31","tertiary":"#00190e","secondary-fixed":"#cce5ff","error":"#ba1a1a","on-primary-fixed-variant":"#30476a","surface-container-highest":"#dde3eb","inverse-primary":"#b0c8f1","surface-tint":"#485f83","on-surface":"#161c22","on-background":"#161c22","surface-dim":"#d4dbe2","surface-variant":"#dde3eb","surface-bright":"#f6f9ff","on-error":"#ffffff","on-tertiary-container":"#24a375","on-tertiary-fixed":"#002114","primary":"#00142f","tertiary-fixed":"#85f8c4","outline":"#74777f","on-primary-fixed":"#001b3b","surface-container":"#e8eef6","surface-container-high":"#e3e9f1","secondary":"#006398","primary-fixed-dim":"#b0c8f1","on-secondary":"#ffffff","background":"#f6f9ff","secondary-fixed-dim":"#93ccff","on-error-container":"#93000a","on-surface-variant":"#44474e","surface":"#f6f9ff","tertiary-container":"#00301f","secondary-container":"#5bb8fe","on-secondary-fixed-variant":"#004b73","on-tertiary-fixed-variant":"#005137","on-primary-container":"#7a91b7","error-container":"#ffdad6","surface-container-low":"#eef4fc","outline-variant":"#c4c6cf"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-lg":"1.5rem","space-xl":"2.5rem","space-md":"1rem","gutter-lg":"1.5rem","gutter":"1rem","space-xs":"0.25rem","margin-lg":"2.5rem","margin":"1rem","space-sm":"0.5rem"},"fontFamily":{"headline-lg":["Inter"],"body-sm":["Inter"],"label-md":["Inter"],"body-lg":["Inter"],"headline-md":["Inter"],"headline-xl":["Inter"],"body-md":["Inter"],"code-sm":["JetBrains Mono"],"title-sm":["Inter"]},"fontSize":{"headline-lg":["24px",{"lineHeight":"32px","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"label-md":["13px",{"lineHeight":"16px","fontWeight":"500"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],"headline-xl":["32px",{"lineHeight":"40px","fontWeight":"700"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"code-sm":["11px",{"lineHeight":"14px","fontWeight":"500"}],"title-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface min-h-screen flex flex-col justify-between selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 max-w-7xl mx-auto px-margin-lg flex items-center justify-between"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[20px]">health_metrics</span></div><div class="flex flex-col"><span class="font-headline-md text-headline-md tracking-tight text-primary leading-none">Unified Health Wallet</span><span class="font-body-sm text-body-sm text-on-surface-variant">Cryptographic Clinical Trust Engine</span></div></div><div class="hidden lg:flex items-center gap-space-xs ml-space-sm"><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-lg bg-surface-container-low"><span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span><span class="font-code-sm text-code-sm text-on-surface tracking-wider uppercase">HL7 FHIR v4.0.1</span></div><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-lg bg-surface-container-low"><span class="material-symbols-outlined text-secondary text-[14px]">verified_user</span><span class="font-code-sm text-code-sm text-on-surface tracking-wider uppercase">HIPAA COMPLIANT</span></div><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-lg bg-secondary-fixed"><span class="font-code-sm text-code-sm text-on-secondary-fixed tracking-wider uppercase">SANDBOX DEMO</span></div></div></div><div class="flex items-center gap-space-lg"><nav class="hidden md:flex items-center gap-space-md" data-active-classes="bg-surface-container-high text-on-surface font-semibold rounded-lg"><a aria-current="page" class="px-space-sm py-1.5 transition-colors bg-surface-container-high text-on-surface font-semibold rounded-lg" data-path="clinical-login" href="#">Authentication Gate</a><a class="px-space-sm py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="identity-verification" href="#">Identity Assurance</a><a class="px-space-sm py-1.5 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="security-protocols" href="#">FHIR Compliance</a></nav><div class="flex items-center gap-space-sm pl-space-md"><div class="hidden sm:flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container"><span class="material-symbols-outlined text-on-surface-variant text-[16px]">lock</span><span class="font-code-sm text-code-sm text-on-surface tracking-widest uppercase">SHA-256</span></div><a class="hidden sm:inline-flex items-center gap-space-xs font-label-md text-label-md text-secondary hover:text-primary transition-colors" data-path="public-portal-redirect" href="#">Portal Return</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-16 bg-surface flex-1 flex flex-col justify-center"><div class="flex flex-col w-full py-space-xl px-margin sm:px-margin-lg items-center justify-center relative overflow-hidden">
+<!-- Subtle Cryptographic Background Ambiance -->
+<div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-secondary-fixed/30 blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-primary-fixed/20 blur-3xl pointer-events-none"></div>
+<!-- Sandbox Simulation Demarcation Header -->
+<div class="w-full max-w-xl mx-auto mb-space-lg flex flex-col items-center text-center">
+<div class="inline-flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container-high shadow-sm mb-space-xs">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span>
+<span class="font-code-sm text-code-sm uppercase tracking-wider text-primary font-semibold">
+        PROTOTYPE SIMULATION • DEMO AUTHENTICATION GATE • HL7 FHIR R4 ENCLAVE
+      </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 justify-center">
+<span class="material-symbols-outlined text-[15px] text-secondary">verified</span>
+      Fictional demo environment — No real credentials or PHI transmitted
+    </p>
+</div>
+<!-- Centered Clinical Authentication Card -->
+<div class="w-full max-w-xl bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden relative">
+<!-- Top Decorative Verification Keyline -->
+<div class="h-1.5 w-full bg-gradient-to-r from-primary via-secondary to-primary-container"></div>
+<div class="p-space-lg sm:p-margin-lg">
+<!-- Card Header & Badge -->
+<div class="flex flex-col items-center text-center mb-space-lg">
+<div class="w-14 h-14 rounded-xl bg-surface-container-low flex items-center justify-center mb-space-sm shadow-sm relative group">
+<div class="w-11 h-11 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[24px]">enhanced_encryption</span>
+</div>
+<span class="absolute -top-1 -right-1 w-4 h-4 bg-tertiary-container rounded-full flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-[10px]">lock</span>
+</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary tracking-tight mb-space-xs">Welcome Back</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
+          Sign in to access your medical records and cryptographic vaccination wallet.
+        </p>
+<!-- Clinical Preset Demo Banner -->
+<div class="w-full mt-space-md p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between gap-space-sm text-left">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0">badge</span>
+<div class="truncate">
+<span class="font-code-sm text-code-sm font-semibold uppercase text-primary block leading-tight">Preset Demo Account</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant truncate block">eleanor.vance@demo.health</span>
+</div>
+</div>
+<button class="px-space-sm py-1 bg-surface-container-highest hover:bg-secondary-fixed text-primary rounded font-label-md text-label-md transition-colors shrink-0 flex items-center gap-1" id="quick-fill-btn" type="button">
+<span class="material-symbols-outlined text-[14px]">auto_fix_high</span> Autofill
+          </button>
+</div>
+</div>
+<!-- Prominent Dynamic Status / Error Banner (Hidden by default) -->
+<div class="hidden mb-space-md p-space-sm rounded-lg transition-all duration-300" id="auth-status-container">
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-[20px] shrink-0" id="auth-status-icon"></span>
+<div class="flex flex-col flex-1">
+<span class="font-title-sm text-title-sm leading-snug" id="auth-status-title"></span>
+<p class="font-body-sm text-body-sm mt-0.5" id="auth-status-desc"></p>
+</div>
+</div>
+</div>
+<!-- Authentication Form -->
+<form class="space-y-space-md" id="clinical-login-form" novalidate="">
+<!-- Email Field -->
+<div>
+<label class="block font-label-md text-label-md text-primary mb-1" for="clinical-email">
+            Clinical Identity or Verified Email <span class="text-error">*</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-space-md flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">alternate_email</span>
+</div>
+<input class="w-full pl-11 pr-space-md py-2.5 rounded bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all" id="clinical-email" name="email" placeholder="e.g. name@demo.health or HL7 ID" type="email" value="eleanor.vance@demo.health"/>
+</div>
+<p class="hidden font-body-sm text-body-sm text-error mt-1 flex items-center gap-1" id="email-error-hint">
+<span class="material-symbols-outlined text-[14px]">error</span> Please enter a valid medical account email.
+          </p>
+</div>
+<!-- Password Field -->
+<div>
+<div class="flex items-center justify-between mb-1">
+<label class="block font-label-md text-label-md text-primary" for="clinical-password">
+              Security Credential <span class="text-error">*</span>
+</label>
+<button class="font-label-md text-label-md text-secondary hover:text-primary transition-colors" id="toggle-recovery-view-link" type="button">
+              Forgot credential?
+            </button>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-space-md flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">password</span>
+</div>
+<input class="w-full pl-11 pr-11 py-2.5 rounded bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all font-mono tracking-normal" id="clinical-password" name="password" placeholder="Enter your clinical passphrase" type="password" value="VaultKey_99182!Eleanor"/>
+<button aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 pr-space-md flex items-center text-on-surface-variant hover:text-primary focus:outline-none" id="toggle-password-visibility" type="button">
+<span class="material-symbols-outlined text-[20px]" id="password-eye-icon">visibility</span>
+</button>
+</div>
+<p class="hidden font-body-sm text-body-sm text-error mt-1 flex items-center gap-1" id="password-error-hint">
+<span class="material-symbols-outlined text-[14px]">error</span> Password must be provided for cryptographic session.
+          </p>
+</div>
+<!-- Session & Security Preferences -->
+<div class="flex items-center justify-between pt-1">
+<label class="flex items-center gap-space-xs cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded text-secondary focus:ring-0 focus:outline-none bg-surface-container cursor-pointer" id="remember-me" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Remember this workstation</span>
+</label>
+<div class="hidden sm:flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px] text-on-tertiary-container">security</span>
+<span class="font-code-sm text-code-sm uppercase tracking-wider">NIST AAL2</span>
+</div>
+</div>
+<!-- Primary Sign-In Button -->
+<button class="w-full min-h-[48px] bg-primary hover:bg-primary-container text-on-primary font-title-sm text-title-sm rounded-lg flex items-center justify-center gap-space-sm shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0" id="submit-auth-btn" type="submit">
+<span class="hidden w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin" id="btn-spinner"></span>
+<span class="material-symbols-outlined text-[18px]" id="btn-lock-icon">lock_open</span>
+<span id="btn-text">Authenticate &amp; Open Clinical Wallet</span>
+</button>
+</form>
+<!-- OR Divider -->
+<div class="relative my-space-lg flex items-center justify-center">
+<div class="w-full h-px bg-surface-container-high"></div>
+<span class="absolute px-space-md bg-surface-container-lowest font-code-sm text-code-sm uppercase tracking-wider text-outline">
+          OR SECURE IDENTITY FEDERATION
+        </span>
+</div>
+<!-- Secondary & Hardware Auth Options -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<!-- Google OIDC Federated Login -->
+<button class="w-full min-h-[44px] bg-surface-container-low hover:bg-surface-container text-primary rounded-lg font-label-md text-label-md flex items-center justify-center gap-space-sm transition-colors shadow-sm" id="google-auth-btn" type="button">
+<svg class="w-4 h-4 shrink-0" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<span>Continue with Google</span>
+</button>
+<!-- WebAuthn Biometric / FIDO2 Passkey -->
+<button class="w-full min-h-[44px] bg-surface-container-low hover:bg-surface-container text-primary rounded-lg font-label-md text-label-md flex items-center justify-center gap-space-sm transition-colors shadow-sm" id="webauthn-btn" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">fingerprint</span>
+<span>WebAuthn Passkey</span>
+</button>
+</div>
+<!-- Instant 1-Click Eleanor Vance Demo Shortcut -->
+<div class="mt-space-md">
+<button class="w-full py-2.5 px-space-md bg-secondary-fixed hover:bg-secondary-fixed-dim text-on-secondary-fixed rounded-lg font-label-md text-label-md flex items-center justify-between transition-colors shadow-sm" id="instant-demo-access-btn" type="button">
+<div class="flex items-center gap-space-xs text-left">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<div>
+<span class="font-semibold block leading-tight">Instant 1-Click Patient Access</span>
+<span class="font-body-sm text-body-sm opacity-80">Load Eleanor Vance (Fully populated cryptographic wallet)</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+<!-- Card Sub-Footer Links -->
+<div class="mt-space-lg pt-space-md bg-surface-container-low/50 -mx-space-lg -mb-space-lg px-space-lg pb-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<div class="font-body-sm text-body-sm text-on-surface-variant text-center sm:text-left">
+          Need clinical access? 
+          <button class="font-label-md text-label-md text-secondary hover:text-primary font-semibold ml-1" id="toggle-registration-btn" type="button">
+            Register Health Identity
+          </button>
+</div>
+<a class="inline-flex items-center gap-1 font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="public-portal-redirect" href="#">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+          Return to Public Gateway
+        </a>
+</div>
+</div>
+</div>
+<!-- Interactive Modal / Drawer for Registration & Recovery Simulation -->
+<div class="hidden fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm flex items-center justify-center p-margin" id="demo-modal">
+<div class="bg-surface-container-lowest max-w-md w-full rounded-xl shadow-2xl overflow-hidden p-space-lg relative animate-in fade-in zoom-in duration-200">
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]" id="modal-icon">shield</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-primary" id="modal-title">Identity Enclave</h2>
+</div>
+<button class="text-on-surface-variant hover:text-primary" id="modal-close-btn">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant mb-space-lg" id="modal-body">
+<!-- Injected via JS -->
+</div>
+<div class="flex items-center justify-end gap-space-sm">
+<button class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md" id="modal-cancel-btn" type="button">
+          Dismiss
+        </button>
+<button class="px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md" id="modal-confirm-btn" type="button">
+          Execute Simulation
+        </button>
+</div>
+</div>
+</div>
+<!-- High-Assurance Telemetry & Trust Architecture Footer Demarcation -->
+<div class="w-full max-w-2xl mt-space-lg pt-space-md flex flex-col items-center text-center">
+<!-- Security Badges -->
+<div class="flex flex-wrap items-center justify-center gap-space-sm mb-space-sm">
+<div class="flex items-center gap-1.5 px-space-sm py-1 rounded bg-surface-container-low shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+<span class="font-code-sm text-code-sm font-semibold uppercase tracking-wider text-primary">HIPAA § 164.312 Telemetry</span>
+</div>
+<div class="flex items-center gap-1.5 px-space-sm py-1 rounded bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[14px]">lock</span>
+<span class="font-code-sm text-code-sm font-semibold uppercase tracking-wider text-primary">256-bit AES Sandboxed</span>
+</div>
+<div class="flex items-center gap-1.5 px-space-sm py-1 rounded bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-on-tertiary-container text-[14px]">token</span>
+<span class="font-code-sm text-code-sm font-semibold uppercase tracking-wider text-primary">SMART-on-FHIR Ready</span>
+</div>
+</div>
+<!-- Explanatory Simulation Disclaimer -->
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-lg leading-relaxed">
+<strong class="text-primary font-medium">PROTOTYPE DEMONSTRATION ONLY:</strong> This interface demonstrates clinical authentication UX. In a live system, health data is guarded by OAuth 2.0 PKCE, hardware-backed FIDO2 biometrics, and state-level immunization registry (IIS) APIs.
+    </p>
+</div>
+</div>
+<script>
+(function() {
+  // Elements
+  const loginForm = document.getElementById('clinical-login-form');
+  const emailInput = document.getElementById('clinical-email');
+  const passwordInput = document.getElementById('clinical-password');
+  const emailError = document.getElementById('email-error-hint');
+  const passwordError = document.getElementById('password-error-hint');
+  const togglePassBtn = document.getElementById('toggle-password-visibility');
+  const eyeIcon = document.getElementById('password-eye-icon');
+  
+  const statusContainer = document.getElementById('auth-status-container');
+  const statusIcon = document.getElementById('auth-status-icon');
+  const statusTitle = document.getElementById('auth-status-title');
+  const statusDesc = document.getElementById('auth-status-desc');
+  
+  const submitBtn = document.getElementById('submit-auth-btn');
+  const btnSpinner = document.getElementById('btn-spinner');
+  const btnLock = document.getElementById('btn-lock-icon');
+  const btnText = document.getElementById('btn-text');
+
+  const autofillBtn = document.getElementById('quick-fill-btn');
+  const instantDemoBtn = document.getElementById('instant-demo-access-btn');
+  const webauthnBtn = document.getElementById('webauthn-btn');
+  const googleBtn = document.getElementById('google-auth-btn');
+
+  // Modal elements
+  const modal = document.getElementById('demo-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalIcon = document.getElementById('modal-icon');
+  const modalBody = document.getElementById('modal-body');
+  const modalClose = document.getElementById('modal-close-btn');
+  const modalCancel = document.getElementById('modal-cancel-btn');
+  const modalConfirm = document.getElementById('modal-confirm-btn');
+  const recoveryLink = document.getElementById('toggle-recovery-view-link');
+  const registrationBtn = document.getElementById('toggle-registration-btn');
+
+  // Toggle Password Visibility
+  if (togglePassBtn && passwordInput && eyeIcon) {
+    togglePassBtn.addEventListener('click', () => {
+      const isPass = passwordInput.getAttribute('type') === 'password';
+      passwordInput.setAttribute('type', isPass ? 'text' : 'password');
+      eyeIcon.textContent = isPass ? 'visibility_off' : 'visibility';
+    });
+  }
+
+  // Quick fill preset
+  if (autofillBtn) {
+    autofillBtn.addEventListener('click', () => {
+      emailInput.value = 'eleanor.vance@demo.health';
+      passwordInput.value = 'VaultKey_99182!Eleanor';
+      hideStatus();
+      emailError.classList.add('hidden');
+      passwordError.classList.add('hidden');
+    });
+  }
+
+  function showStatus(type, title, desc) {
+    statusContainer.classList.remove('hidden', 'bg-error-container', 'text-on-error-container', 'bg-tertiary-container', 'text-on-tertiary-container', 'bg-secondary-fixed', 'text-on-secondary-fixed');
+    
+    if (type === 'error') {
+      statusContainer.classList.add('bg-error-container');
+      statusIcon.textContent = 'error';
+      statusIcon.className = 'material-symbols-outlined text-[20px] shrink-0 text-error';
+      statusTitle.className = 'font-title-sm text-title-sm leading-snug text-error font-semibold';
+      statusDesc.className = 'font-body-sm text-body-sm mt-0.5 text-on-error-container';
+    } else if (type === 'success') {
+      statusContainer.classList.add('bg-surface-container-high');
+      statusIcon.textContent = 'check_circle';
+      statusIcon.className = 'material-symbols-outlined text-[20px] shrink-0 text-on-tertiary-container';
+      statusTitle.className = 'font-title-sm text-title-sm leading-snug text-primary font-semibold';
+      statusDesc.className = 'font-body-sm text-body-sm mt-0.5 text-on-surface-variant';
+    } else if (type === 'loading') {
+      statusContainer.classList.add('bg-surface-container-low');
+      statusIcon.textContent = 'sync';
+      statusIcon.className = 'material-symbols-outlined text-[20px] shrink-0 text-secondary animate-spin';
+      statusTitle.className = 'font-title-sm text-title-sm leading-snug text-primary font-semibold';
+      statusDesc.className = 'font-body-sm text-body-sm mt-0.5 text-on-surface-variant';
+    }
+
+    statusTitle.textContent = title;
+    statusDesc.textContent = desc;
+  }
+
+  function hideStatus() {
+    statusContainer.classList.add('hidden');
+  }
+
+  function executeAuthenticationFlow(targetUser = 'Eleanor Vance') {
+    hideStatus();
+    emailError.classList.add('hidden');
+    passwordError.classList.add('hidden');
+
+    const email = emailInput.value.trim();
+    const pass = passwordInput.value.trim();
+
+    if (!email || !email.includes('@')) {
+      emailError.classList.remove('hidden');
+      showStatus('error', 'Authentication Failure', 'Please provide a valid clinical ID or email address.');
+      return;
+    }
+
+    if (!pass) {
+      passwordError.classList.remove('hidden');
+      showStatus('error', 'Missing Credential', 'A clinical encryption passphrase is required to sign this enclave session.');
+      return;
+    }
+
+    // Realistic Simulated Flow
+    submitBtn.disabled = true;
+    btnSpinner.classList.remove('hidden');
+    btnLock.classList.add('hidden');
+    btnText.textContent = 'Verifying WebAuthn / Clinical Credentials...';
+    showStatus('loading', 'Cryptographic Verification', 'Negotiating SMART-on-FHIR token & SHA-256 state handshake...');
+
+    setTimeout(() => {
+      showStatus('success', 'Access Authorized', `Cryptographic Proof Accepted. Launching Patient Dashboard for ${targetUser}...`);
+      btnText.textContent = 'Redirecting to Protected Records...';
+
+      setTimeout(() => {
+        // Evaluate Desktop vs Mobile screen routing token
+        const isMobile = window.innerWidth < 768;
+        const targetScreen = isMobile ? '{{DATA:SCREEN:SCREEN_24}}' : '{{DATA:SCREEN:SCREEN_26}}';
+        
+        // Navigation simulation
+        window.location.hash = targetScreen;
+      }, 900);
+    }, 1200);
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      executeAuthenticationFlow('Eleanor Vance');
+    });
+  }
+
+  if (instantDemoBtn) {
+    instantDemoBtn.addEventListener('click', () => {
+      emailInput.value = 'eleanor.vance@demo.health';
+      passwordInput.value = 'VaultKey_99182!Eleanor';
+      executeAuthenticationFlow('Eleanor Vance');
+    });
+  }
+
+  if (webauthnBtn) {
+    webauthnBtn.addEventListener('click', () => {
+      showStatus('loading', 'Hardware Passkey Requested', 'Prompting platform biometric authenticator (TouchID / Windows Hello)...');
+      setTimeout(() => {
+        executeAuthenticationFlow('Eleanor Vance (Biometric)');
+      }, 600);
+    });
+  }
+
+  if (googleBtn) {
+    googleBtn.addEventListener('click', () => {
+      showStatus('loading', 'Federated IdP Redirect', 'Contacting Google OpenID Connect Provider...');
+      setTimeout(() => {
+        executeAuthenticationFlow('eleanor.vance@gmail.com');
+      }, 700);
+    });
+  }
+
+  // Modal handlers
+  function openModal(title, icon, contentHtml, onConfirm) {
+    modalTitle.textContent = title;
+    modalIcon.textContent = icon;
+    modalBody.innerHTML = contentHtml;
+    modal.classList.remove('hidden');
+
+    const handleConfirm = () => {
+      if (onConfirm) onConfirm();
+      closeModal();
+      modalConfirm.removeEventListener('click', handleConfirm);
+    };
+
+    modalConfirm.addEventListener('click', handleConfirm);
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+  }
+
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modalCancel) modalCancel.addEventListener('click', closeModal);
+
+  if (recoveryLink) {
+    recoveryLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal(
+        'Credential Recovery Gate',
+        'key',
+        `<p class="mb-2">Simulate a cryptographically signed recovery package dispatch to your medical provider on record.</p>
+         <div class="p-2 rounded bg-surface-container text-xs font-mono">Recipient: eleanor.vance@demo.health<br/>Proof Standard: NIST SP 800-63B</div>`,
+        () => {
+          showStatus('success', 'Recovery Dispatch Simulated', 'A temporary zero-knowledge access challenge has been logged.');
+        }
+      );
+    });
+  }
+
+  if (registrationBtn) {
+    registrationBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal(
+        'Identity Assurance (IAL2/AAL2)',
+        'person_add',
+        `<p class="mb-2">Unified Health Wallet requires state registry validation or an authorized HL7 FHIR Master Patient Index (MPI) token.</p>
+         <p class="text-xs text-on-surface-variant">Would you like to load the Eleanor Vance pre-verified clinical persona into this prototype?</p>`,
+        () => {
+          emailInput.value = 'eleanor.vance@demo.health';
+          passwordInput.value = 'VaultKey_99182!Eleanor';
+          showStatus('success', 'Demo Persona Activated', 'Eleanor Vance credentials loaded. Click "Authenticate" to proceed.');
+        }
+      );
+    });
+  }
+
+})();
+</script></main><footer class="w-full bg-surface-container-low py-space-lg mt-auto"><div class="max-w-7xl mx-auto px-margin-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex flex-col gap-1 text-center md:text-left"><div class="flex flex-wrap items-center justify-center md:justify-start gap-space-sm text-on-surface-variant"><span class="font-code-sm text-code-sm font-semibold uppercase tracking-wider text-primary">NIST SP 800-63-3 (AAL3/IAL2)</span><span class="text-outline-variant">•</span><span class="font-code-sm text-code-sm uppercase tracking-wider">45 CFR § 164.312 HIPAA Safeguards</span><span class="text-outline-variant">•</span><span class="font-code-sm text-code-sm uppercase tracking-wider">OAuth 2.0 / SMART on FHIR</span></div><p class="font-body-sm text-body-sm text-on-surface-variant">Protected Health Information is secured under federal civil &amp; cryptographic compliance mandates. Unauthorized access attempts are monitored and recorded.</p></div><div class="flex items-center gap-space-md"><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors px-space-sm py-1 rounded-lg" data-path="public-portal-redirect" href="#">Public Gateway</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors px-space-sm py-1 rounded-lg" data-path="security-protocols" href="#">Security Assurance</a></div></div></footer></body></html>

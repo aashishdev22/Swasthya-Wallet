@@ -1,0 +1,1353 @@
+# SWASTHYA WALLET — FINAL MASTER DEVELOPMENT PROMPT
+
+## PROJECT OVERVIEW
+
+Application Name: Swasthya Wallet
+
+Official Slogan: Digital Health Locker for Citizens
+
+Target Audience: Indian Citizens
+
+Project Objective:
+
+Enhance the existing Swasthya Wallet application into a secure, multilingual, patient-controlled digital health locker for Indian citizens.
+
+The application must support:
+
+- Personal health record management.
+- Prescription image analysis.
+- Allopathy, Ayurveda and Homeopathy prescription recognition.
+- Medicine availability search.
+- Medicine alternative discovery.
+- QR-based health record sharing.
+- Secure authentication.
+- Supabase PostgreSQL database.
+- Local device storage.
+- Google Drive backup.
+- Online and offline functionality.
+- Automatic data synchronization.
+
+CRITICAL INSTRUCTION:
+
+This is an existing application. Do not rebuild it from scratch.
+
+First inspect the complete existing source code, project structure, dependencies, database, authentication, APIs, encryption mechanisms, and existing features.
+
+Extend the existing application without breaking or removing any working functionality.
+
+==================================================
+PART 1 — BRANDING PRESERVATION
+==================================================
+
+Official Application Name: Swasthya Wallet
+
+Official Slogan: Digital Health Locker for Citizens
+
+STRICT BRANDING REQUIREMENTS:
+
+- Preserve the exact application name.
+- Preserve the exact original slogan.
+- Do not rewrite, shorten, replace, or modify the slogan.
+- Do not generate any alternative slogan.
+- Preserve the existing Swasthya Wallet logo from the provided reference image.
+- Maintain the original blue shield and medical identity.
+- Maintain the existing blue-and-white theme.
+
+Display the application name and original slogan consistently on:
+
+1. Landing page.
+2. Login page.
+3. Registration page.
+4. Main dashboard.
+5. QR sharing page.
+6. Prescription Assistant.
+7. All major application sections.
+8. Mobile interface.
+
+Do not rename the application to Health Wallet or any other name.
+
+==================================================
+PART 2 — TECHNOLOGY STACK
+==================================================
+
+Use the following preferred architecture:
+
+Frontend:
+- React.
+- TypeScript.
+- Responsive UI.
+- Progressive Web App (PWA).
+
+Cloud Database:
+- Supabase PostgreSQL.
+
+Authentication:
+- Preserve the existing authentication implementation.
+- Use existing authentication provider wherever possible.
+- Integrate Supabase Auth only if compatible with the existing architecture.
+- Google OAuth 2.0 / OpenID Connect.
+
+Local Storage:
+- IndexedDB for web and PWA.
+- SQLite for future native Android implementation.
+
+Cloud Backup:
+- Google Drive API.
+- Secure Google OAuth authorization.
+
+Offline Support:
+- PWA.
+- Service Worker.
+- IndexedDB.
+- Background synchronization where supported.
+
+Encryption:
+- Preserve existing zero-knowledge architecture.
+- Client-side encryption.
+- Secure encryption-key management.
+
+QR Sharing:
+- Cryptographically secure token-based sharing.
+
+Prescription Processing:
+- OCR.
+- Medicine recognition.
+- Prescription classification.
+- Verified medicine database integration.
+
+IMPORTANT:
+
+Before implementation, inspect package.json, source code, existing database, authentication provider and project configuration.
+
+If the existing application already uses React and TypeScript, retain the current configuration.
+
+If the existing framework is different, assess migration requirements before changing it.
+
+Do not perform an unnecessary database migration.
+
+Do not expose API keys, service-role keys or other secrets in frontend code.
+
+==================================================
+PART 3 — FIRST PAGE / LANDING PAGE
+==================================================
+
+Create a clean and professional landing page.
+
+Display:
+
+Original Swasthya Wallet logo.
+
+Application Name:
+Swasthya Wallet
+
+Original Slogan:
+Digital Health Locker for Citizens
+
+Main Heading:
+"Your Health, Securely in Your Hands."
+
+Subtitle:
+"One secure place to manage and access your personal health records."
+
+Primary actions:
+
+1. Login.
+2. Create Your Wallet.
+
+Design:
+- Minimal interface.
+- Professional blue-and-white theme.
+- Simple navigation.
+- Clear typography.
+- Responsive layout.
+- Mobile-first experience.
+
+Do not display private health information before authentication.
+
+Do not change the original application slogan.
+
+==================================================
+PART 4 — REGISTRATION SYSTEM
+==================================================
+
+Create a clean registration form with these fields in the exact order:
+
+1. Full Legal Name.
+   - User enters their full name exactly as printed on Aadhaar.
+   - Do not claim Aadhaar verification without an authorized integration.
+
+2. Date of Birth.
+   - User enters DOB as printed on Aadhaar.
+   - Format: DD/MM/YYYY.
+
+3. Mobile Number.
+   - Default country code: +91.
+   - Validate Indian 10-digit mobile numbers.
+
+4. Email Address.
+   - Validate email format.
+
+5. Password.
+   - Minimum 12 characters.
+   - Uppercase.
+   - Lowercase.
+   - Number.
+   - Special character.
+   - Password strength indicator.
+   - Show/hide password.
+
+6. Confirm Password.
+   - Must match the original password.
+   - Show/hide password.
+
+Registration button:
+"Create Swasthya Wallet"
+
+Below:
+"Already have an account? Login"
+
+Additional requirements:
+
+- Assign a unique internal user ID.
+- Preserve username-based login.
+- If username is not collected, generate a unique username and show it to the user.
+- Prevent duplicate registrations.
+- Support email and mobile verification through configured providers.
+- Do not collect Aadhaar numbers unnecessarily.
+
+==================================================
+PART 5 — LOGIN AND AUTHENTICATION
+==================================================
+
+Create one clean login page.
+
+Heading:
+"Welcome Back"
+
+Subtitle:
+"Securely access your Swasthya Wallet."
+
+IDENTITY INPUT:
+
+Use only ONE input field.
+
+Label:
+Username / Mobile Number / Email ID
+
+Placeholder:
+"Enter username, mobile number or email"
+
+The system must automatically identify the entered identifier.
+
+PASSWORD INPUT:
+
+- Password.
+- Show/hide password.
+
+Additional options:
+
+- Remember Me.
+- Forgot Password?
+
+Primary button:
+"Login to Swasthya Wallet"
+
+Below the primary button:
+
+Display an OR divider.
+
+GOOGLE SIGN-IN:
+
+- Continue with Google.
+- Restore existing Google authentication.
+- Use configured OAuth 2.0 / OpenID Connect.
+- Securely link Google authentication to the correct user account.
+- Prevent duplicate accounts.
+- Never automatically merge accounts based only on an unverified email address.
+
+FINGERPRINT / BIOMETRIC UNLOCK:
+
+- Restore existing fingerprint functionality.
+- Use WebAuthn / Passkeys where supported.
+- Support fingerprint, face authentication or device PIN according to device capabilities.
+- Require secure biometric enrollment.
+- Never collect or store raw fingerprint data.
+- Provide password fallback.
+
+BOTTOM:
+
+"Don't have an account? Create Swasthya Wallet"
+
+The following three login methods must work:
+
+1. Username + Password.
+2. Mobile Number + Password.
+3. Email Address + Password.
+
+All must authenticate against the same user account.
+
+Do not create three separate login forms.
+
+==================================================
+PART 6 — FORGOT PASSWORD AND PASSWORD RESET
+==================================================
+
+Preserve the complete password recovery system.
+
+When the user clicks Forgot Password:
+
+Step 1:
+Ask for registered email address or mobile number.
+
+Step 2:
+Send a secure reset link or OTP through a configured delivery provider.
+
+Step 3:
+Verify the reset token or OTP.
+
+Step 4:
+Allow the user to enter a new password and confirm it.
+
+Step 5:
+Invalidate the used token and revoke relevant sessions.
+
+Step 6:
+Redirect to login.
+
+Security:
+
+- Expiring single-use tokens.
+- Rate limiting.
+- Generic account lookup responses.
+- Secure password hashing.
+- Never store plaintext passwords.
+- Never use hardcoded OTPs.
+
+ZERO-KNOWLEDGE RECOVERY:
+
+Inspect whether the authentication password also derives the medical vault encryption key.
+
+If it does, preserve the existing encryption and recovery architecture.
+
+Implement an appropriately protected recovery-key mechanism if necessary.
+
+Never silently destroy encrypted medical records during password reset.
+
+Never claim that a password reset automatically restores encrypted records unless actually implemented.
+
+==================================================
+PART 7 — MAIN DASHBOARD
+==================================================
+
+After successful authentication, display the Swasthya Wallet dashboard.
+
+Header:
+
+- Original Swasthya Wallet logo.
+- Original application name.
+- Original slogan where appropriate.
+- User profile.
+- Language selector.
+- Notification icon if supported.
+
+Greeting:
+
+"Welcome back, [User's Name]"
+
+Dashboard modules:
+
+1. My Health Records.
+2. Prescription Assistant.
+3. Allopathy Medicines.
+4. Ayurveda Medicines.
+5. Homeopathy Medicines.
+6. Find Medicines.
+7. Medicine Alternatives.
+8. Share Health Records.
+9. QR Health Sharing.
+10. Google Drive Backup.
+11. Offline Storage.
+12. Sync Status.
+
+Maintain all existing dashboard features.
+
+Do not overcrowd the interface.
+
+Use logically grouped navigation and simple icons.
+
+==================================================
+PART 8 — FULL-SCREEN QR HEALTH SHARING
+==================================================
+
+Modify the existing Share Health Records feature.
+
+When the user clicks Share Health Records, open a completely new dedicated page.
+
+MOBILE REQUIREMENT:
+
+- Open a full-screen page.
+- Do not display QR in a small modal or popup.
+- Display a large QR code.
+- Provide a clear back button.
+
+QR SHARING PAGE:
+
+Heading:
+"Share Your Health Records"
+
+Display:
+
+- Large QR code.
+- Secure shareable URL.
+- Copy Link.
+- Download QR Code.
+- Share via WhatsApp.
+- Native mobile sharing.
+- Expiry selector.
+- Access permissions.
+- Revoke Access.
+
+RECORD SELECTION:
+
+Allow users to choose:
+
+1. Complete Health Profile.
+2. Selected Medical Reports.
+3. Prescriptions.
+4. Laboratory Reports.
+5. Medical History.
+6. Vaccination Records.
+
+EXPIRY OPTIONS:
+
+- 15 minutes.
+- 1 hour.
+- 24 hours.
+- 7 days.
+- Custom expiry.
+
+RECIPIENT EXPERIENCE:
+
+When another person scans the QR code:
+
+- Open a dedicated mobile-friendly access page.
+- Display only authorized records.
+- Show the record owner's name.
+- Show sharing permissions.
+- Show expiry time.
+- Provide read-only document viewing by default.
+
+QR SECURITY:
+
+- Generate cryptographically secure random tokens.
+- Never encode medical records or encryption keys directly inside the QR code.
+- Use expiring access tokens.
+- Allow immediate revocation.
+- Maintain access logs.
+- Prevent access to unshared records.
+- Require additional authentication for sensitive records where appropriate.
+
+==================================================
+PART 9 — MULTI-SYSTEM PRESCRIPTION ASSISTANT
+==================================================
+
+Extend the existing Prescription Assistant to recognize THREE medical systems:
+
+1. Allopathy.
+2. Ayurveda.
+3. Homeopathy.
+
+Add a dedicated dashboard module:
+
+"Prescription Assistant"
+
+Allow users to:
+
+- Upload JPG images.
+- Upload JPEG images.
+- Upload PNG images.
+- Upload PDF prescriptions.
+- Take photographs using mobile camera.
+- Preview uploaded prescriptions.
+
+AUTOMATIC MEDICAL SYSTEM DETECTION:
+
+After upload, classify the prescription as:
+
+- Allopathy.
+- Ayurveda.
+- Homeopathy.
+- Mixed / Multiple Systems.
+- Unknown / Manual Selection Required.
+
+Allow the user to manually correct the detected category.
+
+Do not assume every uploaded prescription belongs to Allopathy.
+
+==================================================
+PART 10 — ALLOPATHY PRESCRIPTION READER
+==================================================
+
+Extract wherever available:
+
+- Medicine name.
+- Active ingredient / salt.
+- Brand name.
+- Strength.
+- Dosage form.
+- Dosage.
+- Frequency.
+- Duration.
+- Prescription instructions.
+- Manufacturer, where identifiable.
+
+Recognize tablets, capsules, syrups, injections, drops and other common dosage forms.
+
+Preserve exact extracted information.
+
+Allow users to correct OCR errors before saving.
+
+==================================================
+PART 11 — AYURVEDIC PRESCRIPTION READER
+==================================================
+
+Support handwritten and printed Ayurvedic prescriptions.
+
+Extract wherever available:
+
+- Medicine name.
+- Sanskrit name.
+- Common name.
+- English name.
+- Botanical name.
+- Ingredients.
+- Classical formulation.
+- Proprietary formulation.
+- Dosage form.
+- Quantity or strength.
+- Dosage instructions.
+- Frequency.
+- Duration.
+- Manufacturer.
+- AYUSH licence information, where verified.
+
+Recognize common Ayurvedic formulations:
+
+- Churna.
+- Vati.
+- Gutika.
+- Kashayam / Kwath.
+- Asava.
+- Arishta.
+- Taila.
+- Ghrita.
+- Bhasma.
+- Avaleha.
+- Arka.
+- Capsules.
+- Tablets.
+
+Display extracted ingredients and formulations clearly.
+
+Do not invent missing ingredients, formulations or dosages.
+
+==================================================
+PART 12 — HOMEOPATHIC PRESCRIPTION READER
+==================================================
+
+Support handwritten and printed Homeopathic prescriptions.
+
+Extract wherever available:
+
+- Remedy name.
+- Common name.
+- Latin name.
+- Potency.
+- Dilution.
+- Dosage form.
+- Globules.
+- Pills.
+- Drops.
+- Tablets.
+- Prescription instructions.
+- Frequency.
+- Duration.
+- Manufacturer.
+
+Recognize potency notations:
+
+- 6C.
+- 30C.
+- 200C.
+- 1M.
+- 10M.
+- LM / Q potencies.
+- Mother tincture (Ø / Q).
+
+Preserve exact potency notation.
+
+Do not confuse different potencies.
+
+Do not automatically substitute one potency for another.
+
+==================================================
+PART 13 — OCR ACCURACY AND USER VERIFICATION
+==================================================
+
+For every uploaded prescription:
+
+1. Preserve the original image or PDF.
+2. Run OCR.
+3. Identify the medical system.
+4. Extract medicine information.
+5. Assign OCR confidence.
+6. Display uncertain results.
+7. Allow manual correction.
+8. Ask the user to verify the extracted medicines.
+9. Save only after user confirmation.
+
+Do not automatically infer missing dosage or frequency.
+
+If a handwritten medicine cannot be confidently identified, ask the user to verify it or consult the prescribing practitioner.
+
+==================================================
+PART 14 — MEDICINE AVAILABILITY SEARCH
+==================================================
+
+After extracting medicines, provide:
+
+"Find This Medicine"
+
+Create a dedicated medicine information and availability search page.
+
+ALLOPATHY SEARCH:
+
+Search by:
+- Brand name.
+- Generic name.
+- Active ingredient.
+- Strength.
+- Dosage form.
+
+AYURVEDA SEARCH:
+
+Search by:
+- Formulation name.
+- Sanskrit name.
+- Common name.
+- Botanical ingredients.
+- Classical formulation.
+- Manufacturer.
+- Verified AYUSH licence details.
+
+HOMEOPATHY SEARCH:
+
+Search by:
+- Remedy name.
+- Latin name.
+- Common name.
+- Potency.
+- Dilution.
+- Dosage form.
+- Manufacturer.
+
+INDIAN MARKET SUPPORT:
+
+Display where verified:
+
+- Medicine name.
+- Active ingredient or ingredients.
+- Strength or potency.
+- Manufacturer.
+- Product category.
+- Pack size.
+- Approximate price.
+- Online pharmacy availability.
+- Nearby physical pharmacy information.
+- Verified purchase links.
+
+Provide:
+
+1. Online Pharmacy Search.
+2. Nearby Pharmacy Search.
+3. Medicine Brand Search.
+4. Generic Medicine Search.
+5. Medicine Price Comparison.
+
+Use verified and legally accessible databases and provider integrations.
+
+Do not invent:
+
+- Prices.
+- Live inventory.
+- Pharmacy addresses.
+- Medicine availability.
+- Purchase links.
+- Regulatory information.
+
+If live inventory APIs are not configured, display an honest unavailable status instead of fake results.
+
+==================================================
+PART 15 — MEDICINE ALTERNATIVE FINDER
+==================================================
+
+For every identified medicine, provide:
+
+"Find Alternatives"
+
+ALLOPATHY:
+
+- Same active ingredient.
+- Same strength.
+- Same dosage form.
+- Different brands.
+- Generic equivalents.
+
+AYURVEDA:
+
+- Same classical formulation.
+- Similar ingredient composition.
+- Different manufacturers.
+- Verified alternative formulations.
+
+HOMEOPATHY:
+
+- Same remedy.
+- Same potency.
+- Same dosage form.
+- Different manufacturers.
+
+Display:
+
+- Medicine name.
+- Ingredients.
+- Strength or potency.
+- Dosage form.
+- Manufacturer.
+- Approximate price.
+- Availability.
+- Source of information.
+
+CATEGORIZE RESULTS:
+
+1. Exact Product Match.
+2. Same Ingredient / Formulation.
+3. Similar Product.
+4. Different Treatment Approach.
+
+IMPORTANT MEDICAL SAFETY:
+
+- Never automatically replace a prescribed medicine.
+- Never independently recommend dosage changes.
+- Do not claim that Allopathy, Ayurveda and Homeopathy medicines are clinically interchangeable.
+- Do not recommend changing medical systems without qualified professional advice.
+- Distinguish exact matches from different treatment approaches.
+- Consider formulation, release type, potency and clinically relevant differences.
+
+For Ayurveda, consider possible ingredient-related interactions, contamination and heavy-metal concerns.
+
+For Homeopathy, distinguish highly diluted remedies from mother tinctures and other preparations that may contain measurable ingredients.
+
+Do not claim proven clinical effectiveness without reliable evidence.
+
+Display:
+
+"Medicine alternatives are for information only. Always consult your doctor or registered pharmacist before changing prescribed medication."
+
+==================================================
+PART 16 — SUPABASE POSTGRESQL DATABASE
+==================================================
+
+Use Supabase PostgreSQL as the primary cloud database, provided it is compatible with the existing application.
+
+Inspect the existing database before making changes.
+
+Create or maintain appropriate relational tables:
+
+1. users.
+2. user_profiles.
+3. health_records.
+4. prescriptions.
+5. prescription_medicines.
+6. medical_reports.
+7. shared_records.
+8. qr_sharing_tokens.
+9. medicine_search_history.
+10. storage_metadata.
+11. sync_status.
+12. audit_logs.
+13. medicine_catalog.
+14. medicine_ingredients.
+15. medicine_manufacturers.
+16. medicine_alternatives.
+17. prescription_ocr_results.
+
+DATABASE REQUIREMENTS:
+
+- Unique user IDs.
+- Appropriate table relationships.
+- Row Level Security.
+- User-specific access permissions.
+- Database indexes.
+- Timestamps.
+- Record version history.
+- Duplicate prevention.
+- Secure API access.
+- Appropriate validation.
+
+Encrypt sensitive medical information before cloud storage.
+
+Do not store plaintext medical documents in publicly accessible tables or buckets.
+
+Do not expose Supabase service-role credentials in frontend code.
+
+Use secure server-side functions for privileged operations.
+
+Preserve existing database records.
+
+Do not drop or overwrite existing tables without a verified migration and backup plan.
+
+==================================================
+PART 17 — LOCAL DEVICE STORAGE
+==================================================
+
+Implement offline-first storage.
+
+For web/PWA:
+
+Use IndexedDB for:
+
+- Health records.
+- Prescriptions.
+- Medical reports.
+- Uploaded documents.
+- Medicine information cache.
+- Metadata.
+- Pending synchronization queue.
+
+For future native Android:
+
+Use SQLite with appropriate encrypted storage.
+
+REQUIREMENTS:
+
+- Save new records locally.
+- Store sensitive data encrypted.
+- Allow access to previously synchronized records.
+- Maintain local metadata.
+- Track local changes.
+- Maintain record versions.
+- Support offline document preview.
+- Prevent duplicate uploads.
+
+Display:
+
+- Saved on Device.
+- Sync Pending.
+- Synced.
+- Sync Failed.
+
+==================================================
+PART 18 — GOOGLE DRIVE BACKUP
+==================================================
+
+Integrate Google Drive API through secure Google OAuth authorization.
+
+Allow users to connect their personal Google Drive account.
+
+Create a dedicated application folder:
+
+Swasthya Wallet
+
+Organize records into:
+
+1. Health Records.
+2. Prescriptions.
+3. Lab Reports.
+4. Medical Documents.
+5. Backups.
+
+REQUIREMENTS:
+
+- Upload encrypted medical records.
+- Upload encrypted prescription documents.
+- Maintain Google Drive file IDs.
+- Maintain synchronization metadata.
+- Support manual backup.
+- Support restoration.
+- Allow disconnecting Google Drive.
+- Use the user's own Drive storage quota.
+- Request minimum necessary Drive permissions.
+
+Never make medical documents publicly accessible.
+
+Never upload plaintext sensitive medical records.
+
+Use the appropriate Google Drive application-specific folder permission where supported.
+
+Google Drive backup and Supabase synchronization must be treated as separate operations.
+
+Display independent status indicators for both.
+
+==================================================
+PART 19 — ONLINE AND OFFLINE MODE
+==================================================
+
+Swasthya Wallet must work in both online and offline environments.
+
+Implement offline-first PWA architecture.
+
+OFFLINE MODE:
+
+Allow authenticated users to:
+
+1. View previously synchronized health records.
+2. View saved prescriptions.
+3. View medical reports.
+4. Upload new prescription images.
+5. Add new health records.
+6. Edit permitted locally stored information.
+7. Search locally cached medicines.
+8. Preview downloaded documents.
+9. Manage local records.
+
+ONLINE MODE:
+
+When internet is available:
+
+1. Synchronize local changes.
+2. Upload encrypted files to Google Drive.
+3. Synchronize database metadata.
+4. Fetch updated medicine information.
+5. Search online pharmacy availability.
+6. Search nearby pharmacies.
+7. Retrieve verified medicine alternatives.
+8. Synchronize supported devices.
+
+SYNCHRONIZATION ENGINE:
+
+Implement:
+
+- Automatic synchronization when connectivity returns.
+- Manual Sync Now button.
+- Retry mechanism.
+- Pending synchronization queue.
+- Duplicate upload prevention.
+- Conflict detection.
+- Conflict resolution.
+- Last sync timestamp.
+- Sync failure reporting.
+
+Never silently overwrite newer medical records with older versions.
+
+Use versioning and safe conflict resolution.
+
+Do not assume browser background synchronization is always available.
+
+Provide a foreground synchronization fallback.
+
+OFFLINE AUTHENTICATION:
+
+- Support secure access using an existing authenticated local session.
+- Do not bypass server-side authentication.
+- Never expose vault keys.
+- Require reauthentication when appropriate.
+- Protect locally cached medical data.
+
+Clearly indicate features requiring internet access.
+
+==================================================
+PART 20 — DASHBOARD STORAGE AND SYNC STATUS
+==================================================
+
+Create a dedicated storage and synchronization section.
+
+DEVICE STORAGE:
+
+- Local storage status.
+- Locally saved records.
+- Pending uploads.
+
+GOOGLE DRIVE:
+
+- Connected / Disconnected.
+- Last backup time.
+- Backup status.
+- Restore option.
+
+DATABASE:
+
+- Connection status.
+- Last synchronization.
+- Sync errors.
+
+NETWORK:
+
+- Online / Offline.
+
+All status indicators must reflect actual application state.
+
+Never use hardcoded success indicators.
+
+==================================================
+PART 21 — PRIVACY AND ZERO-KNOWLEDGE SECURITY
+==================================================
+
+Preserve the existing patient-controlled zero-knowledge encryption architecture.
+
+Requirements:
+
+- Client-side encryption.
+- Encryption before cloud upload.
+- Secure encryption-key management.
+- Authentication credentials separate from vault encryption keys.
+- Secure local storage.
+- HTTPS.
+- Secure sessions.
+- Access control.
+- Audit logs.
+- Secure QR tokens.
+- Record access revocation.
+- User-controlled sharing.
+- Secure export.
+- Authorized deletion.
+
+Never expose private keys.
+
+Never put encryption keys in QR links.
+
+Never store raw sensitive medical records in public storage.
+
+Do not claim that the entire system is zero-knowledge unless the actual implementation guarantees it.
+
+==================================================
+PART 22 — INDIAN LANGUAGE SUPPORT
+==================================================
+
+Support these 12 languages:
+
+1. English.
+2. Hindi.
+3. Bengali.
+4. Marathi.
+5. Tamil.
+6. Telugu.
+7. Gujarati.
+8. Kannada.
+9. Malayalam.
+10. Punjabi.
+11. Odia.
+12. Urdu.
+
+REQUIREMENTS:
+
+- English as default language.
+- Visible language selector.
+- Translate registration.
+- Translate login.
+- Translate dashboard.
+- Translate QR sharing.
+- Translate prescription assistant.
+- Translate medicine search.
+- Translate password recovery.
+- Translate validation messages.
+- Translate notifications.
+- Support Unicode Indian scripts.
+- Preserve selected language across sessions.
+- Use simple language for ordinary citizens.
+
+INDIAN LOCALIZATION:
+
+- Country code: +91.
+- Date format: DD/MM/YYYY.
+- Time zone: Asia/Kolkata.
+- Currency: INR (₹).
+- Indian number formatting.
+- Metric units.
+
+==================================================
+PART 23 — MINIMAL UI/UX DESIGN
+==================================================
+
+Maintain the original Swasthya Wallet identity.
+
+Design requirements:
+
+- Minimal and professional.
+- Blue-and-white color theme.
+- Clean typography.
+- Consistent spacing.
+- Rounded input fields.
+- Clear buttons.
+- Simple icons.
+- Accessible contrast.
+- Mobile-first responsive layouts.
+- Easy navigation.
+- Readable Indian-language fonts.
+
+Avoid:
+
+- Excessive gradients.
+- Unnecessary animations.
+- Too many cards.
+- Cluttered dashboards.
+- Complicated technical language.
+- Unnecessary decorative elements.
+
+IMPORTANT:
+
+Minimal UI does not mean removing existing features.
+
+All authentication, medical record, backup, QR and prescription features must remain accessible.
+
+==================================================
+PART 24 — EXISTING FEATURE PRESERVATION
+==================================================
+
+Before modifying the application:
+
+1. Inspect all existing modules.
+2. Inspect current authentication.
+3. Inspect Google Sign-In.
+4. Inspect fingerprint authentication.
+5. Inspect password recovery.
+6. Inspect dashboard.
+7. Inspect QR sharing.
+8. Inspect encryption architecture.
+9. Inspect database.
+10. Inspect all existing APIs and integrations.
+
+Preserve all working features.
+
+Do not:
+
+- Delete existing functionality.
+- Replace working integrations with dummy buttons.
+- Replace real database operations with local mock arrays.
+- Remove Google authentication.
+- Remove biometric authentication.
+- Remove password reset.
+- Remove the original slogan.
+- Weaken encryption.
+- Break existing user accounts.
+- Overwrite existing medical records.
+
+==================================================
+PART 25 — IMPLEMENTATION PHASES
+==================================================
+
+Follow this implementation sequence.
+
+PHASE 1 — PROJECT INSPECTION
+
+Inspect:
+- Source code.
+- Project structure.
+- Package dependencies.
+- Frontend framework.
+- Database.
+- Authentication.
+- APIs.
+- Encryption.
+- Existing features.
+
+Provide an inspection report and identify required configuration.
+
+Do not make destructive changes.
+
+PHASE 2 — DATABASE AND BACKEND
+
+- Configure Supabase if required.
+- Create migration scripts.
+- Configure PostgreSQL.
+- Configure RLS.
+- Configure secure API access.
+- Preserve existing records.
+
+PHASE 3 — LOCAL STORAGE AND GOOGLE DRIVE
+
+- Implement IndexedDB.
+- Implement encrypted local storage.
+- Integrate Google Drive.
+- Implement backup and restore.
+- Implement synchronization.
+- Implement conflict handling.
+
+PHASE 4 — QR HEALTH SHARING
+
+- Implement full-screen QR page.
+- Implement secure sharing tokens.
+- Implement permissions.
+- Implement expiry.
+- Implement revocation.
+- Implement recipient access page.
+
+PHASE 5 — MULTI-SYSTEM PRESCRIPTION ASSISTANT
+
+- Implement image and PDF upload.
+- Implement OCR.
+- Implement medical system detection.
+- Implement Allopathy recognition.
+- Implement Ayurveda recognition.
+- Implement Homeopathy recognition.
+- Implement user verification.
+- Implement medicine search.
+- Implement alternatives finder.
+
+PHASE 6 — DASHBOARD AND UI
+
+- Integrate all modules.
+- Preserve existing branding.
+- Preserve original slogan.
+- Implement multilingual support.
+- Improve mobile responsiveness.
+
+PHASE 7 — TESTING
+
+Test all modules independently and together.
+
+==================================================
+PART 26 — FINAL TESTING CHECKLIST
+==================================================
+
+AUTHENTICATION:
+
+1. New account registration.
+2. Username login.
+3. Mobile number login.
+4. Email login.
+5. Google Sign-In.
+6. Biometric unlock.
+7. Remember Me.
+8. Forgot Password.
+9. Password Reset.
+10. Logout.
+
+QR SHARING:
+
+11. Full-screen mobile QR page.
+12. QR scanning from another device.
+13. Sharing permissions.
+14. Expiry.
+15. Revocation.
+16. Unauthorized access prevention.
+
+PRESCRIPTION ASSISTANT:
+
+17. Allopathic prescription reading.
+18. Ayurvedic prescription reading.
+19. Homeopathic prescription reading.
+20. Handwritten prescription recognition.
+21. Printed prescription recognition.
+22. Medicine identification.
+23. Potency recognition.
+24. Ingredient extraction.
+25. OCR correction.
+26. Prescription saving.
+
+MEDICINE SEARCH:
+
+27. Medicine availability search.
+28. Online pharmacy search.
+29. Nearby pharmacy search.
+30. Same-salt alternatives.
+31. Ayurvedic formulation search.
+32. Homeopathic remedy and potency search.
+33. Verified medicine information.
+34. Safety warnings.
+
+DATABASE AND STORAGE:
+
+35. Supabase database operations.
+36. User-specific data permissions.
+37. Local device storage.
+38. Google Drive backup.
+39. Google Drive restoration.
+40. Offline access.
+41. Online synchronization.
+42. Sync conflict resolution.
+43. Duplicate prevention.
+44. Encryption verification.
+
+UI:
+
+45. Landing page branding.
+46. Original slogan preservation.
+47. Registration and login.
+48. Dashboard navigation.
+49. Language switching.
+50. Mobile responsiveness.
+
+Do not mark any feature as completed until actual functionality has been tested.
+
+==================================================
+PART 27 — FINAL DELIVERY
+==================================================
+
+After implementation, provide:
+
+1. Updated project structure.
+2. List of modified files.
+3. Database schema.
+4. Migration scripts.
+5. Required environment variables.
+6. Supabase configuration instructions.
+7. Google OAuth configuration.
+8. Google Drive API configuration.
+9. OCR configuration.
+10. Medicine database integration details.
+11. Pharmacy API configuration.
+12. Local storage implementation.
+13. Offline synchronization details.
+14. Testing results.
+15. Known limitations.
+16. Deployment instructions.
+
+Clearly distinguish implemented features from features requiring external API credentials or provider approval.
+
+Do not claim successful integration if credentials or live providers are not configured.
+
+==================================================
+FINAL PRODUCT REQUIREMENT
+==================================================
+
+Swasthya Wallet must become a secure, multilingual, patient-controlled digital health locker for Indian citizens.
+
+The final application must provide:
+
+- Original Swasthya Wallet branding.
+- Original slogan: Digital Health Locker for Citizens.
+- Secure registration and login.
+- Google authentication.
+- Fingerprint / biometric unlock.
+- Password recovery.
+- Personal health records.
+- Full-screen QR health sharing.
+- Allopathy prescription reading.
+- Ayurveda prescription reading.
+- Homeopathy prescription reading.
+- OCR-based medicine identification.
+- Medicine availability search.
+- Medicine alternative discovery.
+- Supabase PostgreSQL database.
+- Encrypted local device storage.
+- Google Drive backup.
+- Online and offline operation.
+- Reliable data synchronization.
+- Patient-controlled privacy.
+
+FINAL STRICT INSTRUCTION:
+
+Modify the existing Swasthya Wallet application carefully.
+
+Do not rebuild it from scratch.
+
+Do not remove existing working functionality.
+
+Do not change the original application name, logo, or slogan.
+
+Do not replace actual integrations with dummy implementations.
+
+Preserve existing data and security guarantees.
+
+Build a clean, minimal, reliable, production-oriented application for Indian citizens.

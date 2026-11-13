@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-error-container": "#93000a", "primary": "#00142f", "on-tertiary": "#ffffff", "surface-bright": "#f6f9ff", "on-secondary-fixed": "#001d31", "on-primary": "#ffffff", "inverse-surface": "#2b3137", "secondary": "#006398", "on-secondary-fixed-variant": "#004b73", "inverse-primary": "#b0c8f1", "error-container": "#ffdad6", "tertiary-fixed-dim": "#68dba9", "tertiary": "#00190e", "on-error": "#ffffff", "tertiary-fixed": "#85f8c4", "primary-container": "#0f294a", "surface-container-lowest": "#ffffff", "surface-container-highest": "#dde3eb", "surface-variant": "#dde3eb", "on-surface": "#161c22", "primary-fixed": "#d5e3ff", "surface-dim": "#d4dbe2", "on-surface-variant": "#44474e", "outline": "#74777f", "on-tertiary-fixed-variant": "#005137", "on-secondary-container": "#00476e", "on-primary-container": "#7a91b7", "surface-tint": "#485f83", "on-secondary": "#ffffff", "on-primary-fixed": "#001b3b", "surface-container-low": "#eef4fc", "on-tertiary-fixed": "#002114", "on-primary-fixed-variant": "#30476a", "surface-container": "#e8eef6", "surface": "#f6f9ff", "secondary-fixed-dim": "#93ccff", "outline-variant": "#c4c6cf", "on-tertiary-container": "#24a375", "primary-fixed-dim": "#b0c8f1", "tertiary-container": "#00301f", "secondary-fixed": "#cce5ff", "background": "#f6f9ff", "secondary-container": "#5bb8fe", "error": "#ba1a1a", "surface-container-high": "#e3e9f1", "inverse-on-surface": "#ebf1f9", "on-background": "#161c22" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-xl": "2.5rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "gutter": "1rem", "space-md": "1rem", "margin-lg": "2.5rem", "gutter-lg": "1.5rem", "space-xs": "0.25rem", "margin": "1rem" }, "fontFamily": { "body-md": [ "Inter" ], "code-sm": [ "JetBrains Mono" ], "title-sm": [ "Inter" ], "label-md": [ "Inter" ], "body-sm": [ "Inter" ], "headline-lg": [ "Inter" ], "body-lg": [ "Inter" ], "headline-xl": [ "Inter" ], "headline-md": [ "Inter" ] }, "fontSize": { "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "code-sm": [ "11px", { "lineHeight": "14px", "fontWeight": "500" } ], "title-sm": [ "16px", { "lineHeight": "24px", "fontWeight": "600" } ], "label-md": [ "13px", { "lineHeight": "16px", "fontWeight": "500" } ], "body-sm": [ "12px", { "lineHeight": "16px", "fontWeight": "400" } ], "headline-lg": [ "24px", { "lineHeight": "32px", "fontWeight": "600" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "headline-xl": [ "32px", { "lineHeight": "40px", "fontWeight": "700" } ], "headline-md": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface antialiased"><div class="fixed top-0 left-0 right-0 h-7 bg-primary z-50 flex items-center justify-between px-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-sm"><span class="w-2 h-2 rounded-full bg-tertiary-fixed"></span><span class="font-code-sm text-code-sm uppercase tracking-wider text-surface">SYNTHETIC SANDBOX SIMULATION</span><span class="font-code-sm text-code-sm text-on-primary-container px-space-xs py-0.5 rounded bg-primary-container">HL7 FHIR R4 ENCRYPTED</span></div><div class="flex items-center gap-space-md"><span class="font-code-sm text-code-sm text-primary-fixed">SESSION: UHW-8842-SANDBOX</span><span class="font-code-sm text-code-sm text-primary-fixed-dim">SYNTHETIC CLINICAL DATA</span></div></div><aside class="fixed left-0 top-7 bottom-0 w-72 bg-surface-container-low z-40 flex flex-col justify-between py-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col gap-space-md"><div class="px-space-md"><div class="flex items-center gap-space-sm pb-space-sm"><div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-surface text-[20px]">health_metrics</span></div><div><div class="font-title-sm text-title-sm text-primary tracking-tight">Unified Health Wallet</div><div class="font-code-sm text-code-sm text-on-surface-variant uppercase tracking-wider">HIPAA Compliant</div></div></div><div class="mt-space-sm p-space-sm rounded-lg bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center justify-between"><span class="font-code-sm text-code-sm text-on-surface-variant uppercase">PATIENT ID</span><span class="font-code-sm text-code-sm text-on-tertiary-container bg-surface-container-high px-space-xs rounded font-medium">ACTIVE RECORD</span></div><div class="font-title-sm text-title-sm text-primary mt-0.5">Eleanor Vance</div><div class="font-code-sm text-code-sm text-outline mt-0.5">MRN: 802-9914-EV • 35Y • Verified</div></div></div><nav class="flex flex-col gap-1 px-space-md" data-active-classes="bg-primary-container text-on-primary font-medium rounded-lg"><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="dashboard" href="#">Dashboard</a><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="medical-records" href="#">Medical Records</a><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="vaccination-wallet" href="#">Vaccination Wallet</a><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="reminders-and-appointments" href="#">Reminders &amp; Appointments</a><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="secure-sharing" href="#">Secure Sharing</a><a aria-current="page" class="flex items-center px-space-sm py-2 transition-all bg-primary-container text-on-primary font-medium rounded-lg" data-path="document-verification" href="#">Document Verification</a><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="security-and-audit" href="#">Security &amp; Audit</a><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-md text-body-md" data-path="settings" href="#">Settings</a></nav></div><div class="px-space-md"><div class="p-space-sm rounded-lg bg-surface-container flex items-center justify-between"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span><span class="font-code-sm text-code-sm text-on-surface font-medium">SHA-256 VAULT</span></div><span class="font-code-sm text-code-sm text-on-surface-variant">v2.4.0</span></div></div></aside><div class="pl-72"><header class="fixed top-7 left-72 right-0 h-16 bg-surface/90 backdrop-blur-xl z-30 flex items-center justify-between px-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-sm flex-1 max-w-md"><div class="w-full flex items-center gap-space-xs px-space-sm py-2 bg-surface-container-lowest rounded-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><span class="material-symbols-outlined text-outline text-[20px]">search</span><input class="w-full bg-transparent font-body-sm text-body-sm text-on-surface placeholder-outline focus:outline-none" placeholder="Search records, LOINC, vaccines, practitioners..." type="text"/></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1.5 rounded-lg bg-surface-container shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span><span class="font-code-sm text-code-sm text-on-surface font-medium">FHIR SYNC: 100% OK</span></div><button aria-label="Notifications" class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-space-sm pl-space-sm border-l border-outline-variant"><div class="text-right hidden sm:block"><div class="flex items-center gap-1 justify-end"><span class="font-title-sm text-body-md text-on-surface font-semibold leading-tight">Eleanor Vance</span><span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm uppercase bg-surface-container-high text-on-tertiary-container font-medium">Verified</span></div><div class="font-code-sm text-code-sm text-on-surface-variant">35Y • MRN: 802-9914-EV</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 min-h-screen bg-background w-full px-gutter-lg pb-space-xl"><div class="flex flex-col w-full">
+<!-- Top Anchor Notice & Header Block -->
+<div class="w-full flex flex-col gap-space-md mb-space-lg">
+<!-- Cryptographic Engine Header -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex flex-col gap-1 max-w-3xl">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-code-sm text-code-sm uppercase tracking-wider">
+            CRYPTOGRAPHIC HASH &amp; PKI INTEGRITY ENGINE
+          </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-code-sm text-code-sm uppercase">
+            SPEC: W3C VC • HL7 FHIR R4
+          </span>
+<span class="px-2 py-0.5 rounded bg-tertiary-container text-tertiary-fixed font-code-sm text-code-sm">
+            FIPS 140-3 SIMULATED
+          </span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary tracking-tight">
+          Medical Document &amp; Certificate Verification
+        </h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-relaxed">
+          Validate the authenticity, digital signature, and tamper-resistance of FHIR payloads, lab PDFs, and SMART Health Cards across public-key registries.
+        </p>
+</div>
+<!-- Live Cryptographic Telemetry Box -->
+<div class="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0 bg-surface-container-low p-space-sm rounded-lg">
+<div class="flex items-center justify-between gap-space-md">
+<span class="font-code-sm text-code-sm text-outline uppercase">PKI DIRECTORY</span>
+<span class="font-code-sm text-code-sm text-secondary font-semibold">IL-HEALTH-DIR#904</span>
+</div>
+<div class="flex items-center justify-between gap-space-md">
+<span class="font-code-sm text-code-sm text-outline uppercase">DIGEST ENGINE</span>
+<span class="font-code-sm text-code-sm text-on-surface font-semibold">WebCrypto SHA-256</span>
+</div>
+<div class="flex items-center justify-between gap-space-md">
+<span class="font-code-sm text-code-sm text-outline uppercase">REVOCATION</span>
+<span class="font-code-sm text-code-sm text-on-tertiary-container font-semibold">OCSP-STAPLE READY</span>
+</div>
+</div>
+</div>
+<!-- Alert Banner: Strict Clinical Disclaimer -->
+<div class="flex items-start gap-space-sm p-space-md bg-surface-container rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[22px] shrink-0 mt-0.5">verified</span>
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-space-xs">
+<span class="font-title-sm text-title-sm text-primary uppercase font-bold tracking-tight">
+            Important Demo Notice
+          </span>
+<span class="font-code-sm text-code-sm px-1.5 py-0.2 rounded bg-surface-container-highest text-on-surface-variant">SANDBOX CONTEXT</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          This verification engine demonstrates cryptographic hashing and public-key registry matching in a simulated sandbox. A generated reference or QR code alone does not prove document authenticity in a non-authenticated environment; validation requires authoritative public key federation and trust root attestation.
+        </p>
+</div>
+</div>
+</div>
+<!-- Verification Workflow Progress Tracker (5-Stage Visual Stepper) -->
+<div class="w-full bg-surface-container-lowest p-space-md rounded-xl shadow-sm mb-space-lg">
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-code-sm text-code-sm uppercase tracking-wider text-outline">
+        ATTESTATION WORKFLOW LIFECYCLE • STAGE 5 OF 5
+      </span>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+<span class="font-code-sm text-code-sm text-on-tertiary-container font-semibold">PIPELINE SYNCHRONIZED</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-5 gap-space-sm">
+<!-- Step 1 -->
+<div class="flex flex-col p-space-sm rounded-lg bg-surface-container-low transition-all">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline">01</span>
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px]">check_circle</span>
+</div>
+<div class="font-title-sm text-body-md text-primary mt-1 font-semibold">Select Document</div>
+<div class="font-code-sm text-code-sm text-outline truncate">PDF Payload loaded</div>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col p-space-sm rounded-lg bg-surface-container-low transition-all">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline">02</span>
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px]">check_circle</span>
+</div>
+<div class="font-title-sm text-body-md text-primary mt-1 font-semibold">Generate Reference</div>
+<div class="font-code-sm text-code-sm text-outline truncate">UHW-VRF-2024-8842</div>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col p-space-sm rounded-lg bg-surface-container-low transition-all">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline">03</span>
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px]">check_circle</span>
+</div>
+<div class="font-title-sm text-body-md text-primary mt-1 font-semibold">Scan or Ingest</div>
+<div class="font-code-sm text-code-sm text-outline truncate">W3C Credential Pointer</div>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col p-space-sm rounded-lg bg-surface-container-low transition-all">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline">04</span>
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px]">check_circle</span>
+</div>
+<div class="font-title-sm text-body-md text-primary mt-1 font-semibold">Validate Digest</div>
+<div class="font-code-sm text-code-sm text-outline truncate">SHA-256 + RSA-2048</div>
+</div>
+<!-- Step 5: Active Stage -->
+<div class="flex flex-col p-space-sm rounded-lg bg-primary-container text-on-primary shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-primary-fixed">05 ACTIVE</span>
+<span class="material-symbols-outlined text-tertiary-fixed text-[18px]">verified_user</span>
+</div>
+<div class="font-title-sm text-body-md text-on-primary mt-1 font-semibold">Display Result</div>
+<div class="font-code-sm text-code-sm text-primary-fixed-dim truncate">Attestation Ready</div>
+</div>
+</div>
+</div>
+<!-- Main Grid (Two Columns: Ingestion & Interactive Attestation Matrix) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- LEFT COLUMN: Document Selection, Reference Code & QR Credential Pass (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-lg">
+<!-- Card A: Document Selection & Reference Generator -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">description</span>
+<h2 class="font-title-sm text-title-sm text-primary font-semibold">Document Selection &amp; Reference Generator</h2>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">INSPECTION TIER 1</span>
+</div>
+<!-- Document Source Selectors -->
+<div class="flex items-center p-1 rounded-lg bg-surface-container-low gap-1">
+<button class="flex-1 py-1.5 px-space-xs rounded-lg font-body-sm text-body-sm font-semibold bg-surface-container-lowest text-primary shadow-sm text-center" type="button">
+            Health Wallet
+          </button>
+<button class="flex-1 py-1.5 px-space-xs rounded-lg font-body-sm text-body-sm font-normal text-on-surface-variant hover:text-on-surface transition-all text-center" type="button">
+            Upload File
+          </button>
+<button class="flex-1 py-1.5 px-space-xs rounded-lg font-body-sm text-body-sm font-normal text-on-surface-variant hover:text-on-surface transition-all text-center" type="button">
+            Scan QR
+          </button>
+</div>
+<!-- Selected Document Metadata Card -->
+<div class="flex flex-col p-space-md rounded-lg bg-surface-container-low gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-sm text-body-md text-primary font-bold truncate">Northwestern_Pathology_Lipid_Panel_2024.pdf</span>
+<span class="font-code-sm text-code-sm text-outline">1.84 MB • application/pdf • Base64 Signed</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-code-sm text-code-sm font-medium">LOINC 24323-8</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs pt-space-xs text-on-surface-variant font-body-sm text-body-sm">
+<div>
+<span class="text-outline block font-code-sm text-code-sm uppercase">Patient</span>
+<span class="font-medium text-primary">Eleanor Vance</span>
+</div>
+<div>
+<span class="text-outline block font-code-sm text-code-sm uppercase">Issued Date</span>
+<span class="font-medium text-primary">Oct 28, 2024 • 08:30 CDT</span>
+</div>
+<div>
+<span class="text-outline block font-code-sm text-code-sm uppercase">Hospital ID</span>
+<span class="font-code-sm text-code-sm text-secondary font-medium">#NM-84920-PATH</span>
+</div>
+<div>
+<span class="text-outline block font-code-sm text-code-sm uppercase">FHIR DiagnosticReport</span>
+<span class="font-code-sm text-code-sm text-on-surface">DR-992-8021</span>
+</div>
+</div>
+<!-- Calculated Cryptographic Digest Area -->
+<div class="mt-space-xs p-space-sm rounded bg-surface-container-lowest flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm uppercase tracking-wider text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">fingerprint</span>
+                Calculated Document SHA-256 Digest
+              </span>
+<button class="font-code-sm text-code-sm text-secondary hover:text-primary transition-all flex items-center gap-0.5" id="copyHashBtn" onclick="copyDigest()" type="button">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span id="copyHashLabel">Copy</span>
+</button>
+</div>
+<div class="font-code-sm text-code-sm text-primary break-all bg-surface-container-low p-space-xs rounded select-all font-mono leading-relaxed">
+              8F4E6B2A99C048DF72E3108B3492C91A04EF52A807BC4D9284D76E2A1019CFB5
+            </div>
+</div>
+</div>
+<!-- Verification Reference Code -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">
+              Live Verification Reference Identifier
+            </label>
+<span class="font-code-sm text-code-sm text-outline">TTL: 23h 59m</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<div class="flex-1 bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">key</span>
+<span class="font-code-sm text-title-sm text-primary font-bold tracking-wider" id="refCodeText">UHW-VRF-2024-8842-99C0</span>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-code-sm text-code-sm font-semibold">ACTIVE</span>
+</div>
+<button class="h-11 px-3 rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all flex items-center justify-center" onclick="regenerateRef()" title="Regenerate Reference Code" type="button">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+</button>
+<button class="h-11 px-3 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all flex items-center justify-center gap-1 font-body-sm text-body-sm font-semibold" onclick="copyRefCode()" title="Copy Reference Identifier" type="button">
+<span class="material-symbols-outlined text-[18px]">copy_all</span>
+<span>Copy</span>
+</button>
+</div>
+</div>
+<!-- Future QR Verification Presentation Area -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">qr_code_2</span>
+<span class="font-title-sm text-title-sm text-primary font-semibold">Decentralized Verifiable Credential QR</span>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-0.5 rounded bg-surface-container-highest text-on-surface">ISO/IEC 18004</span>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-space-md bg-surface-container-lowest p-space-md rounded-lg">
+<!-- Inline High-Fidelity Clinical Mock QR Code -->
+<div class="relative w-36 h-36 p-2 bg-surface-container-lowest rounded-lg shrink-0 flex items-center justify-center shadow-sm">
+<svg class="w-full h-full text-primary" fill="currentColor" viewbox="0 0 100 100">
+<!-- QR Position Detection Patterns (Top Left, Top Right, Bottom Left) -->
+<rect fill="none" height="26" rx="2" stroke="currentColor" stroke-width="4" width="26" x="5" y="5"></rect>
+<rect height="14" rx="1" width="14" x="11" y="11"></rect>
+<rect fill="none" height="26" rx="2" stroke="currentColor" stroke-width="4" width="26" x="69" y="5"></rect>
+<rect height="14" rx="1" width="14" x="75" y="11"></rect>
+<rect fill="none" height="26" rx="2" stroke="currentColor" stroke-width="4" width="26" x="5" y="69"></rect>
+<rect height="14" rx="1" width="14" x="11" y="75"></rect>
+<!-- Cryptographic data dot pattern -->
+<rect height="5" width="5" x="36" y="7"></rect>
+<rect height="5" width="5" x="45" y="7"></rect>
+<rect height="5" width="5" x="54" y="7"></rect>
+<rect height="5" width="5" x="36" y="16"></rect>
+<rect height="5" width="5" x="45" y="25"></rect>
+<rect height="5" width="5" x="54" y="16"></rect>
+<rect height="5" width="5" x="7" y="36"></rect>
+<rect height="5" width="5" x="16" y="45"></rect>
+<rect height="5" width="5" x="25" y="36"></rect>
+<rect height="5" width="5" x="25" y="54"></rect>
+<rect fill="#006398" height="6" width="6" x="36" y="36"></rect>
+<rect fill="#0f294a" height="12" width="12" x="44" y="44"></rect>
+<rect height="6" width="6" x="58" y="36"></rect>
+<rect height="6" width="6" x="36" y="58"></rect>
+<rect fill="#006398" height="8" width="8" x="46" y="66"></rect>
+<rect height="6" width="6" x="58" y="58"></rect>
+<rect height="5" width="5" x="68" y="45"></rect>
+<rect height="5" width="5" x="77" y="36"></rect>
+<rect height="5" width="5" x="86" y="45"></rect>
+<rect height="5" width="5" x="68" y="63"></rect>
+<rect height="5" width="5" x="77" y="72"></rect>
+<rect height="5" width="5" x="86" y="63"></rect>
+<rect height="5" width="5" x="68" y="81"></rect>
+<rect height="5" width="5" x="77" y="90"></rect>
+<rect height="5" width="5" x="86" y="81"></rect>
+<rect height="5" width="5" x="36" y="77"></rect>
+<rect height="5" width="5" x="45" y="86"></rect>
+<rect height="5" width="5" x="54" y="77"></rect>
+</svg>
+<!-- Center Medical Shield Insignia -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-7 h-7 rounded bg-surface-container-lowest flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[16px]">health_and_safety</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Scan to verify on external clinical validator. Encodes signed W3C Verifiable Credential digest &amp; public key pointer. Ready for future backend integration.
+              </p>
+<div class="flex items-center gap-space-xs font-code-sm text-code-sm text-outline">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>COMPATIBLE: SMART HEALTH CARD v1.3</span>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<button class="py-2 px-3 rounded-lg bg-surface-container text-primary font-body-sm text-body-sm font-semibold hover:bg-surface-container-high transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Download Pass</span>
+</button>
+<button class="py-2 px-3 rounded-lg bg-surface-container-low text-on-surface-variant font-body-sm text-body-sm hover:text-on-surface transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">fullscreen</span>
+<span>Present</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Trust Anchor Fingerprints Telemetry Box -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-xs">
+<span class="font-code-sm text-code-sm uppercase tracking-wider text-outline font-semibold">Federated Trust Hierarchy</span>
+<div class="space-y-2 mt-1">
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-body-sm text-on-surface-variant">Northwestern Medicine Root CA</span>
+<span class="font-code-sm text-code-sm text-on-tertiary-container font-mono bg-surface-container-low px-1.5 py-0.5 rounded">VALID (SHA-256)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-body-sm text-on-surface-variant">Illinois HIE Trust Mesh</span>
+<span class="font-code-sm text-code-sm text-on-tertiary-container font-mono bg-surface-container-low px-1.5 py-0.5 rounded">AUTHORIZED</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-body-sm text-on-surface-variant">Federal Bridge Certification Auth (FBCA)</span>
+<span class="font-code-sm text-code-sm text-secondary font-mono bg-surface-container-low px-1.5 py-0.5 rounded">CROSS-CERTIFIED</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Verification Results Simulation with 4 Interactive States (7 Cols) -->
+<div class="lg:col-span-7 flex flex-col gap-space-lg">
+<!-- Card B: Interactive Verification Results Simulation -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-md">
+<!-- Header & Interactive Status State Switcher -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-xs">
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[22px]">fact_check</span>
+<h2 class="font-title-sm text-title-sm text-primary font-bold">Verification Engine Simulation Matrix</h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Select any clinical verification state to inspect validation payloads &amp; error recovery routines:
+            </p>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-0.5 rounded bg-primary-container text-on-primary shrink-0 self-start sm:self-auto">
+            SIMULATED HSM
+          </span>
+</div>
+<!-- 4 State Switching Interactive Tabs -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 rounded-lg bg-surface-container-low">
+<button class="state-tab-btn py-2 px-space-xs rounded-lg font-body-sm text-body-sm font-semibold transition-all text-center flex items-center justify-center gap-1 bg-surface-container-lowest text-primary shadow-sm" id="tab-state-1" onclick="switchVerificationState(1)" type="button">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+<span>Verified</span>
+</button>
+<button class="state-tab-btn py-2 px-space-xs rounded-lg font-body-sm text-body-sm font-medium text-on-surface-variant hover:text-on-surface transition-all text-center flex items-center justify-center gap-1" id="tab-state-2" onclick="switchVerificationState(2)" type="button">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>Tampered</span>
+</button>
+<button class="state-tab-btn py-2 px-space-xs rounded-lg font-body-sm text-body-sm font-medium text-on-surface-variant hover:text-on-surface transition-all text-center flex items-center justify-center gap-1" id="tab-state-3" onclick="switchVerificationState(3)" type="button">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span>Expired</span>
+</button>
+<button class="state-tab-btn py-2 px-space-xs rounded-lg font-body-sm text-body-sm font-medium text-on-surface-variant hover:text-on-surface transition-all text-center flex items-center justify-center gap-1" id="tab-state-4" onclick="switchVerificationState(4)" type="button">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span>Unreachable</span>
+</button>
+</div>
+<!-- STATE CONTAINER 1: VERIFIED & AUTHENTIC (Active State) -->
+<div class="verification-panel flex flex-col gap-space-md" id="state-panel-1">
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-space-md">
+<!-- State Badge Banner -->
+<div class="flex items-start justify-between gap-space-sm flex-wrap">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container text-tertiary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-primary font-bold">VERIFIED &amp; AUTHENTIC</span>
+<span class="px-2 py-0.5 rounded font-code-sm text-code-sm bg-tertiary-fixed text-on-tertiary-fixed font-semibold uppercase">100% VALIDATED</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Cryptographic Attestation Succeeded • Issuer Identity Confirmed</p>
+</div>
+</div>
+<div class="text-right">
+<span class="font-code-sm text-code-sm text-outline uppercase block">Latency</span>
+<span class="font-code-sm text-body-md text-primary font-bold">142ms</span>
+</div>
+</div>
+<!-- Validation Checklist Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-on-tertiary-container text-[20px] shrink-0 mt-0.5">check_circle</span>
+<div class="flex flex-col">
+<span class="font-title-sm text-body-sm text-primary font-semibold">Issuer Authority</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Northwestern Memorial Hospital PKI Registry</span>
+<span class="font-code-sm text-code-sm text-outline">Key ID: #NW-RSA-2048-B4 • Verified</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-on-tertiary-container text-[20px] shrink-0 mt-0.5">lock</span>
+<div class="flex flex-col">
+<span class="font-title-sm text-body-sm text-primary font-semibold">Digest Integrity</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Matched anchor ledger exactly</span>
+<span class="font-code-sm text-code-sm text-outline">0 bytes modified post-signature</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-on-tertiary-container text-[20px] shrink-0 mt-0.5">schema</span>
+<div class="flex flex-col">
+<span class="font-title-sm text-body-sm text-primary font-semibold">Schema Conformance</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">HL7 FHIR R4 DiagnosticReport Profile</span>
+<span class="font-code-sm text-code-sm text-outline">0 syntax or structural validation errors</span>
+</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-lowest flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-on-tertiary-container text-[20px] shrink-0 mt-0.5">history_toggle_off</span>
+<div class="flex flex-col">
+<span class="font-title-sm text-body-sm text-primary font-semibold">Revocation Check</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">OCSP / CRL check returned GOOD</span>
+<span class="font-code-sm text-code-sm text-outline">Status: Not revoked, superseded, or voided</span>
+</div>
+</div>
+</div>
+<!-- Detailed Cryptographic Specs Table -->
+<div class="bg-surface-container-lowest rounded-lg p-space-sm flex flex-col gap-space-xs">
+<span class="font-code-sm text-code-sm uppercase tracking-wider text-outline font-semibold">Attestation Audit Trail • ISO 27001</span>
+<div class="space-y-1.5 pt-1">
+<div class="flex items-center justify-between text-body-sm py-1 border-b border-surface-container-high">
+<span class="font-body-sm text-on-surface-variant">Document Class</span>
+<span class="font-code-sm text-body-sm text-primary font-medium">Clinical Pathology (LOINC: 24323-8)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1 border-b border-surface-container-high">
+<span class="font-body-sm text-on-surface-variant">Digital Signature Algorithm</span>
+<span class="font-code-sm text-body-sm text-primary font-medium">SHA256withRSA (2048-bit PKCS#1 v1.5)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1 border-b border-surface-container-high">
+<span class="font-body-sm text-on-surface-variant">Confirmed Timestamp</span>
+<span class="font-code-sm text-body-sm text-primary font-medium">Nov 03, 2024 at 14:28:11 UTC</span>
+</div>
+<div class="flex items-center justify-between text-body-sm py-1">
+<span class="font-body-sm text-on-surface-variant">Trust Hierarchy Path</span>
+<span class="font-code-sm text-code-sm text-secondary truncate max-w-xs font-semibold">Northwestern CA → IL State Health → FBCA Root</span>
+</div>
+</div>
+</div>
+<!-- Action CTAs -->
+<div class="flex flex-col sm:flex-row items-center gap-space-sm pt-space-xs">
+<button class="w-full sm:w-auto h-11 px-space-md rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all flex items-center justify-center gap-2 font-body-md text-body-md font-semibold" type="button">
+<span class="material-symbols-outlined text-[18px]">download_for_offline</span>
+<span>Export Verification Attestation (PDF)</span>
+</button>
+<button class="w-full sm:w-auto h-11 px-space-md rounded-lg bg-surface-container text-primary hover:bg-surface-container-high transition-all flex items-center justify-center gap-2 font-body-md text-body-md font-medium" type="button">
+<span class="material-symbols-outlined text-[18px]">data_object</span>
+<span>Inspect FHIR Canonical JSON</span>
+</button>
+</div>
+</div>
+</div>
+<!-- STATE CONTAINER 2: INVALID / TAMPERED (Hidden by Default) -->
+<div class="verification-panel hidden flex flex-col gap-space-md" id="state-panel-2">
+<div class="p-space-md rounded-xl bg-error-container text-on-error-container flex flex-col gap-space-md">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-error text-on-error flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">gpp_bad</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-error font-bold">INVALID • TAMPER DETECTED</span>
+<span class="px-2 py-0.5 rounded font-code-sm text-code-sm bg-error text-on-error font-semibold uppercase">SECURITY ALERT</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-error-container mt-0.5">Signature Mismatch: Hash does not match issuing institution's signed digest.</p>
+</div>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-1 rounded bg-error text-on-error font-mono font-bold">ERROR_CODE_0x99A</span>
+</div>
+<!-- Error Breakdown Box -->
+<div class="bg-surface-container-lowest p-space-md rounded-lg flex flex-col gap-space-xs text-on-surface">
+<span class="font-title-sm text-title-sm text-error font-semibold">Cryptographic Inconsistency Details</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                The computed SHA-256 payload checksum does not match the decrypted RSA signature published by Northwestern Memorial Hospital. The file content or associated clinical values have been modified, corrupted, or altered post-issuance.
+              </p>
+<div class="mt-2 p-space-sm rounded bg-surface-container-low font-code-sm text-code-sm flex flex-col gap-1">
+<div class="text-on-surface-variant">Expected Issuer Digest: <span class="text-on-tertiary-container font-mono">8F4E6B2A99C048DF72E3108B3492C9...</span></div>
+<div class="text-error font-semibold">Actual File Digest: <span class="text-error font-mono">0x3AF7819BCC410080B810034AA89211... (MISMATCH)</span></div>
+</div>
+</div>
+<!-- Clinical Safety Action -->
+<div class="flex items-center justify-between gap-space-sm flex-wrap">
+<span class="font-body-sm text-body-sm text-on-error-container font-semibold">Document quarantined from patient health timeline.</span>
+<button class="h-10 px-space-md rounded-lg bg-error text-on-error font-body-sm text-body-sm font-semibold hover:opacity-90 transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">report</span>
+<span>File Integrity Incident Report</span>
+</button>
+</div>
+</div>
+</div>
+<!-- STATE CONTAINER 3: EXPIRED CERTIFICATE (Hidden by Default) -->
+<div class="verification-panel hidden flex flex-col gap-space-md" id="state-panel-3">
+<div class="p-space-md rounded-xl bg-surface-container text-on-surface flex flex-col gap-space-md">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-secondary text-on-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">timer_off</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-primary font-bold">CERTIFICATE EXPIRED</span>
+<span class="px-2 py-0.5 rounded font-code-sm text-code-sm bg-secondary text-on-secondary font-semibold uppercase">RE-ATTESTATION REQUIRED</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Document authorization expired on Oct 15, 2024. Issuer requires re-issuance.</p>
+</div>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-1 rounded bg-surface-container-high text-on-surface font-mono font-bold">EXP_ERR_410</span>
+</div>
+<!-- Expired Details -->
+<div class="bg-surface-container-lowest p-space-md rounded-lg flex flex-col gap-space-xs text-on-surface">
+<span class="font-title-sm text-title-sm text-primary font-semibold">Validity Window Exceeded</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                While the digital signature is authentic and unaltered, the issuing medical authority applied a strict 30-day clinical validation window which lapsed 19 days ago. Medical findings must be re-attested by an authorized practitioner before clinical cross-referencing.
+              </p>
+<div class="grid grid-cols-2 gap-space-xs pt-space-xs font-body-sm text-body-sm">
+<div>
+<span class="text-outline font-code-sm text-code-sm block">Attestation Validity End:</span>
+<span class="font-semibold text-primary">October 15, 2024 • 23:59:59 UTC</span>
+</div>
+<div>
+<span class="text-outline font-code-sm text-code-sm block">Re-Attestation Portal:</span>
+<span class="font-semibold text-secondary">Northwestern Health Portal API</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="h-10 px-space-md rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-semibold hover:bg-primary-container transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">autorenew</span>
+<span>Request Updated Attestation</span>
+</button>
+</div>
+</div>
+</div>
+<!-- STATE CONTAINER 4: UNABLE TO VERIFY / AUTHORITY UNREACHABLE (Hidden by Default) -->
+<div class="verification-panel hidden flex flex-col gap-space-md" id="state-panel-4">
+<div class="p-space-md rounded-xl bg-surface-container-high text-on-surface flex flex-col gap-space-md">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-dim text-on-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">cloud_off</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-primary font-bold">AUTHORITY UNREACHABLE</span>
+<span class="px-2 py-0.5 rounded font-code-sm text-code-sm bg-surface-variant text-on-surface font-semibold uppercase">TIMEOUT 504</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Issuing hospital registry endpoint timed out. Unable to establish trust anchor link.</p>
+</div>
+</div>
+<span class="font-code-sm text-code-sm px-2 py-1 rounded bg-surface-container text-on-surface font-mono font-bold">NET_ERR_REGISTRY</span>
+</div>
+<!-- Unreachable Details -->
+<div class="bg-surface-container-lowest p-space-md rounded-lg flex flex-col gap-space-xs text-on-surface">
+<span class="font-title-sm text-title-sm text-primary font-semibold">Federated Node Communication Failure</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                The local SHA-256 hash was generated successfully, but the issuing authority’s public key endpoint (<code class="font-code-sm text-code-sm bg-surface-container-low px-1 py-0.5 rounded">pki.nm.org/fhir/.well-known/jwks.json</code>) did not respond within the 5000ms threshold. Verification cannot complete without confirming root key status.
+              </p>
+<div class="flex items-center gap-2 pt-space-xs text-body-sm text-outline font-code-sm text-code-sm">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>ATTEMPT 3/3 FAILED • GATEWAY TIMEOUT (504)</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="h-10 px-space-md rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-semibold hover:bg-primary-container transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>Retry Trust Verification</span>
+</button>
+<button class="h-10 px-space-md rounded-lg bg-surface-container text-on-surface-variant font-body-sm text-body-sm hover:text-on-surface transition-all flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">dns</span>
+<span>Check Node Health</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Educational State Comparison Drawer / Cards (All 4 States Visual Preview) -->
+<div class="pt-space-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm uppercase tracking-wider text-outline font-semibold">
+              Clinical State Machine Reference Guide
+            </span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">4 Handled Conditions</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+<!-- Mini-Card 1: Tampered Preview -->
+<div class="cursor-pointer p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container transition-all flex flex-col gap-1" onclick="switchVerificationState(2)">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-error font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                  INVALID / TAMPERED
+                </span>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_forward</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Hash <code class="font-code-sm text-code-sm">0x3A...</code> diverges from authority anchor. Document payload was modified.
+              </p>
+</div>
+<!-- Mini-Card 2: Expired Preview -->
+<div class="cursor-pointer p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container transition-all flex flex-col gap-1" onclick="switchVerificationState(3)">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-secondary font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  EXPIRED ATTESTATION
+                </span>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_forward</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Validity window lapsed Oct 15, 2024. Clinical integrity requires provider re-attestation.
+              </p>
+</div>
+<!-- Mini-Card 3: Unreachable Preview -->
+<div class="cursor-pointer p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container transition-all flex flex-col gap-1" onclick="switchVerificationState(4)">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                  AUTHORITY OFFLINE
+                </span>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_forward</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                Hospital PKI endpoint timed out (504). Public key could not be cross-checked.
+              </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- BOTTOM CARD: Zero-Knowledge Architecture & Security Assurance -->
+<div class="w-full bg-surface-container-lowest p-space-lg rounded-xl shadow-sm mt-space-lg flex flex-col gap-space-md">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-1 max-w-2xl">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[22px]">enhanced_encryption</span>
+<h3 class="font-title-sm text-headline-md text-primary font-bold">Zero-Knowledge Architecture &amp; Security Assurance</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          The verification protocol validates authenticity without leaking protected health information (PHI) to third-party validators. Documents remain on your client device or secure enclave.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<span class="px-3 py-1.5 rounded-lg bg-surface-container-low text-primary font-code-sm text-code-sm font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-on-tertiary-container text-[18px]">verified</span>
+          HIPAA § 164.312(e)(1) COMPLIANT
+        </span>
+</div>
+</div>
+<!-- 3-Step Cryptographic Flow Infographic -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md pt-space-xs">
+<!-- Step A -->
+<div class="flex flex-col p-space-md rounded-lg bg-surface-container-low gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline uppercase font-semibold">STAGE 01</span>
+<span class="material-symbols-outlined text-primary text-[20px]">laptop_chromebook</span>
+</div>
+<span class="font-title-sm text-title-sm text-primary font-bold">Client-Side SHA-256 Hashing</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          The document raw byte stream is digested locally using standard WebCrypto APIs. No sensitive medical imagery or lab numbers leave the browser memory space.
+        </p>
+</div>
+<!-- Step B -->
+<div class="flex flex-col p-space-md rounded-lg bg-surface-container-low gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline uppercase font-semibold">STAGE 02</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">key_visualizer</span>
+</div>
+<span class="font-title-sm text-title-sm text-primary font-bold">Zero-Knowledge Attestation Query</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Only the 32-byte cryptographic digest and issuer credential pointer are submitted across TLS 1.3 to the state healthcare PKI directory.
+        </p>
+</div>
+<!-- Step C -->
+<div class="flex flex-col p-space-md rounded-lg bg-surface-container-low gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-outline uppercase font-semibold">STAGE 03</span>
+<span class="material-symbols-outlined text-on-tertiary-container text-[20px]">account_balance</span>
+</div>
+<span class="font-title-sm text-title-sm text-primary font-bold">Trust Anchor Reconciliation</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Issuing hospital public keys (JWKS) match against the Federal Bridge Directory. OCSP checks ensure the authorizing physician’s license is currently active.
+        </p>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function switchVerificationState(stateIndex) {
+    // Hide all state panels
+    for (let i = 1; i <= 4; i++) {
+      const panel = document.getElementById('state-panel-' + i);
+      const tab = document.getElementById('tab-state-' + i);
+      if (panel) {
+        panel.classList.add('hidden');
+      }
+      if (tab) {
+        tab.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'font-semibold');
+        tab.classList.add('font-medium', 'text-on-surface-variant');
+      }
+    }
+
+    // Show target state panel
+    const targetPanel = document.getElementById('state-panel-' + stateIndex);
+    const targetTab = document.getElementById('tab-state-' + stateIndex);
+    if (targetPanel) {
+      targetPanel.classList.remove('hidden');
+    }
+    if (targetTab) {
+      targetTab.classList.remove('font-medium', 'text-on-surface-variant');
+      targetTab.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm', 'font-semibold');
+    }
+  }
+
+  function copyDigest() {
+    const hash = '8F4E6B2A99C048DF72E3108B3492C91A04EF52A807BC4D9284D76E2A1019CFB5';
+    navigator.clipboard.writeText(hash).then(() => {
+      const label = document.getElementById('copyHashLabel');
+      if (label) {
+        const orig = label.innerText;
+        label.innerText = 'Copied!';
+        setTimeout(() => { label.innerText = orig; }, 2000);
+      }
+    });
+  }
+
+  function copyRefCode() {
+    const ref = document.getElementById('refCodeText').innerText;
+    navigator.clipboard.writeText(ref).then(() => {
+      alert('Verification Reference ' + ref + ' copied to clipboard.');
+    });
+  }
+
+  function regenerateRef() {
+    const chars = '0123456789ABCDEF';
+    let suffix = '';
+    for (let i = 0; i < 4; i++) {
+      suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const newRef = 'UHW-VRF-2024-8842-' + suffix;
+    document.getElementById('refCodeText').innerText = newRef;
+  }
+</script></main></div></body></html>

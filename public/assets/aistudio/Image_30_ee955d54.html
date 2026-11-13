@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-dim": "#d4dbe2", "secondary": "#006398", "primary-fixed-dim": "#b0c8f1", "on-primary-fixed": "#001b3b", "on-error-container": "#93000a", "secondary-fixed": "#cce5ff", "on-surface-variant": "#44474e", "tertiary-container": "#00301f", "surface-container-high": "#e3e9f1", "on-secondary-fixed-variant": "#004b73", "tertiary": "#00190e", "surface-container-low": "#eef4fc", "error": "#ba1a1a", "background": "#f6f9ff", "inverse-surface": "#2b3137", "outline": "#74777f", "primary": "#00142f", "inverse-primary": "#b0c8f1", "on-tertiary": "#ffffff", "on-secondary": "#ffffff", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#005137", "on-primary-container": "#7a91b7", "surface-variant": "#dde3eb", "on-tertiary-container": "#24a375", "surface": "#f6f9ff", "on-secondary-container": "#00476e", "surface-bright": "#f6f9ff", "on-secondary-fixed": "#001d31", "tertiary-fixed-dim": "#68dba9", "secondary-fixed-dim": "#93ccff", "tertiary-fixed": "#85f8c4", "inverse-on-surface": "#ebf1f9", "on-primary": "#ffffff", "primary-container": "#0f294a", "primary-fixed": "#d5e3ff", "surface-tint": "#485f83", "surface-container-lowest": "#ffffff", "on-primary-fixed-variant": "#30476a", "outline-variant": "#c4c6cf", "on-tertiary-fixed": "#002114", "surface-container-highest": "#dde3eb", "on-surface": "#161c22", "error-container": "#ffdad6", "surface-container": "#e8eef6", "on-background": "#161c22", "secondary-container": "#5bb8fe" }, borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, spacing: { "space-sm": "0.5rem", "margin-lg": "2.5rem", "gutter": "1rem", "margin": "1rem", "space-xs": "0.25rem", "gutter-lg": "1.5rem", "space-md": "1rem", "space-xl": "2.5rem", "space-lg": "1.5rem" }, fontFamily: { "label-md": ["Inter"], "body-md": ["Inter"], "code-sm": ["JetBrains Mono"], "headline-xl": ["Inter"], "headline-md": ["Inter"], "body-lg": ["Inter"], "body-sm": ["Inter"], "title-sm": ["Inter"], "headline-lg": ["Inter"] }, fontSize: { "label-md": ["13px", { "lineHeight": "16px", "fontWeight": "500" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "code-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }], "headline-xl": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "title-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }], "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "600" }] } } } }</script><style>@layer base{html,body{width:100%;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface min-h-full flex flex-col antialiased selection:bg-secondary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-20 px-margin flex items-center justify-between gap-space-sm"><div class="flex flex-col min-w-0 justify-center"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-secondary text-[20px]">vital_signs</span><span class="font-title-sm text-title-sm text-primary tracking-tight truncate">Records</span></div><div class="flex items-center gap-1.5 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container animate-pulse"></span><span class="font-code-sm text-code-sm text-on-surface-variant tracking-wider uppercase font-semibold">DEMO PATIENT DATA • HL7 FHIR</span></div></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Notifications" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container active:bg-surface-container-high transition-colors relative"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-secondary ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-20 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Interactive Sandbox & Sync Telemetry Pill -->
+<div class="px-margin pt-space-sm pb-space-xs">
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="w-2 h-2 rounded-full bg-secondary shrink-0 animate-ping"></span>
+<span class="font-code-sm text-code-sm text-on-surface-variant font-semibold tracking-wide truncate">
+          DEMO PATIENT DATA • Synthetic sandbox environment
+        </span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-highest text-primary font-code-sm text-[10px] uppercase font-bold shrink-0">
+<span class="material-symbols-outlined text-[12px] text-secondary">encrypted</span> SHA-256
+      </span>
+</div>
+</div>
+<!-- Primary Header & Upload Action -->
+<div class="px-margin pt-space-xs pb-space-sm flex items-center justify-between gap-space-sm">
+<div class="min-w-0">
+<div class="flex items-center gap-2">
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Medical Records</h1>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-secondary font-code-sm text-[11px] font-semibold">24</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">24 Records Indexed • FHIR v4.0.1 DataStore</p>
+</div>
+<button class="h-11 px-space-md rounded bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm active:scale-95 transition-transform shrink-0" id="topUploadBtn">
+<span class="material-symbols-outlined text-[18px]">upload_file</span>
+<span>Upload</span>
+</button>
+</div>
+<!-- Search Component with Scanner Icon & Clear State -->
+<div class="px-margin pb-space-sm">
+<div class="relative flex items-center bg-surface-container-lowest rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] ml-3 pointer-events-none">search</span>
+<input class="w-full h-11 pl-2.5 pr-20 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none" id="recordSearchInput" placeholder="Search by title, clinician, hospital, ICD-10..." type="text"/>
+<div class="absolute right-2 flex items-center gap-1">
+<button aria-label="Clear Search" class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors hidden" id="clearSearchBtn">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+<button aria-label="Scan or Voice Search" class="w-8 h-8 rounded flex items-center justify-center text-secondary hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">document_scanner</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Category Filter Chips (Horizontal Scrollable) -->
+<div class="pb-space-sm overflow-x-auto no-scrollbar">
+<div class="flex items-center gap-2 px-margin w-max" id="categoryChips">
+<button class="cat-pill active flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-on-primary font-label-md text-label-md transition-all shadow-sm" data-cat="all">
+<span>All</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface/20 text-on-primary font-code-sm text-[10px]">24</span>
+</button>
+<button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary font-label-md text-label-md transition-all" data-cat="lab">
+<span>Lab Reports</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant font-code-sm text-[10px]">8</span>
+</button>
+<button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary font-label-md text-label-md transition-all" data-cat="prescription">
+<span>Prescriptions</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant font-code-sm text-[10px]">5</span>
+</button>
+<button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary font-label-md text-label-md transition-all" data-cat="imaging">
+<span>Diagnostic Imaging</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant font-code-sm text-[10px]">4</span>
+</button>
+<button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary font-label-md text-label-md transition-all" data-cat="discharge">
+<span>Discharge Summaries</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant font-code-sm text-[10px]">2</span>
+</button>
+<button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary font-label-md text-label-md transition-all" data-cat="consult">
+<span>Consultation</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant font-code-sm text-[10px]">3</span>
+</button>
+<button class="cat-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary font-label-md text-label-md transition-all" data-cat="other">
+<span>Other Docs</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant font-code-sm text-[10px]">2</span>
+</button>
+</div>
+</div>
+<!-- Filter & Control Sub-bar -->
+<div class="px-margin pb-space-sm flex items-center justify-between gap-2 text-on-surface-variant">
+<div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+<!-- Time Range Dropdown Simulator -->
+<button class="flex items-center gap-1 px-2.5 py-1.5 rounded bg-surface-container text-on-surface font-label-md text-label-md shadow-xs active:bg-surface-container-high" id="dateRangeBtn">
+<span class="material-symbols-outlined text-[16px] text-secondary">date_range</span>
+<span class="truncate">Last 6 Months</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<!-- Sort Order -->
+<button class="flex items-center gap-1 px-2.5 py-1.5 rounded bg-surface-container text-on-surface font-label-md text-label-md shadow-xs active:bg-surface-container-high" id="sortOrderBtn">
+<span class="material-symbols-outlined text-[16px]">sort</span>
+<span class="truncate">Most Recent</span>
+</button>
+</div>
+<!-- Verified Only Toggle -->
+<label class="flex items-center gap-1.5 cursor-pointer shrink-0 select-none">
+<span class="font-code-sm text-[11px] font-medium text-on-surface-variant uppercase">Verified</span>
+<div class="relative">
+<input class="sr-only peer" id="verifiedToggle" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-variant rounded-full peer peer-checked:bg-secondary transition-colors"></div>
+<div class="dot absolute left-0.5 top-0.5 bg-surface-container-lowest w-4 h-4 rounded-full transition-transform peer-checked:translate-x-4 shadow-sm"></div>
+</div>
+</label>
+</div>
+<!-- Active Criteria Indicator Strip -->
+<div class="px-margin pb-space-sm flex items-center justify-between text-on-surface-variant font-code-sm text-[11px]">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span id="filteredCountLabel">Showing 4 high-assurance cryptographic records</span>
+</div>
+<button class="text-secondary font-semibold hover:underline flex items-center gap-0.5" id="toggleEmptySimulator">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+<span>Simulate Zero State</span>
+</button>
+</div>
+<!-- Record Feed Cards Container -->
+<div class="flex flex-col gap-space-sm px-margin" id="recordsFeedContainer">
+<!-- Card 1: Comprehensive Metabolic Panel (Lab Reports) -->
+<article class="record-item bg-surface-container-lowest rounded-lg p-space-md shadow-sm transition-all" data-category="lab" data-verified="pending">
+<div class="flex items-start justify-between gap-space-sm pb-2">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-low w-fit text-primary font-code-sm text-[10px] tracking-wide uppercase font-semibold">
+<span class="material-symbols-outlined text-[13px] text-secondary">biotech</span>
+<span>Laboratory Report • LOINC 24323-8</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-primary tracking-tight truncate">Comprehensive Metabolic Panel (CMP-14)</h2>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-error-container text-on-error-container font-code-sm text-[10px] font-bold uppercase shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+          Pending Attestation
+        </span>
+</div>
+<!-- Provenance & Facility -->
+<div class="bg-surface-container-low rounded p-2.5 my-2 flex flex-col gap-1.5 font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex items-center justify-between flex-wrap gap-1">
+<div class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px] text-secondary">domain</span>
+<span>Northwestern Memorial Hospital Pathology Lab</span>
+</div>
+<span class="font-code-sm text-[11px] text-on-surface-variant">Dr. Sarah Jenkins, MD</span>
+</div>
+<div class="flex items-center justify-between text-[11px] font-code-sm pt-1">
+<span class="text-on-surface-variant">Issued: <strong class="text-primary font-medium">Oct 28, 2024</strong></span>
+<span class="text-on-surface-variant">Uploaded: <strong class="text-primary font-medium">Oct 29, 2024 • 09:14 AM</strong></span>
+<span class="text-secondary font-medium">PDF • 1.8 MB</span>
+</div>
+</div>
+<!-- Clinical Quick Summary Pill Matrix -->
+<div class="py-1">
+<p class="font-code-sm text-[11px] text-on-surface-variant uppercase tracking-wider mb-1.5 font-semibold">Normalized Interval Panel Summary</p>
+<div class="grid grid-cols-2 gap-1.5 text-[11px] font-body-sm">
+<div class="bg-surface-container rounded p-1.5 flex items-center justify-between">
+<span class="text-on-surface-variant">Sodium [Na+]</span>
+<span class="font-code-sm font-semibold text-primary">139 mmol/L <span class="text-on-tertiary-container text-[9px]">● OK</span></span>
+</div>
+<div class="bg-surface-container rounded p-1.5 flex items-center justify-between">
+<span class="text-on-surface-variant">Potassium [K+]</span>
+<span class="font-code-sm font-semibold text-primary">4.2 mmol/L <span class="text-on-tertiary-container text-[9px]">● OK</span></span>
+</div>
+<div class="bg-surface-container rounded p-1.5 flex items-center justify-between">
+<span class="text-on-surface-variant">Fasting Glucose</span>
+<span class="font-code-sm font-semibold text-primary">94 mg/dL <span class="text-on-tertiary-container text-[9px]">● OK</span></span>
+</div>
+<div class="bg-surface-container rounded p-1.5 flex items-center justify-between">
+<span class="text-on-surface-variant">Serum Creatinine</span>
+<span class="font-code-sm font-semibold text-primary">0.91 mg/dL <span class="text-on-tertiary-container text-[9px]">● OK</span></span>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-3 mt-2 flex items-center justify-between gap-2">
+<button class="h-9 px-3 rounded bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 active:bg-primary-container">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>View Details &amp; Preview</span>
+</button>
+<div class="flex items-center gap-1">
+<button aria-label="Download Document" class="w-9 h-9 rounded bg-surface-container flex items-center justify-center text-primary active:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button aria-label="Share Cryptographic Link" class="w-9 h-9 rounded bg-surface-container flex items-center justify-center text-primary active:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</button>
+<button aria-label="Options" class="w-9 h-9 rounded bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-error active:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 2: Chest X-Ray 2-View (Diagnostic Imaging) -->
+<article class="record-item bg-surface-container-lowest rounded-lg p-space-md shadow-sm transition-all" data-category="imaging" data-verified="verified">
+<div class="flex items-start justify-between gap-space-sm pb-2">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-low w-fit text-primary font-code-sm text-[10px] tracking-wide uppercase font-semibold">
+<span class="material-symbols-outlined text-[13px] text-secondary">radiology</span>
+<span>Diagnostic Imaging • DICOM / PACS</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-primary tracking-tight truncate">Chest X-Ray 2-View (PA and Lateral)</h2>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-code-sm text-[10px] font-bold uppercase shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+          Hash Registered
+        </span>
+</div>
+<!-- Provenance & Facility -->
+<div class="bg-surface-container-low rounded p-2.5 my-2 flex flex-col gap-1 font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex items-center justify-between flex-wrap gap-1">
+<div class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px] text-secondary">local_hospital</span>
+<span>Advanced Imaging Center • Room RAD-3</span>
+</div>
+<span class="font-code-sm text-[11px] text-on-surface-variant">Dr. Kevin Vance, Radiologist</span>
+</div>
+<div class="flex items-center justify-between text-[11px] font-code-sm pt-1">
+<span class="text-on-surface-variant">Acquired: <strong class="text-primary font-medium">Sep 12, 2024</strong></span>
+<span class="text-on-surface-variant">Uploaded: <strong class="text-primary font-medium">Sep 12, 2024 • 14:30</strong></span>
+<span class="text-secondary font-medium">DICOM + PDF • 14.2 MB</span>
+</div>
+</div>
+<!-- Thumbnail Preview & Radiology Viewport Snippet -->
+<div class="relative rounded overflow-hidden bg-primary my-2 flex items-center justify-center h-28">
+<img class="w-full h-full object-cover opacity-80" data-alt="Monochrome clinical chest radiograph X-ray scan showing clear lung fields, bilateral costophrenic angles, and normal cardiac silhouette on high-contrast digital medical display." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIB1o1NDFFh4-ihWIo9gdi9v65cJu1afIGEDzCpwfB-V437VWFuiTP_pePiIyGqrLEf-dfqGsbkv7RflYRe5BNMbKPMlUp8hrskjUDlmd8K12fqJLeeuxiKDb1qIk4BXKblAAWaNtxdhZKMUNfzn4-8VqinU1SMWD0_amRNFeOFwT_hHjEAKNnmrY1kkULTz2mus4sW_vK-5WycyS90alfRFe18dd9HGgUV3ALEH4znANnNP78irKvyw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent flex items-end justify-between p-2">
+<div class="flex items-center gap-1.5 text-on-primary">
+<span class="material-symbols-outlined text-[16px] text-secondary-fixed">layers</span>
+<span class="font-code-sm text-[10px] uppercase">Series 001 • 2 Frames (PA/LAT)</span>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-surface/20 text-on-primary font-code-sm text-[10px] backdrop-blur-xs">16-bit Grayscale</span>
+</div>
+</div>
+<!-- Diagnostic Impression Snippet -->
+<div class="bg-surface-container rounded p-2 text-[12px] font-body-sm text-on-surface mb-2">
+<span class="font-semibold text-primary">Radiology Impression:</span> No acute focal consolidation, pneumothorax, or large pleural effusion. Cardiomediastinal silhouette normal.
+      </div>
+<!-- Action Footer -->
+<div class="pt-2 flex items-center justify-between gap-2">
+<button class="h-9 px-3 rounded bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 active:bg-primary-container">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Open DICOM Viewer</span>
+</button>
+<div class="flex items-center gap-1">
+<button class="h-9 px-2.5 rounded bg-surface-container flex items-center gap-1 text-primary font-label-md text-label-md active:bg-surface-container-high">
+<span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+<span>Report</span>
+</button>
+<button aria-label="More Actions" class="w-9 h-9 rounded bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary active:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 3: Lisinopril 10mg PO Daily (Prescriptions) -->
+<article class="record-item bg-surface-container-lowest rounded-lg p-space-md shadow-sm transition-all" data-category="prescription" data-verified="verified">
+<div class="flex items-start justify-between gap-space-sm pb-2">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-low w-fit text-primary font-code-sm text-[10px] tracking-wide uppercase font-semibold">
+<span class="material-symbols-outlined text-[13px] text-secondary">medication</span>
+<span>Prescription • RxNorm #409121</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-primary tracking-tight truncate">Lisinopril 10mg Oral Tablet Daily</h2>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-tertiary-container text-on-tertiary-container font-code-sm text-[10px] font-bold uppercase shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-on-tertiary-container"></span>
+          Surescripts Attested
+        </span>
+</div>
+<!-- Provenance & Pharmacy -->
+<div class="bg-surface-container-low rounded p-2.5 my-2 flex flex-col gap-1.5 font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex items-center justify-between flex-wrap gap-1">
+<div class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px] text-secondary">medical_services</span>
+<span>Metro Health Cardiology Clinic</span>
+</div>
+<span class="font-code-sm text-[11px] text-on-surface-variant">Dr. Marcus Chen, FACC</span>
+</div>
+<div class="flex items-center gap-1 text-[12px] text-primary">
+<span class="material-symbols-outlined text-[15px] text-on-surface-variant">local_pharmacy</span>
+<span>Dispensing: <strong>Walgreens Pharmacy #4912</strong> (1200 N Michigan Ave)</span>
+</div>
+<div class="flex items-center justify-between text-[11px] font-code-sm pt-1">
+<span class="text-on-surface-variant">Prescribed: <strong class="text-primary font-medium">Oct 04, 2024</strong></span>
+<span class="text-on-surface-variant">Refills Left: <strong class="text-secondary font-bold">3 of 3</strong></span>
+<span class="text-secondary font-medium">FHIR JSON • 140 KB</span>
+</div>
+</div>
+<!-- Dosage Directive Highlight -->
+<div class="p-2.5 rounded bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">schedule</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Sig: Take 1 tablet daily by mouth every morning for blood pressure.</span>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-3 mt-2 flex items-center justify-between gap-2">
+<button class="h-9 px-3 rounded bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 active:bg-primary-container">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span>View Details</span>
+</button>
+<div class="flex items-center gap-1">
+<button class="h-9 px-3 rounded bg-surface-container-high text-primary font-label-md text-label-md flex items-center gap-1.5 active:bg-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-secondary">autorenew</span>
+<span>Refill Request</span>
+</button>
+<button aria-label="More Actions" class="w-9 h-9 rounded bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary active:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 4: Inpatient Cardiac Care Discharge Summary (Hospital Discharge Summaries) -->
+<article class="record-item bg-surface-container-lowest rounded-lg p-space-md shadow-sm transition-all" data-category="discharge" data-verified="verified">
+<div class="flex items-start justify-between gap-space-sm pb-2">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-low w-fit text-primary font-code-sm text-[10px] tracking-wide uppercase font-semibold">
+<span class="material-symbols-outlined text-[13px] text-secondary">assignment</span>
+<span>Discharge Summary • SNOMED CT 371530004</span>
+</div>
+<h2 class="font-title-sm text-title-sm text-primary tracking-tight truncate">Inpatient Cardiac Care Discharge Summary</h2>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-code-sm text-[10px] font-bold uppercase shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+          HL7 FHIR R4 Compliant
+        </span>
+</div>
+<!-- Provenance & Facility -->
+<div class="bg-surface-container-low rounded p-2.5 my-2 flex flex-col gap-1.5 font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex items-center justify-between flex-wrap gap-1">
+<div class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px] text-secondary">apartment</span>
+<span>St. Jude Medical Center • Inpatient Ward 4B</span>
+</div>
+<span class="font-code-sm text-[11px] text-on-surface-variant">Attending: Dr. Ronald Kelly, MD</span>
+</div>
+<div class="flex items-center justify-between text-[11px] font-code-sm pt-1">
+<span class="text-on-surface-variant">Discharge: <strong class="text-primary font-medium">Jun 14, 2024</strong></span>
+<span class="text-on-surface-variant">Uploaded: <strong class="text-primary font-medium">Jun 15, 2024</strong></span>
+<span class="text-secondary font-medium">Structured CDA • 4.6 MB</span>
+</div>
+</div>
+<!-- Clinical Diagnostic Code Metadata -->
+<div class="p-2 rounded bg-surface-container my-1 text-on-surface font-body-sm text-[12px] flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[10px] px-1.5 py-0.2 rounded bg-surface-container-highest text-primary font-semibold">ICD-10 I10</span>
+<span class="truncate">Essential (primary) hypertension, resolved post-observation.</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[10px] px-1.5 py-0.2 rounded bg-surface-container-highest text-primary font-semibold">SNOMED 42343007</span>
+<span class="truncate">Congestive condition ruled out via echocardiography.</span>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="pt-3 mt-2 flex items-center justify-between gap-2">
+<button class="h-9 px-3 rounded bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 active:bg-primary-container">
+<span class="material-symbols-outlined text-[16px]">description</span>
+<span>View Full Summary</span>
+</button>
+<div class="flex items-center gap-1">
+<button aria-label="Download Document" class="w-9 h-9 rounded bg-surface-container flex items-center justify-center text-primary active:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button aria-label="More Actions" class="w-9 h-9 rounded bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-primary active:bg-surface-container-high">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+</div>
+<!-- Simulated Zero-State / Empty Notice (Hidden by Default, Toggled via Simulator or Empty Query) -->
+<div class="hidden px-margin py-space-md" id="emptyNoticeSection">
+<div class="bg-surface-container-lowest rounded-lg p-space-lg text-center flex flex-col items-center justify-center shadow-sm">
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-space-sm">
+<span class="material-symbols-outlined text-secondary text-[36px]">folder_off</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary tracking-tight mb-1">No records found</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs mb-space-md">
+        No synthetic health records match your current filter parameters or search query.
+      </p>
+<!-- Suggestions Card -->
+<div class="w-full bg-surface-container-low rounded p-space-sm text-left mb-space-md text-body-sm text-on-surface-variant flex flex-col gap-1.5">
+<span class="font-code-sm text-[11px] uppercase font-bold text-primary">Suggestions to locate records:</span>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Switch category filter to 'All Records (24)'</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Disable the 'Verified Only' toggle switch</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Upload an external HL7 FHIR or PDF record below</span>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row w-full gap-2">
+<button class="flex-1 h-11 rounded bg-surface-container-high text-primary font-label-md text-label-md flex items-center justify-center gap-1.5 active:bg-surface-variant" id="resetFiltersBtn">
+<span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+<span>Clear All Filters</span>
+</button>
+<button class="flex-1 h-11 rounded bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm active:bg-primary-container" id="emptyUploadBtn">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Upload Document</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Regulatory Attestation Card -->
+<div class="px-margin pt-space-md pb-space-sm">
+<div class="bg-surface-container-low rounded-lg p-space-sm flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[22px] shrink-0 mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm font-bold text-primary uppercase">HIPAA Security Standard • End-to-End Cryptography</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+          Local patient vault encrypted via AES-256-GCM. Remote clinical attestation records are cross-validated against SMART on FHIR endpoints.
+        </span>
+</div>
+</div>
+</div>
+<!-- Bottom Floating Action Bar for In-Field Quick Capture -->
+<div class="px-margin pt-space-xs pb-space-lg">
+<button class="w-full h-12 rounded bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 shadow-md active:bg-primary-container" id="bottomFabBtn">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span class="font-semibold tracking-wide">Upload New Health Document</span>
+<span class="font-code-sm text-[11px] px-2 py-0.5 rounded bg-surface/20 text-on-primary">FHIR / PDF / DICOM</span>
+</button>
+</div>
+</div>
+<script>
+  (function() {
+    const searchInput = document.getElementById('recordSearchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const categoryChips = document.querySelectorAll('.cat-pill');
+    const verifiedToggle = document.getElementById('verifiedToggle');
+    const feedContainer = document.getElementById('recordsFeedContainer');
+    const emptyNotice = document.getElementById('emptyNoticeSection');
+    const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+    const toggleEmptySimulator = document.getElementById('toggleEmptySimulator');
+    const filteredCountLabel = document.getElementById('filteredCountLabel');
+    const dateRangeBtn = document.getElementById('dateRangeBtn');
+    const sortOrderBtn = document.getElementById('sortOrderBtn');
+
+    let currentCategory = 'all';
+    let simulationActive = false;
+
+    function applyFilters() {
+      if (simulationActive) {
+        feedContainer.classList.add('hidden');
+        emptyNotice.classList.remove('hidden');
+        filteredCountLabel.textContent = 'Showing 0 matching records (Simulator Active)';
+        return;
+      }
+
+      const query = (searchInput.value || '').trim().toLowerCase();
+      const verifiedOnly = verifiedToggle.checked;
+      const records = feedContainer.querySelectorAll('.record-item');
+      let visibleCount = 0;
+
+      records.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        const ver = card.getAttribute('data-verified');
+        const textContent = card.innerText.toLowerCase();
+
+        const matchesCat = (currentCategory === 'all') || (cat === currentCategory);
+        const matchesQuery = query === '' || textContent.includes(query);
+        const matchesVerified = !verifiedOnly || (ver === 'verified');
+
+        if (matchesCat && matchesQuery && matchesVerified) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0) {
+        feedContainer.classList.add('hidden');
+        emptyNotice.classList.remove('hidden');
+        filteredCountLabel.textContent = 'Showing 0 matching records';
+      } else {
+        feedContainer.classList.remove('hidden');
+        emptyNotice.classList.add('hidden');
+        filteredCountLabel.textContent = `Showing ${visibleCount} filtered cryptographic record${visibleCount > 1 ? 's' : ''}`;
+      }
+    }
+
+    // Search typing listener
+    searchInput.addEventListener('input', () => {
+      if (searchInput.value.length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+      applyFilters();
+    });
+
+    // Clear Search Input
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearSearchBtn.classList.add('hidden');
+      applyFilters();
+    });
+
+    // Category Filter Selection
+    categoryChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        categoryChips.forEach(c => {
+          c.classList.remove('bg-primary', 'text-on-primary');
+          c.classList.add('bg-surface-container', 'text-on-surface-variant');
+        });
+        chip.classList.remove('bg-surface-container', 'text-on-surface-variant');
+        chip.classList.add('bg-primary', 'text-on-primary');
+        currentCategory = chip.getAttribute('data-cat');
+        applyFilters();
+      });
+    });
+
+    // Verified Toggle
+    verifiedToggle.addEventListener('change', applyFilters);
+
+    // Reset Filters Handler
+    resetFiltersBtn.addEventListener('click', () => {
+      simulationActive = false;
+      searchInput.value = '';
+      clearSearchBtn.classList.add('hidden');
+      verifiedToggle.checked = false;
+      currentCategory = 'all';
+
+      categoryChips.forEach((c, idx) => {
+        if (idx === 0) {
+          c.classList.add('bg-primary', 'text-on-primary');
+          c.classList.remove('bg-surface-container', 'text-on-surface-variant');
+        } else {
+          c.classList.remove('bg-primary', 'text-on-primary');
+          c.classList.add('bg-surface-container', 'text-on-surface-variant');
+        }
+      });
+
+      applyFilters();
+    });
+
+    // Empty State Simulator Toggle
+    toggleEmptySimulator.addEventListener('click', () => {
+      simulationActive = !simulationActive;
+      toggleEmptySimulator.querySelector('span:last-child').textContent = simulationActive 
+        ? 'Restore Active Feed' 
+        : 'Simulate Zero State';
+      applyFilters();
+    });
+
+    // Micro feedback on action buttons
+    const notifyClick = (msg) => {
+      const originalTitle = filteredCountLabel.textContent;
+      filteredCountLabel.textContent = msg;
+      setTimeout(() => {
+        filteredCountLabel.textContent = originalTitle;
+      }, 2500);
+    };
+
+    dateRangeBtn.addEventListener('click', () => notifyClick('Filter: Date range picker opened.'));
+    sortOrderBtn.addEventListener('click', () => notifyClick('Sort order toggled: Oldest first.'));
+
+    document.querySelectorAll('#topUploadBtn, #bottomFabBtn, #emptyUploadBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        notifyClick('Opening Document Scanner & FHIR Importer...');
+      });
+    });
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,20,47,0.04)]" data-active-classes="text-secondary font-semibold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-code-sm text-[10px] uppercase tracking-wider leading-none">Home</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 transition-colors text-secondary font-semibold" data-path="records" href="#"><span class="material-symbols-outlined text-[22px]">folder_shared</span><span class="font-code-sm text-[10px] uppercase tracking-wider leading-none">Records</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="vaccines" href="#"><span class="material-symbols-outlined text-[22px]">vaccines</span><span class="font-code-sm text-[10px] uppercase tracking-wider leading-none">Vaccines</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="sharing" href="#"><span class="material-symbols-outlined text-[22px]">key</span><span class="font-code-sm text-[10px] uppercase tracking-wider leading-none">Sharing</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-colors" data-path="security" href="#"><span class="material-symbols-outlined text-[22px]">verified_user</span><span class="font-code-sm text-[10px] uppercase tracking-wider leading-none">Security</span></a></div></nav></body></html>
