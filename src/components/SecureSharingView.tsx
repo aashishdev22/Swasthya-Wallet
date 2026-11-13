@@ -10,9 +10,7 @@ import {
   AuditEvent,
   MedicalRecord,
   PatientProfile,
-  initialMedicalRecords,
-  initialPatient,
-} from '../data/mockData.ts';
+} from '../types/health.ts';
 import {
   calculateShareScopeSummary,
   generateEncryptedQrPayload,
@@ -39,8 +37,8 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
   onRevokeDelegation,
   onAddDelegation,
   currentLang = 'en',
-  records = initialMedicalRecords,
-  patient = initialPatient,
+  records = [],
+  patient,
   onAddAuditLog,
   initialRecordId,
 }) => {
@@ -51,10 +49,12 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
 
   // --- SHARE VIA QR STATE ---
   const [selectedRecordId, setSelectedRecordId] = useState<string>(
-    initialRecordId || records[0]?.id || 'rec-1'
+    initialRecordId || records[0]?.id || ''
   );
   const [qrTtlMinutes, setQrTtlMinutes] = useState<number>(15);
-  const [qrPin, setQrPin] = useState<string>('584920');
+  const [qrPin, setQrPin] = useState<string>(() =>
+    String(Math.floor(100000 + Math.random() * 900000))
+  );
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [qrPayload, setQrPayload] = useState<EncryptedQrRecordPayload | null>(null);
   const [qrExpiresAt, setQrExpiresAt] = useState<Date | null>(null);
@@ -73,14 +73,25 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
     recordDetails?: EncryptedQrRecordPayload;
   } | null>(null);
 
-  // --- EXISTING MULTI-RECORD DELEGATION WIZARD STATE ---
-  const [recipient, setRecipient] = useState<string>('rajesh-sharma');
+  // --- MULTI-RECORD DELEGATION WIZARD STATE ---
+  const [recipientType, setRecipientType] = useState<'clinician' | 'hospital' | 'family'>('clinician');
+  const [customRecipientName, setCustomRecipientName] = useState<string>(
+    patient?.primaryAttending && patient.primaryAttending !== 'Not assigned'
+      ? patient.primaryAttending
+      : ''
+  );
+  const [customFacilityName, setCustomFacilityName] = useState<string>(
+    patient?.clinicalNetwork && patient.clinicalNetwork !== 'Not linked'
+      ? patient.clinicalNetwork
+      : ''
+  );
   const [purpose, setPurpose] = useState<string>('Doctor Consultation & Second Opinion');
-  const [selectedRecordIds, setSelectedRecordIds] = useState<string[]>(['rec-1', 'rec-2']);
+  const [selectedRecordIds, setSelectedRecordIds] = useState<string[]>(() =>
+    records.length > 0 ? [records[0].id] : []
+  );
   const [duration, setDuration] = useState<string>('1h');
   const [webAuthnRequired, setWebAuthnRequired] = useState<boolean>(true);
   const [oneTimeRead, setOneTimeRead] = useState<boolean>(true);
-  const [watermarkEnabled, setWatermarkEnabled] = useState<boolean>(true);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [generatedTokenModal, setGeneratedTokenModal] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -92,12 +103,12 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
 
   const selectedRecord = records.find((r) => r.id === selectedRecordId) || records[0];
 
-  // Auto-generate initial QR code on mount for immediate out-of-the-box readiness
+  // Auto-generate initial QR code when records are available
   useEffect(() => {
     if (!qrDataUrl && selectedRecord) {
       handleGenerateQr(initialRecordId || selectedRecord.id);
     }
-  }, []);
+  }, [records.length]);
 
   useEffect(() => {
     if (initialRecordId && initialRecordId !== selectedRecordId) {
@@ -148,8 +159,8 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
 
     const { payload, qrPayloadString, expiresAt, ttlSeconds } = generateEncryptedQrPayload({
       record: rec,
-      patientName: patient?.name || 'Aarav Sharma',
-      abhaId: patient?.synthMrn || '14-8842-9914-2024',
+      patientName: patient?.name || 'Citizen',
+      abhaId: patient?.synthMrn || 'Not linked',
       ttlMinutes: ttl,
       pin: generatedPin,
       oneTimeRead: true,
@@ -208,15 +219,15 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
       setDoctorSimStep('result');
 
       if (result.valid) {
-        // Record audit event in ledger
+        const actorName = customRecipientName.trim() || qrPayload.issuer.clinician || 'Authorized Verifying Clinician';
         const newLog: AuditEvent = {
           id: `audit-qr-${Date.now()}`,
           title: `Temporary QR Verified: ${qrPayload.recordTitle}`,
           timestamp: new Date().toISOString(),
-          actor: 'Dr. Rajesh Sharma, MD (Apollo Hospital)',
-          clientIp: '198.51.100.24 (Apollo Clinical Gateway)',
+          actor: actorName,
+          clientIp: 'ABDM Clinical Gateway',
           statusCode: 'SUCCESS_200',
-          details: `Doctor scanned encrypted QR code #${qrPayload.sessionToken}. PIN verified. AES-256 payload decrypted.`,
+          details: `Verified encrypted QR pass #${qrPayload.sessionToken} with 6-digit PIN.`,
           sigVerified: true,
           nonce: qrPayload.encryption.nonce,
         };
@@ -224,7 +235,7 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
           onAddAuditLog(newLog);
         }
       }
-    }, 900);
+    }, 650);
   };
 
   // Download QR code image as PNG pass
@@ -253,12 +264,24 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
     );
   };
 
-  const recipientNames: Record<string, string> = {
-    'rajesh-sharma': 'Dr. Rajesh Sharma, MD (Apollo Hospital)',
-    'ananya-iyer': 'Dr. Ananya Iyer, MD (Max Healthcare)',
-    'lal-pathlabs': 'Dr. Lal PathLabs Diagnostic Intake',
-    'family-member': 'Priya Sharma (Family Caregiver)',
-  };
+  const resolvedRecipientLabel = (() => {
+    if (customRecipientName.trim()) return customRecipientName.trim();
+    if (recipientType === 'family') {
+      return patient?.emergencyContactName
+        ? `${patient.emergencyContactName} (Family Caregiver)`
+        : 'Designated Family Caregiver';
+    }
+    if (recipientType === 'hospital') {
+      return customFacilityName.trim() || 'Diagnostic / Hospital Intake Desk';
+    }
+    return patient?.primaryAttending && patient.primaryAttending !== 'Not assigned'
+      ? patient.primaryAttending
+      : 'Attending Physician';
+  })();
+
+  const resolvedFacilityLabel =
+    customFacilityName.trim() ||
+    (recipientType === 'family' ? 'Family Health Proxy Session' : 'Authorized Outpatient Facility');
 
   const durationLabels: Record<string, string> = {
     '1h': t.oneHour,
@@ -269,20 +292,26 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
   };
 
   const handleIssueToken = () => {
+    if (!resolvedRecipientLabel.trim() || selectedRecordIds.length === 0) {
+      showToast('Please enter a recipient name and select at least one record.');
+      return;
+    }
     setIsGenerating(true);
     setTimeout(() => {
       setIsGenerating(false);
       setGeneratedTokenModal(true);
 
-      const targetName = recipientNames[recipient] || 'Dr. Rajesh Sharma, MD';
+      const ttlHours = duration === '1h' ? 1 : duration === '24h' ? 24 : duration === '7d' ? 168 : 720;
       const newDel: ActiveDelegation = {
         id: `del-${Date.now()}`,
-        recipientName: targetName,
-        facility: 'Apollo Hospitals New Delhi • Outpatient Session',
-        initials: targetName.slice(0, 2).toUpperCase(),
-        expiresIn: duration === '1h' ? '59m' : duration === '24h' ? '23h' : '6d',
+        recipientName: resolvedRecipientLabel,
+        facility: resolvedFacilityLabel,
+        initials: resolvedRecipientLabel.slice(0, 2).toUpperCase(),
+        expiresIn: duration === '1h' ? '59m' : duration === '24h' ? '23h' : duration === '7d' ? '7d' : '30d',
         expiresDate: duration === '1h' ? 'Today in 1 Hour' : 'Scheduled Window',
+        expiresAtIso: new Date(Date.now() + ttlHours * 3600000).toISOString(),
         scopesSummary: `${selectedRecordIds.length} SCOPED RECORDS`,
+        selectedRecordIds,
         tokenCode: `TK-${Math.floor(1000 + Math.random() * 9000)}-AUTH`,
         tokenHash:
           '0x' +
@@ -291,7 +320,7 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
         purpose,
       };
       onAddDelegation(newDel);
-    }, 800);
+    }, 500);
   };
 
   const handleRevoke = (id: string, name: string) => {
@@ -311,7 +340,7 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
 
   const consentSummary = calculateShareScopeSummary(
     selectedRecordNames,
-    recipientNames[recipient] || 'Authorized Clinician',
+    resolvedRecipientLabel,
     durationLabels[duration] || '1 Hour'
   );
 
@@ -390,69 +419,79 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
               </div>
 
               <div className="flex flex-col gap-2 max-h-[360px] overflow-y-auto pr-1">
-                {records.map((rec) => {
-                  const isSelected = rec.id === selectedRecordId;
-                  return (
-                    <div
-                      key={rec.id}
-                      onClick={() => {
-                        setSelectedRecordId(rec.id);
-                        handleGenerateQr(rec.id);
-                      }}
-                      className={`p-3 rounded-xl cursor-pointer transition-all border flex items-start gap-3 ${
-                        isSelected
-                          ? 'bg-emerald-50/70 border-emerald-500 shadow-sm ring-1 ring-emerald-500/30'
-                          : 'bg-slate-50/50 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
-                      }`}
-                    >
-                      <div className="pt-0.5">
-                        <input
-                          type="radio"
-                          name="specific-record"
-                          checked={isSelected}
-                          onChange={() => {
-                            setSelectedRecordId(rec.id);
-                            handleGenerateQr(rec.id);
-                          }}
-                          className="w-4 h-4 accent-emerald-600 cursor-pointer"
-                        />
+                {records.length === 0 ? (
+                  <div className="py-8 px-4 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-center text-xs text-slate-600">
+                    <span className="material-symbols-outlined text-[32px] text-slate-400 block mb-1">folder_off</span>
+                    <p className="font-semibold text-slate-800">No medical records uploaded yet</p>
+                    <p className="mt-0.5 text-slate-500">
+                      Upload a health report, lab test, or prescription first to generate an encrypted doctor QR pass.
+                    </p>
+                  </div>
+                ) : (
+                  records.map((rec) => {
+                    const isSelected = rec.id === selectedRecordId;
+                    return (
+                      <div
+                        key={rec.id}
+                        onClick={() => {
+                          setSelectedRecordId(rec.id);
+                          handleGenerateQr(rec.id);
+                        }}
+                        className={`p-3 rounded-xl cursor-pointer transition-all border flex items-start gap-3 ${
+                          isSelected
+                            ? 'bg-emerald-50/70 border-emerald-500 shadow-sm ring-1 ring-emerald-500/30'
+                            : 'bg-slate-50/50 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                        }`}
+                      >
+                        <div className="pt-0.5">
+                          <input
+                            type="radio"
+                            name="specific-record"
+                            checked={isSelected}
+                            onChange={() => {
+                              setSelectedRecordId(rec.id);
+                              handleGenerateQr(rec.id);
+                            }}
+                            className="w-4 h-4 accent-emerald-600 cursor-pointer"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2 flex-wrap">
+                            <span className="font-bold text-xs sm:text-sm text-slate-900 truncate">
+                              {rec.title}
+                            </span>
+                            <span
+                              className={`font-mono text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
+                                isSelected
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-slate-200 text-slate-700'
+                              }`}
+                            >
+                              {rec.code}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-slate-600 mt-1 flex-wrap">
+                            <span className="font-medium text-slate-800">{rec.hospital}</span>
+                            <span>•</span>
+                            <span>{rec.clinician}</span>
+                            <span>•</span>
+                            <span className="font-mono text-slate-500">{formatIndianDate(rec.date)}</span>
+                          </div>
+                          <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-500">
+                            <span className="flex items-center gap-1 text-emerald-700 font-medium">
+                              <span className="material-symbols-outlined text-[14px]">verified</span>
+                              <span>Tamper-Proof & Genuine</span>
+                            </span>
+                            <span>•</span>
+                            <span className="font-mono text-slate-400 truncate">
+                              SHA: {rec.sha256 ? rec.sha256.slice(0, 10) + '...' : 'Verified'}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="font-bold text-xs sm:text-sm text-slate-900 truncate">
-                            {rec.title}
-                          </span>
-                          <span
-                            className={`font-mono text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
-                              isSelected
-                                ? 'bg-emerald-600 text-white'
-                                : 'bg-slate-200 text-slate-700'
-                            }`}
-                          >
-                            {rec.code}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-slate-600 mt-1 flex-wrap">
-                          <span className="font-medium text-slate-800">{rec.hospital}</span>
-                          <span>•</span>
-                          <span>{rec.clinician}</span>
-                          <span>•</span>
-                          <span className="font-mono text-slate-500">{formatIndianDate(rec.date)}</span>
-                        </div>
-                        <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-500">
-                          <span className="flex items-center gap-1 text-emerald-700 font-medium">
-                            <span className="material-symbols-outlined text-[14px]">verified</span>
-                            <span>Tamper-Proof & Genuine</span>
-                          </span>
-                          <span>•</span>
-                          <span className="font-mono text-slate-400 truncate">
-                            SHA: {rec.sha256 ? rec.sha256.slice(0, 10) + '...' : 'Verified'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
 
@@ -775,60 +814,55 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
                 <span className="font-mono text-[10px] text-slate-500 uppercase font-medium">STEP 1 OF 4</span>
               </div>
 
-              <div className="grid grid-cols-1 gap-2.5 mb-5">
-                {[
-                  {
-                    id: 'rajesh-sharma',
-                    name: 'Dr. Rajesh Sharma, MD (Apollo Hospital)',
-                    badge: 'VERIFIED CLINICIAN',
-                    detail: 'Apollo Diagnostic & Cardiology Center, New Delhi • MCI #19827',
-                  },
-                  {
-                    id: 'ananya-iyer',
-                    name: 'Dr. Ananya Iyer, MD (Max Healthcare)',
-                    badge: 'PRIMARY ATTENDING',
-                    detail: 'Max Super Speciality Hospital, Saket • Internal Medicine',
-                  },
-                  {
-                    id: 'lal-pathlabs',
-                    name: 'Dr. Lal PathLabs Diagnostic Intake Hub',
-                    badge: 'DIRECT LAB EHR',
-                    detail: 'National Pathology Network Integration Portal',
-                  },
-                  {
-                    id: 'family-member',
-                    name: 'Priya Sharma (Family Caregiver)',
-                    badge: 'FAMILY ACCESS',
-                    detail: 'Designated emergency contact & health proxy',
-                  },
-                ].map((item) => (
-                  <label
-                    key={item.id}
-                    className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all border ${
-                      recipient === item.id
-                        ? 'bg-slate-50 border-emerald-500 shadow-xs ring-1 ring-emerald-500/30'
-                        : 'bg-white border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
+              <div className="flex flex-col gap-3 mb-5">
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'clinician', label: 'Doctor / Clinician', icon: 'stethoscope' },
+                    { id: 'hospital', label: 'Hospital / Lab', icon: 'local_hospital' },
+                    { id: 'family', label: 'Family Caregiver', icon: 'diversity_3' },
+                  ].map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setRecipientType(opt.id as 'clinician' | 'hospital' | 'family')}
+                      className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
+                        recipientType === opt.id
+                          ? 'bg-emerald-50 border-emerald-500 text-emerald-900'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[16px]">{opt.icon}</span>
+                      <span>{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      Recipient Name <span className="text-red-500">*</span>
+                    </label>
                     <input
-                      type="radio"
-                      name="recipient"
-                      value={item.id}
-                      checked={recipient === item.id}
-                      onChange={() => setRecipient(item.id)}
-                      className="mt-1 accent-emerald-600"
+                      type="text"
+                      value={customRecipientName}
+                      onChange={(e) => setCustomRecipientName(e.target.value)}
+                      placeholder="e.g. Dr. Mehta or Family Member"
+                      className="w-full h-10 px-3 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                     />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1 flex-wrap">
-                        <span className="font-semibold text-xs sm:text-sm text-slate-900">{item.name}</span>
-                        <span className="font-mono text-[10px] text-emerald-700 font-bold uppercase">
-                          {item.badge}
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-500 mt-0.5">{item.detail}</div>
-                    </div>
-                  </label>
-                ))}
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      Clinic / Hospital / Facility
+                    </label>
+                    <input
+                      type="text"
+                      value={customFacilityName}
+                      onChange={(e) => setCustomFacilityName(e.target.value)}
+                      placeholder="Hospital or diagnostic center name"
+                      className="w-full h-10 px-3 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Step 2: Purpose */}
@@ -1062,58 +1096,64 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
                 </span>
               </div>
 
-              <div className="flex flex-col gap-3">
-                {delegations.map((del) => {
-                  if (del.revoked) return null;
-
-                  return (
-                    <div
-                      key={del.id}
-                      className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-2.5 shadow-xs"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-9 h-9 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                            {del.initials}
-                          </div>
-                          <div className="min-w-0">
-                            <span className="text-xs font-bold text-slate-900 truncate block">
-                              {del.recipientName}
-                            </span>
-                            <span className="text-[11px] text-slate-500 truncate block">{del.facility}</span>
-                          </div>
-                        </div>
-                        <span className="font-mono text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0 flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[12px]">timer</span>
-                          {del.expiresIn}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-1.5 p-2 rounded-lg bg-white text-[11px] font-mono border border-slate-200">
-                        <div>
-                          <span className="text-slate-400 uppercase block text-[9px]">PURPOSE</span>
-                          <span className="text-slate-800 truncate block">{del.purpose}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-400 uppercase block text-[9px]">SCOPES</span>
-                          <span className="text-slate-800 truncate block">{del.scopesSummary}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => handleRevoke(del.id, del.recipientName)}
-                          className="flex-1 h-9 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold text-xs flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                        >
-                          <span className="material-symbols-outlined text-[15px]">block</span>
-                          <span>Revoke Access</span>
-                        </button>
-                      </div>
+                <div className="flex flex-col gap-3">
+                  {delegations.filter((d) => !d.revoked).length === 0 ? (
+                    <div className="p-4 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-center text-xs text-slate-500">
+                      No active FHIR delegations. Issue a scoped token to grant temporary access.
                     </div>
-                  );
-                })}
-              </div>
+                  ) : (
+                    delegations.map((del) => {
+                      if (del.revoked) return null;
+
+                      return (
+                        <div
+                          key={del.id}
+                          className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-2.5 shadow-xs"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-9 h-9 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                {del.initials}
+                              </div>
+                              <div className="min-w-0">
+                                <span className="text-xs font-bold text-slate-900 truncate block">
+                                  {del.recipientName}
+                                </span>
+                                <span className="text-[11px] text-slate-500 truncate block">{del.facility}</span>
+                              </div>
+                            </div>
+                            <span className="font-mono text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-700 shrink-0 flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[12px]">timer</span>
+                              {del.expiresIn}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-1.5 p-2 rounded-lg bg-white text-[11px] font-mono border border-slate-200">
+                            <div>
+                              <span className="text-slate-400 uppercase block text-[9px]">PURPOSE</span>
+                              <span className="text-slate-800 truncate block">{del.purpose}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 uppercase block text-[9px]">SCOPES</span>
+                              <span className="text-slate-800 truncate block">{del.scopesSummary}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => handleRevoke(del.id, del.recipientName)}
+                              className="flex-1 h-9 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold text-xs flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                            >
+                              <span className="material-symbols-outlined text-[15px]">block</span>
+                              <span>Revoke Access</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
             </div>
 
             {/* Sharing History & Audit Log */}
@@ -1131,22 +1171,28 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
               </div>
 
               <div className="flex flex-col gap-2.5 max-h-[300px] overflow-y-auto pr-1">
-                {auditLogs.slice(0, 4).map((log) => (
-                  <div
-                    key={log.id}
-                    className="p-3 rounded-lg bg-slate-50 text-xs border border-slate-200 flex flex-col gap-1"
-                  >
-                    <div className="flex items-center justify-between font-mono text-[10px]">
-                      <span className="text-slate-500">{formatIndianTime(log.timestamp)}</span>
-                      <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold uppercase">
-                        {log.statusCode}
-                      </span>
-                    </div>
-                    <div className="font-bold text-slate-900">{log.actor}</div>
-                    <p className="text-slate-600 text-[11px]">{log.details}</p>
-                    <span className="font-mono text-[9px] text-slate-400">IP: {log.clientIp}</span>
+                {auditLogs.length === 0 ? (
+                  <div className="p-4 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-center text-xs text-slate-500">
+                    No sharing verification events recorded yet.
                   </div>
-                ))}
+                ) : (
+                  auditLogs.slice(0, 4).map((log) => (
+                    <div
+                      key={log.id}
+                      className="p-3 rounded-lg bg-slate-50 text-xs border border-slate-200 flex flex-col gap-1"
+                    >
+                      <div className="flex items-center justify-between font-mono text-[10px]">
+                        <span className="text-slate-500">{formatIndianTime(log.timestamp)}</span>
+                        <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold uppercase">
+                          {log.statusCode}
+                        </span>
+                      </div>
+                      <div className="font-bold text-slate-900">{log.actor}</div>
+                      <p className="text-slate-600 text-[11px]">{log.details}</p>
+                      <span className="font-mono text-[9px] text-slate-400">IP: {log.clientIp}</span>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -1168,7 +1214,7 @@ export const SecureSharingView: React.FC<SecureSharingViewProps> = ({
                 <div>
                   <h3 className="font-bold text-sm text-white">Doctor Clinic Terminal Simulator</h3>
                   <span className="font-mono text-[10px] text-emerald-400">
-                    Dr. Rajesh Sharma, MD • Apollo Diagnostic Intake
+                    {resolvedRecipientLabel} • {resolvedFacilityLabel}
                   </span>
                 </div>
               </div>

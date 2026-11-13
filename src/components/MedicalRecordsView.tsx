@@ -6,7 +6,7 @@
  */
 
 import React, { useState } from 'react';
-import { MedicalRecord } from '../data/mockData.ts';
+import { MedicalRecord } from '../types/health.ts';
 import { SupportedLanguage, getTranslation } from '../utils/i18n.ts';
 import { RecordCategoryIcon } from './CategoryIcon.tsx';
 
@@ -79,9 +79,13 @@ export const MedicalRecordsView: React.FC<MedicalRecordsViewProps> = ({
         return false;
       }
 
-      // Recent Filter (e.g. within 2024)
-      if (recentOnly && !rec.date.includes('2024')) {
-        return false;
+      // Recent Filter (current year or previous year)
+      if (recentOnly) {
+        const currentYear = String(new Date().getFullYear());
+        const prevYear = String(new Date().getFullYear() - 1);
+        if (!rec.date.includes(currentYear) && !rec.date.includes(prevYear)) {
+          return false;
+        }
       }
 
       // Search Query
@@ -192,7 +196,7 @@ export const MedicalRecordsView: React.FC<MedicalRecordsViewProps> = ({
               onChange={(e) => setRecentOnly(e.target.checked)}
               className="w-4 h-4 rounded text-blue-900 focus:ring-blue-500 cursor-pointer"
             />
-            <span className="font-medium text-slate-700">Recent Records (2024)</span>
+            <span className="font-medium text-slate-700">Recent Records</span>
           </label>
 
           <div className="flex items-center gap-1.5">
@@ -211,9 +215,26 @@ export const MedicalRecordsView: React.FC<MedicalRecordsViewProps> = ({
 
       {/* Two-Column Square Grid on Mobile, Responsive to 3/4 cols on Tablet/Desktop (Problem 4 & Part 2) */}
       {filteredRecords.length === 0 ? (
-        <div className="bg-white rounded-3xl p-10 text-center border border-slate-200 text-slate-500 text-xs sm:text-sm">
-          <span className="material-symbols-outlined text-[36px] text-slate-300 mb-2 block">folder_off</span>
-          No medical records found in this category.
+        <div className="bg-white rounded-3xl p-10 text-center border border-slate-200 text-slate-500 text-xs sm:text-sm flex flex-col items-center gap-3">
+          <span className="material-symbols-outlined text-[40px] text-slate-300 block">folder_off</span>
+          <div>
+            <p className="font-semibold text-slate-700">No medical records found</p>
+            <p className="text-xs text-slate-500 mt-1">
+              {records.length === 0
+                ? 'Your personal health locker is empty. Upload a lab report, prescription, or scan to get started.'
+                : 'No records match your current category or search filter.'}
+            </p>
+          </div>
+          {records.length === 0 && (
+            <button
+              type="button"
+              onClick={onOpenUpload}
+              className="px-4 py-2 rounded-xl bg-blue-900 hover:bg-blue-800 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[16px]">upload_file</span>
+              <span>Upload First Record</span>
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">

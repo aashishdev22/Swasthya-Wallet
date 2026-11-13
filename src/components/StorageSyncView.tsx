@@ -17,7 +17,7 @@ import {
   DriveBackupMeta,
 } from '../utils/googleDrive.ts';
 import { syncHealthRecordsWithSupabase, isSupabaseConfigured } from '../utils/supabase.ts';
-import { MedicalRecord, PatientProfile } from '../data/mockData.ts';
+import { MedicalRecord, PatientProfile } from '../types/health.ts';
 import { SupportedLanguage, getTranslation } from '../utils/i18n.ts';
 
 interface StorageSyncViewProps {
@@ -43,10 +43,10 @@ export const StorageSyncView: React.FC<StorageSyncViewProps> = ({
   // IndexedDB Stats
   const [storageStats, setStorageStats] = useState<LocalStorageStats>({
     recordsCount: records.length,
-    prescriptionsCount: 2,
-    reportsCount: 4,
+    prescriptionsCount: records.filter((r) => r.category === 'prescription').length,
+    reportsCount: records.filter((r) => r.category === 'lab').length,
     pendingSyncCount: 0,
-    databaseSizeBytes: 520000,
+    databaseSizeBytes: records.length * 4096,
     lastLocalSaveTimestamp: Date.now(),
   });
 
@@ -131,7 +131,7 @@ export const StorageSyncView: React.FC<StorageSyncViewProps> = ({
   const handleSyncSupabase = async () => {
     setIsSyncingSupabase(true);
     try {
-      const res = await syncHealthRecordsWithSupabase(records, 'usr_aarav_sharma_del');
+      const res = await syncHealthRecordsWithSupabase(records, patient.id || '');
       setSupabaseSyncMessage(res.message);
     } catch (e: any) {
       setSupabaseSyncMessage(`Supabase error: ${e.message}`);

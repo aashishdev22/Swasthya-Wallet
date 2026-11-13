@@ -3,38 +3,52 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { PatientProfile } from '../data/mockData.ts';
+import React, { useState, useRef } from 'react';
+import { PatientProfile, VaccineItem } from '../types/health.ts';
 import { SupportedLanguage, getTranslation } from '../utils/i18n.ts';
 
 interface LogVaccineModalProps {
   isOpen: boolean;
   onClose: () => void;
   patient: PatientProfile;
+  onAddVaccine?: (vaccine: VaccineItem) => void;
   onSuccess?: (vaccineName: string) => void;
   currentLang?: SupportedLanguage;
 }
+
+const VACCINE_LABELS: Record<string, { name: string; fullName: string; cvx: string }> = {
+  tdap: { name: 'Tdap / Tetanus Booster', fullName: 'Tetanus, Diphtheria, Acellular Pertussis', cvx: 'CVX 115' },
+  covid: { name: 'COVID-19 Vaccine', fullName: 'SARS-CoV-2 Spike Protein Vaccine', cvx: 'CVX 313' },
+  flu: { name: 'Influenza Seasonal', fullName: 'Influenza, Seasonal Quadrivalent', cvx: 'CVX 158' },
+  hepa: { name: 'Hepatitis A', fullName: 'Hepatitis A, Adult Formulation', cvx: 'CVX 83' },
+  hepb: { name: 'Hepatitis B', fullName: 'Hepatitis B, Recombinant Vaccine', cvx: 'CVX 189' },
+  mmr: { name: 'MMR Vaccine', fullName: 'Measles, Mumps, Rubella', cvx: 'CVX 03' },
+  hpv: { name: 'HPV 9-Valent', fullName: 'Human Papillomavirus 9-Valent', cvx: 'CVX 165' },
+  typhoid: { name: 'Typhoid Conjugate', fullName: 'Typhoid Conjugate Vaccine (TCV)', cvx: 'CVX 190' },
+};
 
 export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
   isOpen,
   onClose,
   patient,
+  onAddVaccine,
   onSuccess,
   currentLang = 'en',
 }) => {
-  const t = getTranslation(currentLang);
+  const _t = getTranslation(currentLang);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [intakeMode, setIntakeMode] = useState<'manual' | 'ocr' | 'qr'>('manual');
   const [antigen, setAntigen] = useState('tdap');
   const [doseSeries, setDoseSeries] = useState('booster');
-  const [adminDate, setAdminDate] = useState('2024-11-03');
-  const [brandNdc, setBrandNdc] = useState('Tetanus Toxoid / Td Booster • Serum Institute of India');
-  const [lotNum, setLotNum] = useState('TT-9924B');
-  const [lotExp, setLotExp] = useState('10/2026');
-  const [facility, setFacility] = useState('Safdarjung Hospital CVC, New Delhi');
-  const [clinician, setClinician] = useState('Dr. K. Verma, Medical Officer');
+  const [adminDate, setAdminDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [brandNdc, setBrandNdc] = useState('');
+  const [lotNum, setLotNum] = useState('');
+  const [lotExp, setLotExp] = useState('');
+  const [facility, setFacility] = useState('');
+  const [clinician, setClinician] = useState('');
   const [adminSite, setAdminSite] = useState('left_deltoid');
   const [adminRoute, setAdminRoute] = useState('im');
-  const [showStagedFile, setShowStagedFile] = useState(true);
+  const [stagedFile, setStagedFile] = useState<{ name: string; sizeLabel: string; previewUrl?: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -48,25 +62,87 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
   const handleModeChange = (mode: 'manual' | 'ocr' | 'qr') => {
     setIntakeMode(mode);
     if (mode === 'ocr') {
-      showToast('Camera optical recognition opened. Scanning CDC card...');
+      showToast('Select your vaccine certificate photo or PDF below to attach proof.');
     } else if (mode === 'qr') {
-      showToast('SMART® Health QR scanner activated.');
+      showToast('Enter CoWIN / ABDM certificate details manually or attach file.');
+    }
+  };
+
+  const handleCertificateSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 15 * 1024 * 1024) {
+      showToast('Certificate file must be 15 MB or smaller.');
+      return;
+    }
+    const sizeLabel =
+      file.size < 1024 * 1024 ? `${(file.size / 1024).toFixed(0)} KB` : `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setStagedFile({
+          name: file.name,
+          sizeLabel,
+          previewUrl: typeof reader.result === 'string' ? reader.result : undefined,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setStagedFile({ name: file.name, sizeLabel });
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!lotNum.trim() || !facility.trim()) {
+      showToast('Please enter Lot Number and Healthcare Facility.');
+      return;
+    }
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      showToast('Immunization verified & synced to WA DOH-IIS registry.');
-      if (onSuccess) {
-        onSuccess(antigen.toUpperCase());
-      }
-      setTimeout(() => {
-        onClose();
-      }, 1200);
-    }, 1200);
+
+    const meta = VACCINE_LABELS[antigen] || {
+      name: 'Immunization Dose',
+      fullName: 'Preventive Vaccine',
+      cvx: 'CVX',
+    };
+
+    const doseLabel =
+      doseSeries === 'dose1'
+        ? 'Dose 1'
+        : doseSeries === 'dose2'
+        ? 'Dose 2'
+        : doseSeries === 'annual'
+        ? 'Annual Seasonal'
+        : 'Booster';
+    const statusLabel = doseSeries === 'booster' ? 'Booster Logged' : 'Series Complete';
+
+    const newVaccine: VaccineItem = {
+      id: `vax-${Date.now()}`,
+      title: meta.name,
+      subtitle: `${meta.fullName} • ${doseLabel}`,
+      type: 'administered',
+      priority: 'normal',
+      status: statusLabel,
+      code: meta.cvx,
+      lastDose: adminDate,
+      lot: lotNum.trim().toUpperCase(),
+      facility: facility.trim(),
+      registryState: stagedFile ? 'CoWIN Certificate Attached' : 'Citizen Self-Attested',
+      ndcCode: brandNdc.trim() || undefined,
+      clinicianSig: clinician.trim() || `${adminRoute.toUpperCase()} • ${adminSite.replace('_', ' ')}`,
+      dosesHistory: [{ dose: doseLabel, date: adminDate }],
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (onAddVaccine) {
+      onAddVaccine(newVaccine);
+    }
+    if (onSuccess) {
+      onSuccess(meta.name);
+    }
+    setIsSubmitting(false);
+    onClose();
   };
 
   return (
@@ -103,20 +179,18 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
 
         {/* Modal Scrollable Body */}
         <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
-          {/* Demo Clinical Banner */}
           <div className="bg-surface-container-high px-3 py-1.5 rounded-xl flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-2 min-w-0">
               <span className="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
               <span className="font-code-sm text-[11px] text-primary uppercase tracking-wider truncate font-semibold">
-                DEMO PATIENT DATA • FHIR R4 INGESTION
+                ABDM / COWIN IMMUNIZATION INGESTION
               </span>
             </div>
             <span className="font-code-sm text-[10px] text-on-surface-variant shrink-0 bg-surface px-1.5 py-0.5 rounded font-mono">
-              MRN {patient.mrn}
+              MRN {patient.mrn || 'UNASSIGNED'}
             </span>
           </div>
 
-          {/* Patient Context Micro-Card */}
           <div className="bg-surface-container-lowest p-3 rounded-xl shadow-xs border border-outline-variant/20 flex items-center justify-between">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-9 h-9 rounded-full bg-secondary-fixed flex items-center justify-center shrink-0">
@@ -124,19 +198,18 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
               </div>
               <div className="min-w-0">
                 <h3 className="font-semibold text-xs sm:text-sm text-primary truncate leading-tight">
-                  {patient.name}, {patient.age}Y
+                  {patient.name}{patient.age ? `, ${patient.age}Y` : ''}
                 </h3>
                 <p className="font-body-sm text-[11px] text-on-surface-variant truncate">
-                  DOB: {patient.dob} • Primary Profile
+                  DOB: {patient.dob || 'Not provided'} • Citizen Locker
                 </p>
               </div>
             </div>
             <span className="font-code-sm text-[10px] bg-tertiary-fixed text-on-tertiary-fixed font-semibold px-2 py-0.5 rounded-lg shrink-0 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[13px]">verified</span> STAGED
+              <span className="material-symbols-outlined text-[13px]">verified</span> ACTIVE
             </span>
           </div>
 
-          {/* Intake Selector Segmented Bar */}
           <div className="bg-surface-container p-1 rounded-xl flex items-center gap-1">
             <button
               type="button"
@@ -160,7 +233,7 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
               }`}
             >
               <span className="material-symbols-outlined text-[15px]">document_scanner</span>
-              <span>Scan CDC Card</span>
+              <span>Attach Certificate</span>
             </button>
             <button
               type="button"
@@ -172,13 +245,11 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
               }`}
             >
               <span className="material-symbols-outlined text-[15px]">qr_code_scanner</span>
-              <span>SMART® QR</span>
+              <span>CoWIN QR</span>
             </button>
           </div>
 
-          {/* Form */}
           <form id="vax-form" onSubmit={handleSubmit} className="space-y-4">
-            {/* Section 1: Vaccine & Series */}
             <div className="bg-surface-container-lowest p-3.5 rounded-xl shadow-xs border border-outline-variant/20 flex flex-col gap-3">
               <div className="flex items-center justify-between pb-1 border-b border-surface-container">
                 <div className="flex items-center gap-1.5">
@@ -186,11 +257,10 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
                   <span className="font-semibold text-xs text-primary">Immunization Target</span>
                 </div>
                 <span className="font-code-sm text-[10px] text-secondary bg-surface-container-low px-2 py-0.5 rounded font-medium">
-                  HL7 CVX 115
+                  {(VACCINE_LABELS[antigen]?.cvx) || 'HL7 CVX'}
                 </span>
               </div>
 
-              {/* Vaccine Antigen Select */}
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-primary flex items-center justify-between" htmlFor="antigen-select">
                   <span>Target Vaccine / Antigen <span className="text-error">*</span></span>
@@ -204,13 +274,13 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
                     className="w-full h-10 bg-surface-container-low text-primary text-xs rounded-lg px-3 pr-8 appearance-none outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all"
                   >
                     <option value="tdap">Tdap (Tetanus, Diphtheria, Pertussis) — CVX 115</option>
-                    <option value="covid">COVID-19, mRNA Spike Protein (Updated 2024-2025) — CVX 313</option>
+                    <option value="covid">COVID-19 Vaccine — CVX 313</option>
                     <option value="flu">Influenza, Seasonal Quadrivalent — CVX 158</option>
-                    <option value="hepa">Hepatitis A, Pediatric/Adult Formulation — CVX 83</option>
-                    <option value="hepb">Hepatitis B, Recombinant (Heplisav-B) — CVX 189</option>
+                    <option value="hepa">Hepatitis A — CVX 83</option>
+                    <option value="hepb">Hepatitis B — CVX 189</option>
                     <option value="mmr">MMR (Measles, Mumps, Rubella) — CVX 03</option>
-                    <option value="hpv">HPV 9-Valent (Gardasil 9) — CVX 165</option>
-                    <option value="shingrix">Zoster Recombinant (Shingrix) — CVX 187</option>
+                    <option value="hpv">HPV 9-Valent — CVX 165</option>
+                    <option value="typhoid">Typhoid Conjugate (TCV) — CVX 190</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-2.5 top-2.5 text-outline pointer-events-none text-[18px]">
                     expand_more
@@ -218,7 +288,6 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
                 </div>
               </div>
 
-              {/* Dose Sequence Selector */}
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-primary">
                   Dose Number / Series Stage <span className="text-error">*</span>
@@ -248,27 +317,21 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
                 </div>
               </div>
 
-              {/* Date of Administration */}
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-primary" htmlFor="admin-date">
                   Administration Date <span className="text-error">*</span>
                 </label>
-                <div className="relative">
-                  <input
-                    id="admin-date"
-                    type="date"
-                    value={adminDate}
-                    onChange={(e) => setAdminDate(e.target.value)}
-                    className="w-full h-10 bg-surface-container-low text-primary text-xs rounded-lg px-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all"
-                  />
-                  <span className="material-symbols-outlined absolute right-2.5 top-2.5 text-outline pointer-events-none text-[18px]">
-                    event
-                  </span>
-                </div>
+                <input
+                  id="admin-date"
+                  type="date"
+                  value={adminDate}
+                  onChange={(e) => setAdminDate(e.target.value)}
+                  required
+                  className="w-full h-10 bg-surface-container-low text-primary text-xs rounded-lg px-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all"
+                />
               </div>
             </div>
 
-            {/* Section 2: Product & Lot Telemetry */}
             <div className="bg-surface-container-lowest p-3.5 rounded-xl shadow-xs border border-outline-variant/20 flex flex-col gap-3">
               <div className="flex items-center justify-between pb-1 border-b border-surface-container">
                 <div className="flex items-center gap-1.5">
@@ -276,19 +339,20 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
                   <span className="font-semibold text-xs text-primary">Manufacturing & Batch Detail</span>
                 </div>
                 <span className="font-code-sm text-[10px] text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded font-medium">
-                  FDA NDC
+                  CDSCO / Batch
                 </span>
               </div>
 
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-primary" htmlFor="brand-ndc">
-                  Commercial Brand & NDC
+                  Manufacturer / Commercial Brand
                 </label>
                 <input
                   id="brand-ndc"
                   type="text"
                   value={brandNdc}
                   onChange={(e) => setBrandNdc(e.target.value)}
+                  placeholder="e.g., Serum Institute of India / Bharat Biotech"
                   className="w-full h-10 bg-surface-container-low text-primary text-xs rounded-lg px-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all"
                 />
               </div>
@@ -296,20 +360,17 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-semibold text-primary" htmlFor="lot-num">
-                    Lot Number <span className="text-error">*</span>
+                    Batch / Lot Number <span className="text-error">*</span>
                   </label>
-                  <div className="relative">
-                    <input
-                      id="lot-num"
-                      type="text"
-                      value={lotNum}
-                      onChange={(e) => setLotNum(e.target.value)}
-                      className="w-full h-10 bg-surface-container-low text-primary font-code-sm text-xs uppercase rounded-lg px-3 pr-7 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all"
-                    />
-                    <span className="material-symbols-outlined absolute right-2 top-2.5 text-secondary text-[16px]">
-                      verified
-                    </span>
-                  </div>
+                  <input
+                    id="lot-num"
+                    type="text"
+                    value={lotNum}
+                    onChange={(e) => setLotNum(e.target.value)}
+                    placeholder="e.g., BATCH-042"
+                    required
+                    className="w-full h-10 bg-surface-container-low text-primary font-code-sm text-xs uppercase rounded-lg px-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all"
+                  />
                 </div>
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-semibold text-primary" htmlFor="lot-exp">
@@ -327,7 +388,6 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
               </div>
             </div>
 
-            {/* Section 3: Clinical Administration Site & Route */}
             <div className="bg-surface-container-lowest p-3.5 rounded-xl shadow-xs border border-outline-variant/20 flex flex-col gap-3">
               <div className="flex items-center justify-between pb-1 border-b border-surface-container">
                 <div className="flex items-center gap-1.5">
@@ -341,20 +401,17 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
 
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold text-primary" htmlFor="provider-loc">
-                  Healthcare Facility / Clinic <span className="text-error">*</span>
+                  Vaccination Center / Hospital <span className="text-error">*</span>
                 </label>
-                <div className="relative">
-                  <input
-                    id="provider-loc"
-                    type="text"
-                    value={facility}
-                    onChange={(e) => setFacility(e.target.value)}
-                    className="w-full h-10 bg-surface-container-low text-primary text-xs rounded-lg px-3 pr-8 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all"
-                  />
-                  <span className="material-symbols-outlined absolute right-2.5 top-2.5 text-outline pointer-events-none text-[18px]">
-                    storefront
-                  </span>
-                </div>
+                <input
+                  id="provider-loc"
+                  type="text"
+                  value={facility}
+                  onChange={(e) => setFacility(e.target.value)}
+                  placeholder="Hospital, PHC, or CVC name"
+                  required
+                  className="w-full h-10 bg-surface-container-low text-primary text-xs rounded-lg px-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all"
+                />
               </div>
 
               <div className="flex flex-col gap-1">
@@ -366,6 +423,7 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
                   type="text"
                   value={clinician}
                   onChange={(e) => setClinician(e.target.value)}
+                  placeholder="Doctor or vaccinator name"
                   className="w-full h-10 bg-surface-container-low text-primary text-xs rounded-lg px-3 outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary transition-all"
                 />
               </div>
@@ -407,7 +465,7 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
               </div>
             </div>
 
-            {/* Section 4: Document Verification Staging */}
+            {/* Supporting Certificate Proof */}
             <div className="bg-surface-container-lowest p-3.5 rounded-xl shadow-xs border border-outline-variant/20 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
@@ -415,50 +473,50 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
                   <span className="font-semibold text-xs text-primary">Supporting Certificate Proof</span>
                 </div>
                 <span className="font-code-sm text-[10px] text-secondary bg-surface-container-low px-2 py-0.5 rounded font-medium">
-                  OCR ACTIVE
+                  OPTIONAL
                 </span>
               </div>
 
-              {/* Dropzone Trigger */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,image/*"
+                onChange={handleCertificateSelect}
+                className="hidden"
+              />
+
               <div
-                onClick={() => showToast('File selector active (JPEG/PNG/PDF)')}
+                onClick={() => fileInputRef.current?.click()}
                 className="p-3 rounded-xl bg-surface-container-low flex flex-col items-center justify-center text-center gap-1.5 cursor-pointer hover:bg-surface-container transition-all border border-dashed border-outline-variant/50"
               >
                 <div className="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
                   <span className="material-symbols-outlined text-[18px]">cloud_upload</span>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-primary">Attach CDC Card, Summary, or Pharmacy Slip</p>
+                  <p className="text-xs font-semibold text-primary">Attach CoWIN Certificate or Clinic Slip</p>
                   <p className="font-body-sm text-[11px] text-on-surface-variant">PDF, JPEG, or PNG up to 15MB</p>
                 </div>
               </div>
 
-              {/* Staged Preview Card */}
-              {showStagedFile && (
+              {stagedFile && (
                 <div className="bg-surface-container p-2.5 rounded-xl flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 overflow-hidden relative border border-outline-variant/30">
-                      <img
-                        className="w-full h-full object-cover"
-                        alt="CDC Card Preview"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8SC56wEytSjeHYIBX63hm2ZIUJMrW29kteesUb6iRoJD8j4XJpUt-CAO_vvQBeuyOTZHz9TOpF_W1viVx3gU6W8zSGoyaVfT_qz0xVNo9jwTQ7e6Wc77HaXOOqaDabQ3RidwPYXsz0wZXcnDu4kBoo3sgfa2RdZfYOPzK0vxxGDqYDpKN_EF7ZB4kwBKAPaOxLhvwl4S9Kl4gr5zmdZd8s3kwvvaFxY_qoC-EBYamGw-ikrCe4JE-7A"
-                      />
+                      {stagedFile.previewUrl ? (
+                        <img className="w-full h-full object-cover" alt="Certificate preview" src={stagedFile.previewUrl} />
+                      ) : (
+                        <span className="material-symbols-outlined text-primary text-[20px]">picture_as_pdf</span>
+                      )}
                     </div>
                     <div className="min-w-0 flex flex-col">
-                      <span className="text-xs font-semibold text-primary truncate">CDC_Card_Proof_Nov2024.jpg</span>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="font-code-sm text-[10px] text-on-surface-variant">340 KB</span>
-                        <span className="w-1 h-1 rounded-full bg-outline-variant"></span>
-                        <span className="font-code-sm text-[9px] bg-tertiary-fixed text-on-tertiary-fixed px-1.5 py-0.2 rounded font-semibold flex items-center gap-0.5">
-                          <span className="material-symbols-outlined text-[10px]">done</span> Lot Matched
-                        </span>
-                      </div>
+                      <span className="text-xs font-semibold text-primary truncate">{stagedFile.name}</span>
+                      <span className="font-code-sm text-[10px] text-on-surface-variant">{stagedFile.sizeLabel}</span>
                     </div>
                   </div>
                   <button
                     type="button"
                     aria-label="Remove uploaded proof"
-                    onClick={() => setShowStagedFile(false)}
+                    onClick={() => setStagedFile(null)}
                     className="w-7 h-7 rounded-lg bg-surface hover:bg-error-container text-on-surface-variant hover:text-error flex items-center justify-center shrink-0 transition-colors"
                   >
                     <span className="material-symbols-outlined text-[16px]">close</span>
@@ -467,26 +525,10 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
               )}
             </div>
 
-            {/* Section 5: Intelligent Next-Dose Schedule Projection Engine */}
-            <div className="bg-secondary-fixed/20 p-3 rounded-xl shadow-xs border border-secondary/20 flex flex-col gap-1.5">
-              <div className="flex items-center gap-1.5 text-secondary">
-                <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
-                <h4 className="font-semibold text-xs">CDC ACIP Schedule Engine</h4>
-              </div>
-              <p className="text-xs text-on-surface leading-tight">
-                Next decennial dose projected for <strong className="text-primary font-semibold">November 2034</strong> (10-Year Interval).
-              </p>
-              <div className="bg-surface-container-lowest/80 p-1.5 px-2 rounded-lg flex items-center gap-1.5 text-on-surface-variant font-code-sm text-[10px]">
-                <span className="material-symbols-outlined text-secondary text-[14px]">rule</span>
-                <span>Algorithm: CDC_ACIP_TDAP_2024_V3. Reminders sync upon save.</span>
-              </div>
-            </div>
-
-            {/* Section 6: Attestation & Registry Cross-Check */}
             <div className="bg-surface-container-lowest p-3.5 rounded-xl shadow-xs border border-outline-variant/20 flex flex-col gap-2">
               <span className="text-xs font-semibold text-primary flex items-center gap-1">
                 <span className="material-symbols-outlined text-secondary text-[16px]">verified_user</span>
-                Legal Attestation & Registry Synchronization
+                Citizen Attestation
               </span>
               <label className="flex items-start gap-2 cursor-pointer pt-0.5">
                 <input
@@ -496,63 +538,43 @@ export const LogVaccineModal: React.FC<LogVaccineModalProps> = ({
                   className="mt-0.5 w-4 h-4 rounded accent-primary shrink-0 cursor-pointer"
                 />
                 <span className="font-body-sm text-[11px] text-on-surface leading-snug">
-                  I attest under penalty of misrepresentation that this immunization was administered by a licensed healthcare clinician as described above.
-                </span>
-              </label>
-              <label className="flex items-start gap-2 cursor-pointer pt-0.5">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="mt-0.5 w-4 h-4 rounded accent-primary shrink-0 cursor-pointer"
-                />
-                <span className="font-body-sm text-[11px] text-on-surface leading-snug">
-                  Submit cryptographic SHA-256 bundle to state registry (<strong className="text-primary">WA DOH-IIS</strong>) for cross-verification.
+                  I attest that this immunization was administered by an authorized healthcare provider as described above.
                 </span>
               </label>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex flex-col gap-2 pt-1 pb-2">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-11 bg-primary hover:bg-primary-container text-on-primary rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-md active:scale-[0.99] transition-all disabled:opacity-75"
+                className="w-full h-11 bg-primary hover:bg-primary-container text-on-primary rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-md active:scale-[0.99] transition-all disabled:opacity-75 cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
                     <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>
-                    <span>Ingesting FHIR R4 Bundle...</span>
+                    <span>Saving Immunization Record...</span>
                   </>
                 ) : (
                   <>
                     <span className="material-symbols-outlined text-[16px]">lock</span>
-                    <span>Save & Index Immunization Record</span>
+                    <span>Save Immunization Record</span>
                   </>
                 )}
               </button>
               <button
                 type="button"
-                onClick={() => showToast('Draft bundle saved to secure enclave sandbox.')}
-                className="w-full h-10 bg-surface-container-high hover:bg-surface-variant text-primary rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 active:scale-[0.99] transition-all"
-              >
-                <span className="material-symbols-outlined text-[16px]">bookmark</span>
-                <span>Save Staged Draft</span>
-              </button>
-              <button
-                type="button"
                 onClick={onClose}
-                className="w-full py-1 text-center text-xs text-on-surface-variant hover:text-error transition-colors font-medium"
+                className="w-full py-1 text-center text-xs text-on-surface-variant hover:text-error transition-colors font-medium cursor-pointer"
               >
-                Cancel & Discard Entry
+                Cancel
               </button>
             </div>
           </form>
         </div>
 
-        {/* Feedback Toast */}
         {toastMessage && (
-          <div className="absolute bottom-4 left-4 right-4 bg-primary text-on-primary px-3 py-2.5 rounded-xl shadow-xl flex items-center gap-2 z-50 animate-in fade-in slide-in-from-bottom duration-200">
-            <span className="material-symbols-outlined text-tertiary-fixed text-[20px]">verified</span>
+          <div className="absolute bottom-4 left-4 right-4 bg-primary text-on-primary px-3 py-2.5 rounded-xl shadow-xl flex items-center gap-2 z-50">
+            <span className="material-symbols-outlined text-tertiary-fixed text-[20px]">info</span>
             <span className="text-xs flex-1">{toastMessage}</span>
           </div>
         )}

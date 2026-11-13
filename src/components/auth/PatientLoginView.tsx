@@ -7,14 +7,15 @@ import React, { useState, useEffect } from 'react';
 import { AuthHeader, AuthScreenType } from './AuthHeader.tsx';
 import { AuthFooter } from './AuthFooter.tsx';
 import {
-  authenticateUser,
   detectIdentifierType,
   getRateLimitState,
   IdentifierType,
   UserAccount,
-  signInWithGoogle,
   authenticateWithBiometrics,
+  loginWithSupabaseOrLocal,
+  signInWithGoogleSupabase,
 } from '../../utils/auth.ts';
+import { isSupabaseConfigured } from '../../utils/supabase.ts';
 import { linkGoogleSignInIdentity } from '../../utils/googleDrive.ts';
 import { SupportedLanguage } from '../../utils/i18n.ts';
 
@@ -33,9 +34,9 @@ export const PatientLoginView: React.FC<PatientLoginViewProps> = ({
   currentLang = 'en',
   onSelectLang,
 }) => {
-  // Single Unified Identity Field: Username, Mobile, or Email
-  const [identifier, setIdentifier] = useState('aaravsharma');
-  const [password, setPassword] = useState('SwasthyaKey_2024!Aarav');
+  // Single Unified Identity Field: Username, Mobile, or Email (starts empty)
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
@@ -78,20 +79,6 @@ export const PatientLoginView: React.FC<PatientLoginViewProps> = ({
     return () => clearInterval(timer);
   }, [lockoutSeconds]);
 
-  // Quick autofill buttons for testing all 3 identifier formats against Aarav's account
-  const handleAutofill = (type: 'username' | 'mobile' | 'email') => {
-    setPassword('SwasthyaKey_2024!Aarav');
-    setErrorMessage(null);
-    setSuccessInfo(null);
-    if (type === 'username') {
-      setIdentifier('aaravsharma');
-    } else if (type === 'mobile') {
-      setIdentifier('9876543210');
-    } else if (type === 'email') {
-      setIdentifier('aarav.sharma@health.in');
-    }
-  };
-
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -117,7 +104,7 @@ export const PatientLoginView: React.FC<PatientLoginViewProps> = ({
     setIsLoading(true);
 
     try {
-      const result = await authenticateUser(identifier, password, rememberMe);
+      const result = await loginWithSupabaseOrLocal(identifier, password, rememberMe);
 
       if (!result.success || !result.user) {
         setIsLoading(false);
@@ -128,7 +115,6 @@ export const PatientLoginView: React.FC<PatientLoginViewProps> = ({
         return;
       }
 
-      // Successful login
       const typeLabel =
         result.identifierType === 'mobile'
           ? 'Indian Mobile (+91)'
@@ -142,46 +128,30 @@ export const PatientLoginView: React.FC<PatientLoginViewProps> = ({
       setTimeout(() => {
         setIsLoading(false);
         onSuccessLogin(result.user?.fullName, result.user);
-      }, 600);
+      }, 450);
     } catch {
       setIsLoading(false);
       setErrorMessage('A secure authentication handshake error occurred. Please try again.');
     }
   };
 
-  // Google Sign-In (OAuth 2.0 / OpenID Connect)
+  // Real Supabase Google OAuth Sign-In
   const handleGoogleSignIn = async () => {
     setErrorMessage(null);
     setSuccessInfo(null);
     setIsGoogleLoading(true);
 
     try {
-      const result = await signInWithGoogle({
-        email: 'aarav.sharma@health.in',
-        name: 'Aarav Sharma',
-        googleId: 'g_oidc_sub_aarav_sharma',
-      });
-
-      if (!result.success || !result.user) {
+      const result = await signInWithGoogleSupabase();
+      if (!result.success) {
         setIsGoogleLoading(false);
-        setErrorMessage(result.error || 'Google Sign-In failed.');
+        setErrorMessage(result.error || 'Google Sign-In requires Supabase Auth configuration.');
         return;
       }
-
-      linkGoogleSignInIdentity(result.user.googleEmail || result.user.email, result.user.fullName);
-      setSuccessInfo(
-        result.isNewUser
-          ? `Google account verified! Welcome to Swasthya Wallet, ${result.user.fullName}.`
-          : `Linked Google Sign-In authenticated! Welcome back, ${result.user.fullName}.`
-      );
-
-      setTimeout(() => {
-        setIsGoogleLoading(false);
-        onSuccessLogin(result.user?.fullName, result.user);
-      }, 600);
+      setSuccessInfo('Redirecting to Google Account verification...');
     } catch {
       setIsGoogleLoading(false);
-      setErrorMessage('Google OAuth authentication service encountered a network error.');
+      setErrorMessage('Google OAuth authentication service encountered an error.');
     }
   };
 
@@ -240,41 +210,15 @@ export const PatientLoginView: React.FC<PatientLoginViewProps> = ({
             </p>
           </div>
 
-          {/* Quick Demo Credentials Bar */}
-          <div className="bg-blue-50/70 border-b border-blue-100 px-4 py-2 text-xs">
-            <div className="flex items-center justify-between text-[11px] text-slate-600 mb-1">
-              <span className="font-semibold text-blue-900 flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">key</span>
-                Demo Account (Aarav Sharma):
+          {/* Connection Mode Notice */}
+          {!isSupabaseConfigured() && (
+            <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-[11px] text-amber-900 flex items-start gap-2">
+              <span className="material-symbols-outlined text-[16px] text-amber-700 shrink-0 mt-0.5">info</span>
+              <span>
+                Supabase environment variables are not configured. Local encrypted vault login works for accounts you register on this device.
               </span>
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                type="button"
-                onClick={() => handleAutofill('username')}
-                className="px-2 py-0.5 rounded bg-white border border-blue-200 text-blue-800 font-medium hover:bg-blue-100 transition-colors cursor-pointer text-[11px]"
-                title="Fill Username 'aaravsharma'"
-              >
-                Username
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAutofill('mobile')}
-                className="px-2 py-0.5 rounded bg-white border border-blue-200 text-blue-800 font-medium hover:bg-blue-100 transition-colors cursor-pointer text-[11px]"
-                title="Fill Mobile '9876543210'"
-              >
-                Mobile (+91)
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAutofill('email')}
-                className="px-2 py-0.5 rounded bg-white border border-blue-200 text-blue-800 font-medium hover:bg-blue-100 transition-colors cursor-pointer text-[11px]"
-                title="Fill Email 'aarav.sharma@health.in'"
-              >
-                Email ID
-              </button>
-            </div>
-          </div>
+          )}
 
           {/* Login Form */}
           <form onSubmit={handleLoginSubmit} className="p-6 sm:p-7 space-y-4">

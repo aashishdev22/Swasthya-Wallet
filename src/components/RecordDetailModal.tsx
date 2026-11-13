@@ -4,11 +4,12 @@
  */
 
 import React, { useState } from 'react';
-import { MedicalRecord } from '../data/mockData.ts';
+import { MedicalRecord, PatientProfile } from '../types/health.ts';
 import { SupportedLanguage, getTranslation, formatIndianDate } from '../utils/i18n.ts';
 
 interface RecordDetailModalProps {
   record: MedicalRecord | null;
+  patient: PatientProfile;
   onClose: () => void;
   onDeleteRecord: (id: string) => void;
   onUpdateMetadata: (id: string, newTitle: string, newCategory: string) => void;
@@ -18,6 +19,7 @@ interface RecordDetailModalProps {
 
 export const RecordDetailModal: React.FC<RecordDetailModalProps> = ({
   record,
+  patient,
   onClose,
   onDeleteRecord,
   onUpdateMetadata,
@@ -121,9 +123,9 @@ export const RecordDetailModal: React.FC<RecordDetailModalProps> = ({
   <div class="grid">
     <div>
       <div class="label">Patient Full Name</div>
-      <div class="val">Aarav Sharma</div>
+      <div class="val">${patient.name}</div>
       <div class="label" style="margin-top:8px;">ABHA Health ID</div>
-      <div class="val">14-8842-9914-2024</div>
+      <div class="val">${patient.synthMrn || 'Not linked'}</div>
     </div>
     <div>
       <div class="label">Clinical Standard & Code</div>
@@ -320,8 +322,8 @@ export const RecordDetailModal: React.FC<RecordDetailModalProps> = ({
               <div className="grid grid-cols-2 gap-3 bg-surface-container-high/40 p-3 rounded-xl text-xs border border-outline-variant/20">
                 <div>
                   <p className="font-code-sm text-[10px] text-on-surface-variant uppercase font-bold">Patient Name</p>
-                  <p className="font-bold text-sm text-primary">Aarav Sharma</p>
-                  <p className="font-code-sm text-[10px] text-on-surface-variant mt-0.5">ABHA: 14-8842-9914-2024</p>
+                  <p className="font-bold text-sm text-primary">{patient.name}</p>
+                  <p className="font-code-sm text-[10px] text-on-surface-variant mt-0.5">ABHA: {patient.synthMrn || 'Not linked'}</p>
                 </div>
                 <div>
                   <p className="font-code-sm text-[10px] text-on-surface-variant uppercase font-bold">Collection Info</p>

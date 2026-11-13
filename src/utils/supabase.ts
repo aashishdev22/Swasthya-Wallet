@@ -7,14 +7,41 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Environment variables or fallback local demo configuration
-const SUPABASE_URL = (import.meta as any).env?.VITE_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '';
+export function normalizeSupabaseUrl(rawUrl: string): string {
+  const trimmed = (rawUrl || '').trim();
+  if (!trimmed) return '';
+  try {
+    const parsed = new URL(trimmed);
+    const cleanedPath = parsed.pathname
+      .replace(/\/+(rest|auth|storage|realtime|functions)\/v\d+.*$/i, '')
+      .replace(/\/+$/, '');
+    return `${parsed.origin}${cleanedPath}`;
+  } catch {
+    return trimmed
+      .replace(/\/+(rest|auth|storage|realtime|functions)\/v\d+.*$/i, '')
+      .replace(/\/+$/, '');
+  }
+}
+
+const SUPABASE_URL = normalizeSupabaseUrl((import.meta as any).env?.VITE_SUPABASE_URL || '');
+const SUPABASE_ANON_KEY = ((import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '').trim();
 
 let supabaseInstance: SupabaseClient | null = null;
 
 export function isSupabaseConfigured(): boolean {
-  return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL.startsWith('http'));
+  return Boolean(
+    SUPABASE_URL &&
+      SUPABASE_ANON_KEY &&
+      SUPABASE_URL.startsWith('http') &&
+      !SUPABASE_URL.includes('your-project') &&
+      !SUPABASE_ANON_KEY.includes('your-supabase-anon-key') &&
+      !SUPABASE_ANON_KEY.includes('your-anon-key')
+  );
+}
+
+export function getSupabaseConfigError(): string | null {
+  if (isSupabaseConfigured()) return null;
+  return 'Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.';
 }
 
 export function getSupabaseClient(): SupabaseClient | null {
@@ -27,6 +54,7 @@ export function getSupabaseClient(): SupabaseClient | null {
         auth: {
           persistSession: true,
           autoRefreshToken: true,
+          detectSessionInUrl: true,
         },
       });
     } catch (e) {
@@ -39,6 +67,7 @@ export function getSupabaseClient(): SupabaseClient | null {
 
 export interface CloudSyncResult {
   success: boolean;
+  isConfigured: boolean;
   syncedRecordsCount: number;
   message: string;
   timestamp: string;
@@ -56,9 +85,20 @@ export async function syncHealthRecordsWithSupabase(
 
   if (!client) {
     return {
-      success: true,
-      syncedRecordsCount: records.length,
-      message: 'Supabase credentials not configured. Records preserved in Zero-Knowledge IndexedDB on device.',
+      success: false,
+      isConfigured: false,
+      syncedRecordsCount: 0,
+      message: getSupabaseConfigError() || 'Supabase credentials not configured.',
+      timestamp: now,
+    };
+  }
+
+  if (!userId) {
+    return {
+      success: false,
+      isConfigured: true,
+      syncedRecordsCount: 0,
+      message: 'Authenticated user session required for Supabase synchronization.',
       timestamp: now,
     };
   }
@@ -78,28 +118,43 @@ export async function syncHealthRecordsWithSupabase(
       sha256: r.sha256,
       file_size: r.fileSize,
       file_format: r.fileFormat,
+      file_storage_path: r.fileStoragePath || null,
+      storage_bucket: r.storageBucket || 'health-documents',
+      original_document_name: r.originalDocumentName || null,
+      uploaded_at: r.uploadedAt || null,
+      ocr_extracted_text: r.ocrExtractedText || null,
+      drive_file_id: r.driveFileId || null,
+      biomarkers: r.biomarkers || null,
+      dosage_sig: r.dosageSig || null,
+      refills_left: r.refillsLeft ?? null,
+      total_refills: r.totalRefills ?? null,
       indication: r.indication || null,
       impression: r.impression || null,
       verified: r.verified ?? true,
+      version: r.version ?? 1,
       updated_at: now,
     }));
 
-    const { error } = await client.from('health_records').upsert(payload, { onConflict: 'id' });
-    if (error) {
-      throw error;
+    if (payload.length > 0) {
+      const { error } = await client.from('health_records').upsert(payload, { onConflict: 'id' });
+      if (error) {
+        throw error;
+      }
     }
 
     return {
       success: true,
+      isConfigured: true,
       syncedRecordsCount: records.length,
-      message: `Successfully synced ${records.length} encrypted record(s) to Supabase PostgreSQL.`,
+      message: `Successfully synced ${records.length} record(s) to Supabase PostgreSQL.`,
       timestamp: now,
     };
   } catch (err: any) {
     return {
       success: false,
+      isConfigured: true,
       syncedRecordsCount: 0,
-      message: `Supabase sync error: ${err.message || 'Network error'}. Fallback to IndexedDB active.`,
+      message: `Supabase sync error: ${err?.message || 'Network or permission error'}.`,
       timestamp: now,
     };
   }
@@ -108,29 +163,43 @@ export async function syncHealthRecordsWithSupabase(
 /**
  * Save single record metadata to Supabase
  */
-export async function saveRecordToSupabase(record: any, userId: string = 'current_user'): Promise<boolean> {
+export async function saveRecordToSupabase(record: any, userId: string): Promise<boolean> {
   const client = getSupabaseClient();
-  if (!client) return true;
+  if (!client || !userId) return false;
   try {
-    const { error } = await client.from('health_records').upsert({
-      id: record.id,
-      user_id: userId,
-      title: record.title,
-      category: record.category,
-      code: record.code,
-      code_standard: record.codeStandard,
-      record_date: record.date,
-      clinician: record.clinician,
-      hospital: record.hospital,
-      integrity_status: record.integrityStatus,
-      sha256: record.sha256,
-      file_size: record.fileSize,
-      file_format: record.fileFormat,
-      indication: record.indication || null,
-      impression: record.impression || null,
-      verified: record.verified ?? true,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'id' });
+    const { error } = await client.from('health_records').upsert(
+      {
+        id: record.id,
+        user_id: userId,
+        title: record.title,
+        category: record.category,
+        code: record.code,
+        code_standard: record.codeStandard,
+        record_date: record.date,
+        clinician: record.clinician,
+        hospital: record.hospital,
+        integrity_status: record.integrityStatus,
+        sha256: record.sha256,
+        file_size: record.fileSize,
+        file_format: record.fileFormat,
+        file_storage_path: record.fileStoragePath || null,
+        storage_bucket: record.storageBucket || 'health-documents',
+        original_document_name: record.originalDocumentName || null,
+        uploaded_at: record.uploadedAt || null,
+        ocr_extracted_text: record.ocrExtractedText || null,
+        drive_file_id: record.driveFileId || null,
+        biomarkers: record.biomarkers || null,
+        dosage_sig: record.dosageSig || null,
+        refills_left: record.refillsLeft ?? null,
+        total_refills: record.totalRefills ?? null,
+        indication: record.indication || null,
+        impression: record.impression || null,
+        verified: record.verified ?? true,
+        version: record.version ?? 1,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'id' }
+    );
     return !error;
   } catch {
     return false;
@@ -142,7 +211,7 @@ export async function saveRecordToSupabase(record: any, userId: string = 'curren
  */
 export async function deleteRecordFromSupabase(recordId: string): Promise<boolean> {
   const client = getSupabaseClient();
-  if (!client) return true;
+  if (!client || !recordId) return false;
   try {
     const { error } = await client.from('health_records').delete().eq('id', recordId);
     return !error;
@@ -150,4 +219,3 @@ export async function deleteRecordFromSupabase(recordId: string): Promise<boolea
     return false;
   }
 }
-

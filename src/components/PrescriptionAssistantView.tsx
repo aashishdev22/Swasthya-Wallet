@@ -20,6 +20,16 @@ interface PrescriptionAssistantViewProps {
   onNavigateToFindMedicine: (medicineName: string, system: string) => void;
   onNavigateToAlternatives: (medicineName: string, system: string) => void;
   onAddPrescriptionRecord: (record: any) => void;
+  onSaveExtractedMedicines?: (
+    medicines: ExtractedPrescriptionItem[],
+    ocrResult: PrescriptionOcrResult,
+    healthRecordId: string
+  ) => void;
+}
+
+function buildInlineSampleRxSvg(label: string, color: string, subtitle: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="360" viewBox="0 0 600 360"><rect width="600" height="360" fill="#f8fafc"/><rect x="20" y="20" width="560" height="320" rx="16" fill="#ffffff" stroke="${color}" stroke-width="3"/><text x="45" y="75" font-family="sans-serif" font-size="26" font-weight="bold" fill="${color}">Rx • ${label}</text><text x="45" y="110" font-family="sans-serif" font-size="16" fill="#475569">${subtitle}</text><line x1="45" y1="135" x2="555" y2="135" stroke="#e2e8f0" stroke-width="2"/><rect x="45" y="160" width="440" height="16" rx="4" fill="#e2e8f0"/><rect x="45" y="195" width="380" height="16" rx="4" fill="#e2e8f0"/><rect x="45" y="230" width="410" height="16" rx="4" fill="#e2e8f0"/><text x="45" y="305" font-family="monospace" font-size="13" fill="#64748b">Swasthya Wallet OCR Sample Preview</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
 export const PrescriptionAssistantView: React.FC<PrescriptionAssistantViewProps> = ({
@@ -27,6 +37,7 @@ export const PrescriptionAssistantView: React.FC<PrescriptionAssistantViewProps>
   onNavigateToFindMedicine,
   onNavigateToAlternatives,
   onAddPrescriptionRecord,
+  onSaveExtractedMedicines,
 }) => {
   const _t = getTranslation(currentLang);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -48,13 +59,13 @@ export const PrescriptionAssistantView: React.FC<PrescriptionAssistantViewProps>
     setVerificationError(null);
     setTimeout(() => {
       let fileName = 'Sample_Rx_Allopathy.jpg';
-      let preview = 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&auto=format&fit=crop&q=60';
+      let preview = buildInlineSampleRxSvg('Allopathy Sample Rx', '#1e40af', 'Dolo 650mg • Telma 40mg');
       if (sampleType === 'ayurveda') {
         fileName = 'Ayurvedic_Vaidya_Churna_Prescription.png';
-        preview = 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&auto=format&fit=crop&q=60';
+        preview = buildInlineSampleRxSvg('Ayurveda Sample Rx', '#047857', 'Ashwagandha Churna • Triphala');
       } else if (sampleType === 'homeopathy') {
         fileName = 'Homeopathic_Remedies_30C_Prescription.jpg';
-        preview = 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=800&auto=format&fit=crop&q=60';
+        preview = buildInlineSampleRxSvg('Homeopathy Sample Rx', '#6d28d9', 'Arnica 30C • Nux Vomica 30C');
       }
 
       setSelectedFile(null);
@@ -163,6 +174,13 @@ export const PrescriptionAssistantView: React.FC<PrescriptionAssistantViewProps>
     });
 
     onAddPrescriptionRecord(newPrescriptionRecord);
+    if (onSaveExtractedMedicines) {
+      onSaveExtractedMedicines(
+        analysisResult.medicines,
+        { ...analysisResult, detectedSystem: detectedSystemOverride as any },
+        newPrescriptionRecord.id
+      );
+    }
     setSavedSuccessMessage(
       `Prescription saved to your Swasthya Wallet! Indexed under ${detectedSystemOverride.toUpperCase()}.`
     );

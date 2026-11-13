@@ -1,24 +1,39 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
+ * Swasthya Wallet - Main Citizen Dashboard
+ * Official Slogan: Digital Health Locker for Citizens
  */
 
 import React, { useState } from 'react';
-import { PatientProfile, MedicalRecord, VaccineItem, ActiveDelegation, AuditEvent } from '../data/mockData.ts';
+import {
+  ActiveDelegation,
+  AppointmentItem,
+  AuditEvent,
+  MedicalRecord,
+  PatientProfile,
+  VaccineItem,
+} from '../types/health.ts';
 import { NavTab } from './Sidebar.tsx';
 import { SupportedLanguage, getTranslation, formatIndianDate, formatIndianCurrency } from '../utils/i18n.ts';
+import { AvatarBadge } from './AvatarBadge.tsx';
 
 interface DashboardViewProps {
   patient: PatientProfile;
   records: MedicalRecord[];
   vaccines: VaccineItem[];
   delegations: ActiveDelegation[];
+  appointments?: AppointmentItem[];
   auditLogs: AuditEvent[];
+  isLoadingData?: boolean;
+  dataError?: string | null;
+  onRetryLoad?: () => void;
   isMobileShell?: boolean;
   onNavigateTab: (tab: NavTab) => void;
   onSelectRecord: (record: MedicalRecord) => void;
   onOpenUpload: () => void;
   onOpenDicomViewer: (record: MedicalRecord) => void;
+  onOpenProfilePhoto?: () => void;
   currentLang?: SupportedLanguage;
 }
 
@@ -27,18 +42,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   records,
   vaccines,
   delegations,
+  appointments = [],
   auditLogs: _auditLogs,
+  isLoadingData = false,
+  dataError = null,
+  onRetryLoad,
   isMobileShell = false,
   onNavigateTab,
   onSelectRecord,
   onOpenUpload,
   onOpenDicomViewer,
+  onOpenProfilePhoto,
   currentLang = 'en',
 }) => {
   const t = getTranslation(currentLang);
   const [tableSearch, setTableSearch] = useState('');
   const [recordTypeFilter, setRecordTypeFilter] = useState('all');
-  const [dismissedAlerts, setDismissedAlerts] = useState<string[]>([]);
 
   const filteredRecords = records.filter((rec) => {
     const matchesSearch =
@@ -51,23 +70,52 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   });
 
   const activeDelegationsCount = delegations.filter((d) => !d.revoked).length;
+  const upcomingAppointments = appointments.filter((a) => a.status === 'upcoming');
+  const nextAppointment = upcomingAppointments[0];
+
+  const emergencyDisplay = patient.emergencyContactName
+    ? patient.emergencyContactPhone
+      ? `${patient.emergencyContactName} (${patient.emergencyContactPhone})`
+      : patient.emergencyContactName
+    : 'Not set';
 
   return (
     <div className="flex flex-col w-full gap-5 pb-12">
+      {/* Error Banner with Retry */}
+      {dataError && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-start gap-2.5 min-w-0">
+            <span className="material-symbols-outlined text-[20px] text-rose-600 shrink-0">cloud_off</span>
+            <div>
+              <div className="font-bold">Could not load some cloud records</div>
+              <p className="text-rose-700 mt-0.5">{dataError}</p>
+            </div>
+          </div>
+          {onRetryLoad && (
+            <button
+              type="button"
+              onClick={onRetryLoad}
+              className="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs cursor-pointer shrink-0"
+            >
+              Retry
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Welcome & Citizen Health Card */}
       <section className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue-900 flex items-center justify-center text-white overflow-hidden shadow-xs ring-2 ring-slate-100 shrink-0">
-              <img
-                src={patient.avatarUrl}
-                alt={patient.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
-            </div>
+            <AvatarBadge
+              name={patient.name}
+              avatarUrl={patient.avatarUrl}
+              sizeClass="w-14 h-14 sm:w-16 sm:h-16"
+              textSizeClass="text-lg sm:text-xl"
+              roundedClass="rounded-2xl"
+              onClick={onOpenProfilePhoto}
+              className="ring-2 ring-slate-100 shadow-xs"
+            />
             <div>
               <div className="text-[11px] font-semibold text-blue-700 tracking-wide uppercase mb-0.5">
                 Swasthya Wallet • Digital Health Locker for Citizens
@@ -82,7 +130,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                {t.abhaId}: <span className="font-semibold text-slate-800">{patient.synthMrn}</span> • {t.age}: {patient.age} {t.years}
+                {t.abhaId}: <span className="font-semibold text-slate-800">{patient.synthMrn || 'Not linked'}</span>
+                {patient.age ? ` • ${t.age}: ${patient.age} ${t.years}` : ''}
               </p>
             </div>
           </div>
@@ -112,110 +161,131 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-100">
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60">
             <span className="text-[11px] text-slate-500 font-medium block">{t.bloodGroup}</span>
-            <span className="text-sm font-bold text-slate-900 mt-0.5 block">{patient.bloodType}</span>
+            <span className="text-sm font-bold text-slate-900 mt-0.5 block">
+              {patient.bloodType || 'Not specified'}
+            </span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60">
             <span className="text-[11px] text-slate-500 font-medium block">{t.emergencyContact}</span>
             <span className="text-xs sm:text-sm font-semibold text-slate-800 mt-0.5 truncate block">
-              Priya Sharma (+91 98765)
+              {emergencyDisplay}
             </span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60">
             <span className="text-[11px] text-slate-500 font-medium block">{t.primaryDoctor}</span>
             <span className="text-xs sm:text-sm font-semibold text-slate-800 mt-0.5 truncate block">
-              {patient.primaryAttending}
+              {patient.primaryAttending || 'Not assigned'}
             </span>
           </div>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/60">
             <span className="text-[11px] text-slate-500 font-medium block">{t.insuranceCard}</span>
             <span className="text-xs sm:text-sm font-semibold text-blue-800 mt-0.5 truncate block">
-              {patient.insurance}
+              {patient.insurance || 'Not linked'}
             </span>
           </div>
         </div>
       </section>
 
-      {/* 4 Clean Metric Summary Cards */}
+      {/* 4 Clean Metric Summary Cards (Skeleton while loading, real counts when loaded) */}
       <section className={`grid ${isMobileShell ? 'grid-cols-2 gap-3' : 'grid-cols-2 lg:grid-cols-4 gap-4'}`}>
-        {/* Card 1: Health Records */}
-        <div
-          onClick={() => onNavigateTab('medical-records')}
-          className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500">{t.activeRecordsCount}</span>
-            <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[20px]">clinical_notes</span>
+        {isLoadingData ? (
+          Array.from({ length: 4 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs animate-pulse space-y-3"
+            >
+              <div className="h-3 w-24 bg-slate-200 rounded"></div>
+              <div className="h-8 w-12 bg-slate-200 rounded"></div>
+              <div className="h-3 w-28 bg-slate-100 rounded"></div>
             </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{records.length}</div>
-            <div className="text-xs text-emerald-700 font-medium mt-1 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px]">check_circle</span>
-              <span>{t.tamperProof}</span>
+          ))
+        ) : (
+          <>
+            {/* Card 1: Health Records */}
+            <div
+              onClick={() => onNavigateTab('medical-records')}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-500">{t.activeRecordsCount}</span>
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[20px]">clinical_notes</span>
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{records.length}</div>
+                <div className="text-xs text-emerald-700 font-medium mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                  <span>{records.length > 0 ? t.tamperProof : 'Ready to upload'}</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Card 2: Vaccines */}
-        <div
-          onClick={() => onNavigateTab('vaccination-wallet')}
-          className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500">{t.vaccinesGivenCount}</span>
-            <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-800 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[20px]">vaccines</span>
+            {/* Card 2: Vaccines */}
+            <div
+              onClick={() => onNavigateTab('vaccination-wallet')}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-500">{t.vaccinesGivenCount}</span>
+                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-800 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[20px]">vaccines</span>
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{vaccines.length}</div>
+                <div className="text-xs text-purple-700 font-medium mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[14px]">verified</span>
+                  <span>{vaccines.length > 0 ? 'CoWIN Ledger' : 'No doses logged'}</span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{vaccines.length}</div>
-            <div className="text-xs text-purple-700 font-medium mt-1 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px]">verified</span>
-              <span>CoWIN Verified</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Card 3: Upcoming Visits */}
-        <div
-          onClick={() => onNavigateTab('reminders-and-appointments')}
-          className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500">{t.upcomingVisitsCount}</span>
-            <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+            {/* Card 3: Upcoming Visits */}
+            <div
+              onClick={() => onNavigateTab('reminders-and-appointments')}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-500">{t.upcomingVisitsCount}</span>
+                <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                  {upcomingAppointments.length}
+                </div>
+                <div className="text-xs text-amber-700 font-medium mt-1 flex items-center gap-1 truncate">
+                  <span className="material-symbols-outlined text-[14px]">schedule</span>
+                  <span className="truncate">
+                    {nextAppointment ? nextAppointment.title : 'None scheduled'}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">2</div>
-            <div className="text-xs text-amber-700 font-medium mt-1 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px]">schedule</span>
-              <span>Dr. Ananya Iyer ({formatIndianCurrency(600)})</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Card 4: Active Shares */}
-        <div
-          onClick={() => onNavigateTab('secure-sharing')}
-          className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500">{t.activeSharesCount}</span>
-            <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-800 flex items-center justify-center">
-              <span className="material-symbols-outlined text-[20px]">share</span>
+            {/* Card 4: Active Shares */}
+            <div
+              onClick={() => onNavigateTab('secure-sharing')}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-500">{t.activeSharesCount}</span>
+                <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-800 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[20px]">share</span>
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{activeDelegationsCount}</div>
+                <div className="text-xs text-teal-700 font-medium mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[14px]">lock</span>
+                  <span>PIN & QR Protected</span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{activeDelegationsCount}</div>
-            <div className="text-xs text-teal-700 font-medium mt-1 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px]">lock</span>
-              <span>PIN & QR Protected</span>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </section>
 
       {/* Citizen Health Locker Services Hub */}
@@ -235,7 +305,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {/* Service 1: Prescription Assistant */}
           <button
             type="button"
             onClick={() => onNavigateTab('prescription-assistant')}
@@ -250,7 +319,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </button>
 
-          {/* Service 2: Find Medicines */}
           <button
             type="button"
             onClick={() => onNavigateTab('find-medicines')}
@@ -261,11 +329,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
             <div>
               <span className="text-xs font-bold text-white block">Find Medicines</span>
-              <span className="text-[10px] text-blue-200 leading-tight block">Pharmacies & Jan Aushadhi</span>
+              <span className="text-[10px] text-blue-200 leading-tight block">My Locker & Drug Reference</span>
             </div>
           </button>
 
-          {/* Service 3: Medicine Alternatives */}
           <button
             type="button"
             onClick={() => onNavigateTab('medicine-alternatives')}
@@ -280,7 +347,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </button>
 
-          {/* Service 4: Full-Screen QR Sharing */}
           <button
             type="button"
             onClick={() => onNavigateTab('qr-sharing')}
@@ -295,7 +361,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </button>
 
-          {/* Service 5: Storage Settings & Google Drive */}
           <button
             type="button"
             onClick={() => onNavigateTab('settings')}
@@ -323,56 +388,29 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <p className="text-xs text-slate-500">{t.recordsSubtitle}</p>
               </div>
 
-              {/* Category Filter Controls */}
               <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
-                <button
-                  type="button"
-                  onClick={() => setRecordTypeFilter('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    recordTypeFilter === 'all'
-                      ? 'bg-blue-900 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {t.all}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRecordTypeFilter('lab')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    recordTypeFilter === 'lab'
-                      ? 'bg-blue-900 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {t.labTest}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRecordTypeFilter('imaging')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    recordTypeFilter === 'imaging'
-                      ? 'bg-blue-900 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {t.imagingXray}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRecordTypeFilter('prescription')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    recordTypeFilter === 'prescription'
-                      ? 'bg-blue-900 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {t.prescriptions}
-                </button>
+                {[
+                  { id: 'all', label: t.all },
+                  { id: 'lab', label: t.labTest },
+                  { id: 'imaging', label: t.imagingXray },
+                  { id: 'prescription', label: t.prescriptions },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setRecordTypeFilter(tab.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                      recordTypeFilter === tab.id
+                        ? 'bg-blue-900 text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* In-table search input */}
             <div className="pt-3 pb-2">
               <input
                 type="text"
@@ -383,11 +421,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               />
             </div>
 
-            {/* Records List Items */}
             <div className="divide-y divide-slate-100 mt-2">
-              {filteredRecords.length === 0 ? (
+              {isLoadingData ? (
+                <div className="py-8 space-y-3">
+                  <div className="h-12 rounded-xl bg-slate-100 animate-pulse"></div>
+                  <div className="h-12 rounded-xl bg-slate-100 animate-pulse"></div>
+                </div>
+              ) : records.length === 0 ? (
+                <div className="py-10 px-4 text-center flex flex-col items-center gap-2">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[26px]">folder_open</span>
+                  </div>
+                  <div className="text-sm font-bold text-slate-900">Your health locker is empty</div>
+                  <p className="text-xs text-slate-500 max-w-sm">
+                    Upload your first lab report, prescription, or radiology scan to store it securely with SHA-256 verification.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={onOpenUpload}
+                    className="mt-2 px-4 py-2 rounded-xl bg-blue-900 hover:bg-blue-800 text-white text-xs font-semibold cursor-pointer"
+                  >
+                    + Upload First Record
+                  </button>
+                </div>
+              ) : filteredRecords.length === 0 ? (
                 <div className="py-8 text-center text-xs text-slate-500">
-                  No records match your search.
+                  No records match your search or category filter.
                 </div>
               ) : (
                 filteredRecords.map((rec) => (
@@ -425,9 +484,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           {rec.clinician} • {rec.hospital}
                         </p>
                         <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
-                          <span className="font-medium text-slate-600">
-                            {formatIndianDate(rec.date)}
-                          </span>
+                          <span className="font-medium text-slate-600">{formatIndianDate(rec.date)}</span>
                           <span>·</span>
                           <span>{rec.fileFormat}</span>
                           <span>·</span>
@@ -439,7 +496,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
                     <div className="flex items-center gap-2 sm:shrink-0 self-end sm:self-center">
                       {rec.category === 'imaging' && (
                         <button
@@ -465,9 +521,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
 
-        {/* Right Column: Appointments & Reminders (4 cols) */}
+        {/* Right Column: Appointments & Quick Verify (4 cols) */}
         <div className="lg:col-span-4 flex flex-col gap-4">
-          {/* Upcoming Visits Card */}
           <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
@@ -477,65 +532,45 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigateTab('reminders-and-appointments')}
-                className="text-xs text-blue-700 font-semibold hover:underline"
+                className="text-xs text-blue-700 font-semibold hover:underline cursor-pointer"
               >
                 {t.viewDetails}
               </button>
             </div>
 
             <div className="mt-3 space-y-3">
-              {/* Visit 1 */}
-              {!dismissedAlerts.includes('dr-ananya') && (
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-xs font-bold text-slate-900 block">Dr. Ananya Iyer, MD</span>
-                      <span className="text-[11px] text-slate-500 block mt-0.5">
-                        Max Super Speciality Hospital, Saket
+              {upcomingAppointments.length === 0 ? (
+                <div className="p-4 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-center text-xs text-slate-500">
+                  No scheduled visits yet. Book a clinic consultation or diagnostic lab appointment.
+                </div>
+              ) : (
+                upcomingAppointments.slice(0, 3).map((appt) => (
+                  <div key={appt.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="text-xs font-bold text-slate-900 block truncate">{appt.title}</span>
+                        <span className="text-[11px] text-slate-500 block mt-0.5 truncate">
+                          {appt.clinicianOrFacility}
+                        </span>
+                      </div>
+                      {(() => {
+                        const parsedFee = appt.feeInr
+                          ? Number(String(appt.feeInr).replace(/[^0-9.]/g, ''))
+                          : 0;
+                        return parsedFee > 0 ? (
+                          <span className="text-xs font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md shrink-0">
+                            {formatIndianCurrency(parsedFee)}
+                          </span>
+                        ) : null;
+                      })()}
+                    </div>
+                    <div className="mt-2 text-xs text-slate-600 flex items-center justify-between">
+                      <span>
+                        {appt.scheduledDate} at {appt.scheduledTime}
                       </span>
                     </div>
-                    <span className="text-xs font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded-md">
-                      {formatIndianCurrency(600)}
-                    </span>
                   </div>
-                  <div className="mt-2 text-xs text-slate-600 flex items-center justify-between">
-                    <span>15/11/2024 at 10:30 AM IST</span>
-                    <button
-                      type="button"
-                      onClick={() => setDismissedAlerts((p) => [...p, 'dr-ananya'])}
-                      className="text-[11px] text-slate-400 hover:text-slate-700"
-                    >
-                      {t.close}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Lab Test */}
-              {!dismissedAlerts.includes('lal-path') && (
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-xs font-bold text-slate-900 block">Fasting Blood Sugar Test</span>
-                      <span className="text-[11px] text-slate-500 block mt-0.5">
-                        Dr. Lal PathLabs (Home Collection)
-                      </span>
-                    </div>
-                    <span className="text-xs font-bold text-purple-900 bg-purple-50 px-2 py-0.5 rounded-md">
-                      {formatIndianCurrency(350)}
-                    </span>
-                  </div>
-                  <div className="mt-2 text-xs text-slate-600 flex items-center justify-between">
-                    <span>16/11/2024 at 07:30 AM IST</span>
-                    <button
-                      type="button"
-                      onClick={() => setDismissedAlerts((p) => [...p, 'lal-path'])}
-                      className="text-[11px] text-slate-400 hover:text-slate-700"
-                    >
-                      {t.close}
-                    </button>
-                  </div>
-                </div>
+                ))
               )}
             </div>
 
@@ -548,15 +583,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </button>
           </div>
 
-          {/* Quick Verify Card */}
           <div className="bg-gradient-to-br from-blue-900 to-indigo-950 text-white rounded-2xl p-5 shadow-xs">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-emerald-400 text-[22px]">verified</span>
               <h3 className="font-bold text-sm">{t.verificationTitle}</h3>
             </div>
-            <p className="text-xs text-blue-200 mt-1 leading-relaxed">
-              {t.verificationSubtitle}
-            </p>
+            <p className="text-xs text-blue-200 mt-1 leading-relaxed">{t.verificationSubtitle}</p>
             <button
               type="button"
               onClick={() => onNavigateTab('document-verification')}

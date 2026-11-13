@@ -9,7 +9,7 @@ import { SupportedLanguage, SUPPORTED_LANGUAGES, getTranslation } from '../utils
 interface LandingPageViewProps {
   onGoToLogin: () => void;
   onGoToRegister: () => void;
-  onDemoLogin: () => void;
+  onDemoLogin?: () => void;
   currentLang: SupportedLanguage;
   onSelectLang: (lang: SupportedLanguage) => void;
 }
@@ -17,13 +17,12 @@ interface LandingPageViewProps {
 export const LandingPageView: React.FC<LandingPageViewProps> = ({
   onGoToLogin,
   onGoToRegister,
-  onDemoLogin,
   currentLang,
   onSelectLang,
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement>(null);
-  const t = getTranslation(currentLang);
+  const _t = getTranslation(currentLang);
   const currentLangObj = SUPPORTED_LANGUAGES.find((l) => l.code === currentLang) || SUPPORTED_LANGUAGES[0];
 
   useEffect(() => {
@@ -173,16 +172,10 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
           </button>
         </div>
 
-        {/* Quick Demo Access Bar */}
+        {/* Citizen Data Sovereignty Note */}
         <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-500">
-          <span>Looking to explore right away?</span>
-          <button
-            type="button"
-            onClick={onDemoLogin}
-            className="text-blue-600 hover:text-blue-800 font-semibold underline underline-offset-2 cursor-pointer"
-          >
-            Enter Demo Wallet (Aarav Sharma)
-          </button>
+          <span className="material-symbols-outlined text-[16px] text-emerald-600">verified_user</span>
+          <span>Every locker starts private and stores only your authenticated citizen health records.</span>
         </div>
 
         {/* 4 Feature Pillars (Minimal, Clean White Background with Blue Accents) */}

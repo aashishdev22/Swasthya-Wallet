@@ -3,11 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AuthHeader, AuthScreenType } from './AuthHeader.tsx';
 import { AuthFooter } from './AuthFooter.tsx';
 import {
-  registerUser,
+  registerWithSupabasePhoneStart,
+  verifySupabasePhoneSignupOtp,
+  resendSupabasePhoneSignupOtp,
+  getOtpResendCooldown,
+  validateOtpCode,
+  PendingPhoneRegistration,
   validateDob,
   normalizeMobile,
   validateEmail,
@@ -18,7 +23,7 @@ import {
 import { SupportedLanguage } from '../../utils/i18n.ts';
 
 interface PatientRegistrationViewProps {
-  onSuccessRegister: (userData: { name: string; email: string; username?: string }) => void;
+  onSuccessRegister: (userData: UserAccount) => void;
   onNavigate: (screen: AuthScreenType) => void;
   onReturnToPortal: () => void;
   currentLang?: SupportedLanguage;
@@ -54,7 +59,21 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [pendingOtp, setPendingOtp] = useState<PendingPhoneRegistration | null>(null);
+  const [otpInput, setOtpInput] = useState('');
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isResendingOtp, setIsResendingOtp] = useState(false);
+  const [otpStatusNotice, setOtpStatusNotice] = useState<string | null>(null);
+  const [resendCount, setResendCount] = useState(0);
+  const [lastOtpSentAt, setLastOtpSentAt] = useState<number | null>(null);
+  const [cooldownTick, setCooldownTick] = useState(0);
+  const [verifyAttempts, setVerifyAttempts] = useState(0);
   const [successAccount, setSuccessAccount] = useState<UserAccount | null>(null);
+  const [emailLinkNotice, setEmailLinkNotice] = useState<string | null>(null);
+
+  const MAX_VERIFY_ATTEMPTS = 5;
+  const MAX_RESENDS = 3;
+  const RESEND_COOLDOWN_SEC = 60;
 
   // Field touch tracking
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -62,6 +81,24 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
   const markTouched = (field: string) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
+
+  // Live cooldown ticker for Resend OTP button
+  const cooldownState = getOtpResendCooldown(
+    resendCount,
+    lastOtpSentAt,
+    Date.now(),
+    MAX_RESENDS,
+    RESEND_COOLDOWN_SEC
+  );
+
+  useEffect(() => {
+    if (!pendingOtp || !lastOtpSentAt) return;
+    if (cooldownState.secondsRemaining <= 0) return;
+    const timer = setInterval(() => {
+      setCooldownTick((t) => t + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [pendingOtp, lastOtpSentAt, cooldownState.secondsRemaining, cooldownTick]);
 
   // Live password validation
   const passStrength = validatePasswordStrength(password);
@@ -89,54 +126,38 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
     }
   };
 
-  // Quick fill sample data helper
-  const handleAutofillSample = () => {
-    setFullName('Priya Sharma');
-    setDob('24/09/1996');
-    setMobileNumber('9823456789');
-    setEmail('priya.sharma@swasthya.in');
-    setPassword('SwasthyaPass_2024!Priya');
-    setConfirmPassword('SwasthyaPass_2024!Priya');
-    setErrorMessage(null);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+    setOtpStatusNotice(null);
 
-    // 1. Full Legal Name
     if (!fullName.trim() || fullName.trim().length < 2) {
       setErrorMessage('Please enter your Full Legal Name as printed on your Aadhaar card.');
       return;
     }
 
-    // 2. Date of Birth
     const dobCheck = validateDob(dob);
     if (!dobCheck.valid) {
       setErrorMessage(dobCheck.error || 'Please enter a valid Date of Birth in DD/MM/YYYY format.');
       return;
     }
 
-    // 3. Mobile Number
     const normMob = normalizeMobile(mobileNumber);
     if (!normMob) {
       setErrorMessage('Please enter a valid Indian 10-digit mobile number (starts with 6, 7, 8, or 9).');
       return;
     }
 
-    // 4. Email Address
     if (!validateEmail(email)) {
       setErrorMessage('Please enter a valid email address.');
       return;
     }
 
-    // 5. Password
     if (!passStrength.valid) {
       setErrorMessage(`Please satisfy all password security criteria: ${passStrength.errors.join('; ')}`);
       return;
     }
 
-    // 6. Confirm Password
     if (password !== confirmPassword) {
       setErrorMessage('Passwords do not match. Please ensure both passwords match.');
       return;
@@ -145,7 +166,7 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
     setIsSubmitting(true);
 
     try {
-      const res = await registerUser({
+      const res = await registerWithSupabasePhoneStart({
         fullName,
         dob,
         mobileNumber,
@@ -155,17 +176,106 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
         enrollBiometrics,
       });
 
-      if (!res.success || !res.user) {
-        setErrorMessage(res.error || 'Registration failed. Please check your details and try again.');
+      if (!res.success || !res.pending) {
+        setErrorMessage(
+          res.error || 'Could not dispatch SMS verification OTP. Please check your details and try again.'
+        );
         setIsSubmitting(false);
         return;
       }
 
-      setSuccessAccount(res.user);
+      setPendingOtp(res.pending);
+      setOtpInput('');
+      setVerifyAttempts(0);
+      setResendCount(0);
+      setLastOtpSentAt(Date.now());
+      setOtpStatusNotice(`6-digit SMS OTP dispatched to ${res.pending.maskedPhone}.`);
       setIsSubmitting(false);
     } catch {
-      setErrorMessage('An unexpected error occurred during account creation. Please try again.');
+      setErrorMessage('An unexpected error occurred while sending SMS OTP. Please try again.');
       setIsSubmitting(false);
+    }
+  };
+
+  const handleVerifyOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pendingOtp) return;
+    setErrorMessage(null);
+    setOtpStatusNotice(null);
+
+    if (verifyAttempts >= MAX_VERIFY_ATTEMPTS) {
+      setErrorMessage('Maximum OTP verification attempts reached. Please resend a new OTP before retrying.');
+      return;
+    }
+
+    const otpCheck = validateOtpCode(otpInput);
+    if (!otpCheck.valid) {
+      setErrorMessage(otpCheck.error || 'Enter the 6-digit SMS OTP.');
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    try {
+      const res = await verifySupabasePhoneSignupOtp({
+        pending: pendingOtp,
+        otpCode: otpCheck.cleaned,
+      });
+
+      if (!res.success || !res.user) {
+        setVerifyAttempts((prev) => prev + 1);
+        setErrorMessage(res.error || 'Invalid or expired 6-digit OTP.');
+        setIsVerifyingOtp(false);
+        return;
+      }
+
+      setEmailLinkNotice(res.emailLinkNotice || null);
+      setPendingOtp(null);
+      setSuccessAccount(res.user);
+      setIsVerifyingOtp(false);
+    } catch {
+      setVerifyAttempts((prev) => prev + 1);
+      setErrorMessage('OTP verification request failed. Please try again.');
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!pendingOtp || isResendingOtp) return;
+    const check = getOtpResendCooldown(
+      resendCount,
+      lastOtpSentAt,
+      Date.now(),
+      MAX_RESENDS,
+      RESEND_COOLDOWN_SEC
+    );
+    if (check.lockedOut) {
+      setErrorMessage('Maximum SMS OTP resend limit reached (3/3). Please wait before creating a new request.');
+      return;
+    }
+    if (!check.canResend) {
+      setErrorMessage(`Please wait ${check.secondsRemaining}s before requesting another OTP.`);
+      return;
+    }
+
+    setErrorMessage(null);
+    setOtpStatusNotice(null);
+    setIsResendingOtp(true);
+
+    try {
+      const res = await resendSupabasePhoneSignupOtp(pendingOtp.e164Phone);
+      setIsResendingOtp(false);
+      if (!res.success) {
+        setErrorMessage(res.error || 'Could not resend SMS OTP.');
+        return;
+      }
+      setResendCount((prev) => prev + 1);
+      setLastOtpSentAt(Date.now());
+      setVerifyAttempts(0);
+      setOtpInput('');
+      setOtpStatusNotice(`A fresh 6-digit SMS OTP has been sent to ${pendingOtp.maskedPhone}.`);
+    } catch {
+      setIsResendingOtp(false);
+      setErrorMessage('Unable to resend SMS OTP right now. Please try again shortly.');
     }
   };
 
@@ -185,26 +295,140 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
         <div className="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           {/* Header Banner */}
           <div className="bg-blue-600 px-6 py-6 sm:px-8 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Create Swasthya Wallet</h1>
-                <p className="text-blue-100 text-xs sm:text-sm mt-1">
-                  Digital Health Locker for Citizens
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={handleAutofillSample}
-                className="text-xs bg-white/15 hover:bg-white/25 text-white font-medium px-3 py-1.5 rounded-lg border border-white/20 transition-colors cursor-pointer"
-                title="Fill sample details for quick testing"
-              >
-                Autofill Sample Data
-              </button>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Create Swasthya Wallet</h1>
+              <p className="text-blue-100 text-xs sm:text-sm mt-1">
+                Digital Health Locker for Citizens
+              </p>
             </div>
           </div>
 
-          {/* Success State / Account Created Confirmation */}
-          {successAccount ? (
+          {/* Step 2: Dedicated Mobile SMS OTP Verification Screen */}
+          {pendingOtp && !successAccount ? (
+            <form onSubmit={handleVerifyOtpSubmit} className="p-6 sm:p-8 space-y-5 animate-fadeIn">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined text-[26px]">sms</span>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900">Verify Mobile Number</h2>
+                  <p className="text-xs text-slate-600 mt-0.5">
+                    Enter the 6-digit SMS verification code sent to{' '}
+                    <strong className="font-mono text-slate-900">{pendingOtp.maskedPhone}</strong>
+                  </p>
+                </div>
+              </div>
+
+              {errorMessage && (
+                <div
+                  role="alert"
+                  className="bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm rounded-xl p-3.5 flex items-start gap-2.5 animate-fadeIn"
+                >
+                  <span className="material-symbols-outlined text-[20px] text-red-500 shrink-0">error</span>
+                  <div className="font-medium">{errorMessage}</div>
+                </div>
+              )}
+
+              {otpStatusNotice && !errorMessage && (
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs rounded-xl p-3 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[18px] text-emerald-600 shrink-0">
+                    mark_chat_read
+                  </span>
+                  <span>{otpStatusNotice}</span>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="reg-otp-input" className="block text-xs font-semibold text-slate-700">
+                    6-Digit Mobile OTP <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[11px] text-slate-500">
+                    Attempts left: {Math.max(0, MAX_VERIFY_ATTEMPTS - verifyAttempts)}/{MAX_VERIFY_ATTEMPTS}
+                  </span>
+                </div>
+                <input
+                  id="reg-otp-input"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  aria-label="6-digit SMS verification code"
+                  maxLength={6}
+                  required
+                  value={otpInput}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 6);
+                    setOtpInput(digits);
+                    if (errorMessage) setErrorMessage(null);
+                  }}
+                  placeholder="• • • • • •"
+                  className="w-full text-center tracking-[0.45em] text-xl font-mono font-bold px-4 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p className="text-[11px] text-slate-500 text-center">
+                  Your Swasthya Wallet account is created only after confirming this Supabase SMS OTP.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-1">
+                <button
+                  type="submit"
+                  disabled={isVerifyingOtp || verifyAttempts >= MAX_VERIFY_ATTEMPTS || otpInput.length !== 6}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {isVerifyingOtp ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                      <span>Verifying OTP...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-[18px]">verified</span>
+                      <span>Verify OTP</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  disabled={isResendingOtp || !cooldownState.canResend}
+                  className="sm:w-48 bg-slate-100 hover:bg-slate-200 disabled:bg-slate-50 disabled:text-slate-400 text-slate-800 font-semibold py-3 px-4 rounded-xl text-xs sm:text-sm border border-slate-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  {isResendingOtp ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-slate-400 border-t-blue-600 rounded-full animate-spin"></span>
+                      <span>Sending...</span>
+                    </>
+                  ) : cooldownState.lockedOut ? (
+                    <span>Resend Limit Reached</span>
+                  ) : !cooldownState.canResend ? (
+                    <span>Resend in {cooldownState.secondsRemaining}s</span>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-[16px]">refresh</span>
+                      <span>Resend OTP ({MAX_RESENDS - resendCount} left)</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPendingOtp(null);
+                    setErrorMessage(null);
+                    setOtpStatusNotice(null);
+                  }}
+                  className="text-slate-600 hover:text-slate-900 font-semibold flex items-center gap-1 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+                  <span>Edit Mobile Number / Details</span>
+                </button>
+                <span className="text-[11px] text-slate-400">Supabase SMS Auth</span>
+              </div>
+            </form>
+          ) : successAccount ? (
             <div className="p-6 sm:p-8 space-y-6 animate-fadeIn">
               <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
                 <span className="material-symbols-outlined text-[32px]">check_circle</span>
@@ -213,14 +437,14 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
               <div className="text-center space-y-2">
                 <h2 className="text-xl font-bold text-slate-900">Swasthya Wallet Created Successfully!</h2>
                 <p className="text-slate-600 text-sm max-w-md mx-auto">
-                  Your encrypted health locker has been provisioned. You can now log in using your assigned Username, Mobile Number, or Email Address.
+                  Your mobile number (+91 {successAccount.mobileNumber}) is verified and your encrypted health locker is active.
                 </p>
               </div>
 
               {/* Account Credentials Summary Card */}
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 space-y-3">
                 <div className="text-xs font-semibold uppercase tracking-wider text-blue-800">
-                  Your Account Details
+                  Your Verified Citizen Account
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                   <div>
@@ -234,8 +458,11 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
                     </span>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-500 block">Registered Mobile:</span>
-                    <span className="font-semibold text-slate-800">+91 {successAccount.mobileNumber}</span>
+                    <span className="text-xs text-slate-500 block">Verified Mobile:</span>
+                    <span className="font-semibold text-emerald-700 flex items-center gap-1">
+                      <span>+91 {successAccount.mobileNumber}</span>
+                      <span className="material-symbols-outlined text-[14px]">verified</span>
+                    </span>
                   </div>
                   <div>
                     <span className="text-xs text-slate-500 block">Email Address:</span>
@@ -253,16 +480,16 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
                 </div>
               </div>
 
+              {emailLinkNotice && (
+                <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900">
+                  {emailLinkNotice}
+                </div>
+              )}
+
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() =>
-                    onSuccessRegister({
-                      name: successAccount.fullName,
-                      email: successAccount.email,
-                      username: successAccount.username,
-                    })
-                  }
+                  onClick={() => onSuccessRegister(successAccount)}
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Open Swasthya Wallet</span>
@@ -317,7 +544,7 @@ export const PatientRegistrationView: React.FC<PatientRegistrationViewProps> = (
                     className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   />
                   <p className="text-[11px] text-slate-500">
-                    As printed on Aadhaar (e.g. Aarav Sharma)
+                    Exact full legal name printed on your Aadhaar card
                   </p>
                 </div>
 

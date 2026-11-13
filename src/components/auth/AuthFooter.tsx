@@ -10,9 +10,9 @@ export const AuthFooter: React.FC = () => {
     <footer className="w-full bg-white py-4 mt-auto border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
         <div className="flex items-center gap-2 text-center sm:text-left">
-          <span className="font-semibold text-slate-700">Swasthya Health Wallet</span>
+          <span className="font-semibold text-slate-700">Swasthya Wallet</span>
           <span>•</span>
-          <span>Ayushman Bharat Digital Mission (ABDM) &amp; DPDP Guidelines Compliant</span>
+          <span>Digital Health Locker for Citizens</span>
         </div>
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">

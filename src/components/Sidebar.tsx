@@ -6,8 +6,9 @@
  */
 
 import React from 'react';
-import { PatientProfile } from '../data/mockData.ts';
+import { PatientProfile } from '../types/health.ts';
 import { SupportedLanguage, getTranslation } from '../utils/i18n.ts';
+import { AvatarBadge } from './AvatarBadge.tsx';
 
 export type NavTab =
   | 'dashboard'
@@ -77,18 +78,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Active Citizen ABHA Card */}
-          <div className="mt-2.5 p-3 rounded-xl bg-white shadow-xs border border-slate-200/80">
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="text-slate-500 font-medium">{t.abhaId}</span>
-              <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded font-semibold">
-                {t.verifiedBadge}
-              </span>
+          <button
+            type="button"
+            onClick={() => onSelectTab('settings')}
+            className="mt-2.5 w-full text-left p-3 rounded-xl bg-white hover:bg-blue-50/40 shadow-xs border border-slate-200/80 transition-colors cursor-pointer flex items-center gap-2.5"
+            title="Manage Profile & Photo"
+          >
+            <AvatarBadge
+              name={patient.name}
+              avatarUrl={patient.avatarUrl}
+              sizeClass="w-10 h-10"
+              textSizeClass="text-xs"
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between text-[11px] gap-1">
+                <span className="text-slate-500 font-medium">{t.abhaId}</span>
+                <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded font-semibold">
+                  {t.verifiedBadge}
+                </span>
+              </div>
+              <div className="font-bold text-sm text-slate-900 mt-0.5 truncate">{patient.name}</div>
+              <div className="text-xs text-slate-600 mt-0.5 font-medium truncate">
+                {patient.synthMrn} • {patient.bloodType}
+              </div>
             </div>
-            <div className="font-bold text-sm text-slate-900 mt-0.5">{patient.name}</div>
-            <div className="text-xs text-slate-600 mt-0.5 font-medium">
-              {patient.synthMrn} • {patient.bloodType}
-            </div>
-          </div>
+          </button>
         </div>
 
         {/* Navigation Menu */}

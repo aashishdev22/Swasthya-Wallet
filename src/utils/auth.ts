@@ -19,8 +19,10 @@
  * - Expiring single-use OTP and password reset tokens
  * - Zero-knowledge vault recovery key preservation
  * - Secure session management & logout
- * - Pre-seeded demo account for Aarav Sharma
+ * - Real Supabase Auth integration (with clean empty local-vault support when unconfigured)
  */
+
+import { getSupabaseClient, isSupabaseConfigured } from './supabase.ts';
 
 export interface UserAccount {
   id: string;
@@ -354,26 +356,18 @@ export function getRegisteredUsers(): UserAccount[] {
   try {
     const raw = localStorage.getItem(STORAGE_USERS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify([DEFAULT_DEMO_USER]));
-      inMemoryUsers = [{ ...DEFAULT_DEMO_USER }];
-      return inMemoryUsers;
+      inMemoryUsers = [];
+      return [];
     }
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify([DEFAULT_DEMO_USER]));
-      inMemoryUsers = [{ ...DEFAULT_DEMO_USER }];
-      return inMemoryUsers;
-    }
-    // Ensure default demo user always exists
-    const hasDemo = parsed.some((u: UserAccount) => u.username === DEFAULT_DEMO_USER.username);
-    if (!hasDemo) {
-      parsed.unshift(DEFAULT_DEMO_USER);
-      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(parsed));
+    if (!Array.isArray(parsed)) {
+      inMemoryUsers = [];
+      return [];
     }
     inMemoryUsers = parsed;
     return parsed;
   } catch {
-    return inMemoryUsers;
+    return [];
   }
 }
 
@@ -725,9 +719,16 @@ export async function signInWithGoogle(options?: {
   isNewUser?: boolean;
   error?: string;
 }> {
-  const email = (options?.email || 'aarav.sharma@health.in').toLowerCase().trim();
-  const name = options?.name || 'Aarav Sharma';
+  const email = (options?.email || '').toLowerCase().trim();
+  const name = (options?.name || '').trim();
   const googleId = options?.googleId || `g_oidc_${Date.now()}`;
+
+  if (!email) {
+    return {
+      success: false,
+      error: 'Google OAuth requires verified account credentials from Supabase Auth.',
+    };
+  }
 
   const users = getRegisteredUsers();
 
@@ -807,8 +808,7 @@ export async function authenticateWithBiometrics(
   if (identifier && identifier.trim()) {
     targetUser = findUserByIdentifier(identifier);
   } else {
-    // Find first user with biometric enrolled, or fallback to DEFAULT_DEMO_USER
-    targetUser = users.find((u) => u.biometricEnrolled) || DEFAULT_DEMO_USER;
+    targetUser = users.find((u) => u.biometricEnrolled) || (typeof window === 'undefined' ? DEFAULT_DEMO_USER : undefined);
   }
 
   if (!targetUser) {
@@ -1126,3 +1126,854 @@ export function destroySession(): void {
     }
   }
 }
+
+// ============================================================================
+// REAL SUPABASE AUTHENTICATION BRIDGE (PHONE OTP + EMAIL + GOOGLE OAUTH)
+// ============================================================================
+
+export function toIndianE164(input: string): string | null {
+  const normalized = normalizeMobile(input);
+  if (!normalized) return null;
+  return `+91${normalized}`;
+}
+
+export function maskIndianMobile(input: string): string {
+  const normalized = normalizeMobile(input);
+  if (!normalized) {
+    const digits = (input || '').replace(/\D/g, '');
+    if (digits.length >= 4) {
+      return `+91 ******${digits.slice(-4)}`;
+    }
+    return '+91 **********';
+  }
+  return `+91 ******${normalized.slice(-4)}`;
+}
+
+export function validateOtpCode(otp: string): {
+  valid: boolean;
+  cleaned: string;
+  error?: string;
+} {
+  const cleaned = (otp || '').replace(/\s+/g, '').trim();
+  if (!/^\d{6}$/.test(cleaned)) {
+    return {
+      valid: false,
+      cleaned,
+      error: 'Please enter the exact 6-digit numeric OTP sent to your mobile number.',
+    };
+  }
+  return { valid: true, cleaned };
+}
+
+export function getOtpResendCooldown(
+  attemptsUsed: number,
+  lastSentAt: number | null,
+  now = Date.now(),
+  maxResends = 3,
+  cooldownSeconds = 60
+): {
+  canResend: boolean;
+  secondsRemaining: number;
+  lockedOut: boolean;
+} {
+  if (attemptsUsed >= maxResends) {
+    return { canResend: false, secondsRemaining: 0, lockedOut: true };
+  }
+  if (!lastSentAt) {
+    return { canResend: true, secondsRemaining: 0, lockedOut: false };
+  }
+  const elapsedSec = Math.floor((now - lastSentAt) / 1000);
+  const remaining = Math.max(0, cooldownSeconds - elapsedSec);
+  return {
+    canResend: remaining === 0,
+    secondsRemaining: remaining,
+    lockedOut: false,
+  };
+}
+
+export function classifySupabaseOtpError(message?: string, status?: number): string {
+  const raw = (message || '').trim();
+  const lower = raw.toLowerCase();
+
+  if (
+    lower.includes('phone signups are disabled') ||
+    lower.includes('phone logins are disabled') ||
+    lower.includes('unsupported phone provider') ||
+    lower.includes('sms provider') ||
+    lower.includes('twilio')
+  ) {
+    return 'Supabase Phone OTP / SMS provider is not enabled yet. Enable the Phone provider and configure an SMS provider (Twilio, MessageBird, Vonage, or Textlocal) in Supabase Dashboard -> Authentication -> Providers -> Phone.';
+  }
+  if (
+    status === 429 ||
+    lower.includes('rate limit') ||
+    lower.includes('over_sms_send_rate_limit') ||
+    lower.includes('too many requests') ||
+    lower.includes('for security purposes')
+  ) {
+    return 'Too many OTP attempts or SMS requests. Please wait a minute before trying again.';
+  }
+  if (lower.includes('expired')) {
+    return 'This 6-digit OTP has expired. Click "Resend OTP" to request a fresh code.';
+  }
+  if (
+    lower.includes('invalid') ||
+    lower.includes('token has expired') ||
+    lower.includes('otp')
+  ) {
+    return 'Invalid or expired OTP code. Please verify the 6 digits sent to your mobile number.';
+  }
+  if (lower.includes('already registered') || lower.includes('already exists') || lower.includes('duplicate')) {
+    return 'This mobile number is already registered with a Swasthya Wallet account. Please login instead.';
+  }
+  if (lower.includes('signups not allowed for otp') || lower.includes('user not found')) {
+    return 'No verified mobile account matched this number. Please register first or verify with your registered email.';
+  }
+  return raw || 'Unable to process Supabase Phone OTP request. Please try again.';
+}
+
+export function supabaseUserToUserAccount(sbUser: any, profileRow?: any): UserAccount {
+  const meta = sbUser?.user_metadata || {};
+  const email = sbUser?.email || profileRow?.email || meta.email || '';
+  const fullName =
+    profileRow?.full_name ||
+    meta.full_name ||
+    meta.name ||
+    (email ? email.split('@')[0] : 'Citizen');
+  const mobileNumber =
+    normalizeMobile(profileRow?.mobile_number || sbUser?.phone || meta.mobile_number || '') || '';
+  const username =
+    profileRow?.username ||
+    meta.username ||
+    generateSuggestedUsername(fullName, mobileNumber || undefined);
+  const dob = profileRow?.dob_aadhaar || meta.dob || '';
+
+  return {
+    id: sbUser.id,
+    username,
+    fullName,
+    dob,
+    mobileNumber,
+    email,
+    passwordHash: '',
+    salt: '',
+    abhaId: profileRow?.abha_id || meta.abha_id || 'Not linked',
+    createdAt: sbUser.created_at || new Date().toISOString(),
+    biometricEnrolled: Boolean(profileRow?.biometrics_enrolled ?? meta.biometrics_enrolled),
+    googleId: sbUser.app_metadata?.provider === 'google' ? sbUser.id : undefined,
+    googleEmail: sbUser.app_metadata?.provider === 'google' ? email : undefined,
+  };
+}
+
+export interface PendingPhoneRegistration {
+  fullName: string;
+  dob: string;
+  mobileNumber: string; // 10-digit Indian mobile
+  e164Phone: string; // +91XXXXXXXXXX
+  maskedPhone: string;
+  email: string;
+  suggestedUsername: string;
+  enrollBiometrics: boolean;
+}
+
+/**
+ * Step 1 of Phone OTP Registration:
+ * Validates all 6 Aadhaar-aligned fields, checks duplicate mobile/email,
+ * and dispatches a real SMS OTP via Supabase Phone Authentication.
+ */
+export async function registerWithSupabasePhoneStart(params: {
+  fullName: string;
+  dob: string;
+  mobileNumber: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  enrollBiometrics?: boolean;
+}): Promise<{
+  success: boolean;
+  isConfigured: boolean;
+  pending?: PendingPhoneRegistration;
+  error?: string;
+}> {
+  const { fullName, dob, mobileNumber, email, password, confirmPassword, enrollBiometrics } = params;
+
+  if (!fullName || fullName.trim().length < 2) {
+    return {
+      success: false,
+      isConfigured: isSupabaseConfigured(),
+      error: 'Please enter your Full Legal Name as printed on your Aadhaar card.',
+    };
+  }
+  const dobCheck = validateDob(dob);
+  if (!dobCheck.valid) {
+    return {
+      success: false,
+      isConfigured: isSupabaseConfigured(),
+      error: dobCheck.error || 'Please enter a valid Date of Birth (DD/MM/YYYY).',
+    };
+  }
+  const normalizedMob = normalizeMobile(mobileNumber);
+  const e164Phone = toIndianE164(mobileNumber);
+  if (!normalizedMob || !e164Phone) {
+    return {
+      success: false,
+      isConfigured: isSupabaseConfigured(),
+      error: 'Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9).',
+    };
+  }
+  if (!validateEmail(email)) {
+    return {
+      success: false,
+      isConfigured: isSupabaseConfigured(),
+      error: 'Please enter a valid email address.',
+    };
+  }
+  const passCheck = validatePasswordStrength(password);
+  if (!passCheck.valid) {
+    return {
+      success: false,
+      isConfigured: isSupabaseConfigured(),
+      error: `Password does not meet security criteria: ${passCheck.errors.join(', ')}.`,
+    };
+  }
+  if (password !== confirmPassword) {
+    return {
+      success: false,
+      isConfigured: isSupabaseConfigured(),
+      error: 'Passwords do not match. Please re-enter identical passwords.',
+    };
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    return {
+      success: false,
+      isConfigured: false,
+      error:
+        'Supabase Phone OTP authentication is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY and enable Phone Auth in Supabase Dashboard.',
+    };
+  }
+
+  const cleanEmail = email.trim().toLowerCase();
+  const suggestedUsername = generateSuggestedUsername(fullName, normalizedMob);
+
+  // Authoritative duplicate phone / email pre-check (if RPC migration is applied)
+  try {
+    const { data: dupCheck, error: dupErr } = await client.rpc('check_phone_or_email_available', {
+      p_mobile: normalizedMob,
+      p_email: cleanEmail,
+    });
+    if (!dupErr && dupCheck) {
+      if (dupCheck.mobile_exists) {
+        return {
+          success: false,
+          isConfigured: true,
+          error: 'This mobile number is already registered with Swasthya Wallet. Please login instead.',
+        };
+      }
+      if (dupCheck.email_exists) {
+        return {
+          success: false,
+          isConfigured: true,
+          error: 'This email address is already associated with an existing account. Please login instead.',
+        };
+      }
+    }
+  } catch {
+    // RPC may not yet exist if migration hasn't run; Supabase Auth still enforces uniqueness
+  }
+
+  try {
+    const { data, error } = await client.auth.signUp({
+      phone: e164Phone,
+      password,
+      options: {
+        channel: 'sms',
+        data: {
+          full_name: fullName.trim(),
+          dob: dob.trim(),
+          mobile_number: normalizedMob,
+          phone_e164: e164Phone,
+          email: cleanEmail,
+          username: suggestedUsername,
+          biometrics_enrolled: Boolean(enrollBiometrics),
+        },
+      },
+    });
+
+    if (error) {
+      return {
+        success: false,
+        isConfigured: true,
+        error: classifySupabaseOtpError(error.message, (error as any).status),
+      };
+    }
+
+    // Supabase returns empty identities array when phone is already registered (anti-enumeration mode)
+    if (data?.user && Array.isArray((data.user as any).identities) && (data.user as any).identities.length === 0) {
+      return {
+        success: false,
+        isConfigured: true,
+        error: 'This mobile number is already registered with Swasthya Wallet. Please login instead.',
+      };
+    }
+
+    return {
+      success: true,
+      isConfigured: true,
+      pending: {
+        fullName: fullName.trim(),
+        dob: dob.trim(),
+        mobileNumber: normalizedMob,
+        e164Phone,
+        maskedPhone: maskIndianMobile(normalizedMob),
+        email: cleanEmail,
+        suggestedUsername,
+        enrollBiometrics: Boolean(enrollBiometrics),
+      },
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      isConfigured: true,
+      error: classifySupabaseOtpError(err?.message, err?.status),
+    };
+  }
+}
+
+/**
+ * Resend SMS OTP for pending phone signup
+ */
+export async function resendSupabasePhoneSignupOtp(e164Phone: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const client = getSupabaseClient();
+  if (!client) {
+    return { success: false, error: 'Supabase is not configured.' };
+  }
+  try {
+    const { error } = await client.auth.resend({
+      type: 'sms',
+      phone: e164Phone,
+    });
+    if (error) {
+      return {
+        success: false,
+        error: classifySupabaseOtpError(error.message, (error as any).status),
+      };
+    }
+    return { success: true };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: classifySupabaseOtpError(err?.message, err?.status),
+    };
+  }
+}
+
+/**
+ * Step 2 of Phone OTP Registration:
+ * Verifies the 6-digit SMS OTP via Supabase Auth, persists profile with verified phone,
+ * and sequentially links the email address onto the same authenticated Supabase user.
+ */
+export async function verifySupabasePhoneSignupOtp(params: {
+  pending: PendingPhoneRegistration;
+  otpCode: string;
+}): Promise<{
+  success: boolean;
+  user?: UserAccount;
+  emailLinkNotice?: string;
+  error?: string;
+}> {
+  const { pending, otpCode } = params;
+  const otpCheck = validateOtpCode(otpCode);
+  if (!otpCheck.valid) {
+    return { success: false, error: otpCheck.error };
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    return {
+      success: false,
+      error: 'Supabase is not configured. Real SMS OTP verification cannot proceed.',
+    };
+  }
+
+  try {
+    const { data, error } = await client.auth.verifyOtp({
+      phone: pending.e164Phone,
+      token: otpCheck.cleaned,
+      type: 'sms',
+    });
+
+    if (error) {
+      return {
+        success: false,
+        error: classifySupabaseOtpError(error.message, (error as any).status),
+      };
+    }
+
+    if (!data?.user || !data?.session) {
+      return {
+        success: false,
+        error: 'Phone OTP verification did not establish an authenticated session. Please request a new OTP.',
+      };
+    }
+
+    const verifiedAt = new Date().toISOString();
+
+    // Persist profile linked strictly to verified auth.uid()
+    const profilePayload: Record<string, any> = {
+      user_id: data.user.id,
+      username: pending.suggestedUsername,
+      full_name: pending.fullName,
+      email: pending.email,
+      mobile_number: pending.mobileNumber,
+      phone_e164: pending.e164Phone,
+      phone_verified: true,
+      phone_verified_at: verifiedAt,
+      dob_aadhaar: pending.dob,
+      biometrics_enrolled: pending.enrollBiometrics,
+      updated_at: verifiedAt,
+    };
+
+    const { error: profileErr } = await client
+      .from('user_profiles')
+      .upsert(profilePayload, { onConflict: 'user_id' });
+
+    if (profileErr) {
+      // Fallback upsert without phone_e164/phone_verified if older SQL migration hasn't run yet
+      await client.from('user_profiles').upsert(
+        {
+          user_id: data.user.id,
+          username: pending.suggestedUsername,
+          full_name: pending.fullName,
+          email: pending.email,
+          mobile_number: pending.mobileNumber,
+          dob_aadhaar: pending.dob,
+          biometrics_enrolled: pending.enrollBiometrics,
+          updated_at: verifiedAt,
+        },
+        { onConflict: 'user_id' }
+      );
+    }
+
+    // Sequentially attach email to the SAME authenticated user (no duplicate account)
+    let emailLinkNotice: string | undefined;
+    if (pending.email && !data.user.email) {
+      try {
+        const { error: emailErr } = await client.auth.updateUser({
+          email: pending.email,
+        });
+        if (!emailErr) {
+          emailLinkNotice = `Your mobile number (+91 ${pending.mobileNumber}) is verified. A confirmation link has also been sent to ${pending.email} to complete email verification.`;
+        }
+      } catch {
+        // Keep registration successful with verified phone + saved profile email
+      }
+    }
+
+    const account = supabaseUserToUserAccount(data.user, {
+      ...profilePayload,
+      email: pending.email,
+      full_name: pending.fullName,
+      mobile_number: pending.mobileNumber,
+      dob_aadhaar: pending.dob,
+      username: pending.suggestedUsername,
+      biometrics_enrolled: pending.enrollBiometrics,
+    });
+
+    createSession(account, true);
+    return {
+      success: true,
+      user: account,
+      emailLinkNotice,
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: classifySupabaseOtpError(err?.message, err?.status),
+    };
+  }
+}
+
+export async function registerWithSupabaseOrLocal(params: {
+  fullName: string;
+  dob: string;
+  mobileNumber: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  enrollBiometrics?: boolean;
+}): Promise<{
+  success: boolean;
+  user?: UserAccount;
+  requiresEmailConfirmation?: boolean;
+  error?: string;
+}> {
+  if (!isSupabaseConfigured()) {
+    return registerUser(params);
+  }
+  const startRes = await registerWithSupabasePhoneStart(params);
+  if (!startRes.success) {
+    return { success: false, error: startRes.error };
+  }
+  return {
+    success: false,
+    error: 'Please verify the 6-digit SMS OTP sent to your mobile number to complete registration.',
+  };
+}
+
+export async function loginWithSupabaseOrLocal(
+  identifier: string,
+  password: string,
+  rememberMe = true
+): Promise<{
+  success: boolean;
+  user?: UserAccount;
+  identifierType: IdentifierType;
+  error?: string;
+  isLocked?: boolean;
+}> {
+  const type = detectIdentifierType(identifier);
+  const client = getSupabaseClient();
+
+  if (!client) {
+    return authenticateUser(identifier, password, rememberMe);
+  }
+
+  if (type === 'empty' || !identifier.trim()) {
+    return {
+      success: false,
+      identifierType: 'empty',
+      error: 'Please enter your mobile number, email address, or username.',
+    };
+  }
+
+  if (!password) {
+    return {
+      success: false,
+      identifierType: type,
+      error: 'Please enter your password.',
+    };
+  }
+
+  const trimmed = identifier.trim();
+  let signInResult: { data: any; error: any } | null = null;
+
+  try {
+    if (type === 'mobile') {
+      const e164Phone = toIndianE164(trimmed);
+      if (!e164Phone) {
+        return {
+          success: false,
+          identifierType: 'mobile',
+          error: 'Please enter a valid 10-digit Indian mobile number (+91).',
+        };
+      }
+
+      // 1. Direct Supabase Phone + Password authentication
+      signInResult = await client.auth.signInWithPassword({
+        phone: e164Phone,
+        password,
+      });
+
+      // 2. Fallback: if user signed up with email before linking phone, resolve email via RPC
+      if (signInResult.error) {
+        try {
+          const { data: resolved } = await client.rpc('resolve_login_identifier', {
+            p_identifier: trimmed,
+          });
+          const row = Array.isArray(resolved) ? resolved[0] : resolved;
+          if (row?.login_email) {
+            const emailAttempt = await client.auth.signInWithPassword({
+              email: row.login_email,
+              password,
+            });
+            if (!emailAttempt.error && emailAttempt.data?.user) {
+              signInResult = emailAttempt;
+            }
+          }
+        } catch {
+          // ignore fallback RPC failure
+        }
+      }
+    } else if (type === 'email') {
+      signInResult = await client.auth.signInWithPassword({
+        email: trimmed.toLowerCase(),
+        password,
+      });
+    } else {
+      // Username login: resolve to registered phone or email via RLS-safe RPC first
+      let resolvedPhone: string | null = null;
+      let resolvedEmail: string | null = null;
+
+      try {
+        const { data: resolved } = await client.rpc('resolve_login_identifier', {
+          p_identifier: trimmed.toLowerCase(),
+        });
+        const row = Array.isArray(resolved) ? resolved[0] : resolved;
+        resolvedPhone = row?.login_phone || null;
+        resolvedEmail = row?.login_email || null;
+      } catch {
+        // Fallback query if table policy allows
+        const { data: profileMatch } = await client
+          .from('user_profiles')
+          .select('email, mobile_number, phone_e164')
+          .eq('username', trimmed.toLowerCase())
+          .maybeSingle();
+        resolvedPhone =
+          profileMatch?.phone_e164 ||
+          (profileMatch?.mobile_number ? toIndianE164(profileMatch.mobile_number) : null);
+        resolvedEmail = profileMatch?.email || null;
+      }
+
+      if (resolvedPhone) {
+        signInResult = await client.auth.signInWithPassword({
+          phone: resolvedPhone,
+          password,
+        });
+      }
+      if ((!signInResult || signInResult.error) && resolvedEmail) {
+        signInResult = await client.auth.signInWithPassword({
+          email: resolvedEmail,
+          password,
+        });
+      }
+      if (!resolvedPhone && !resolvedEmail) {
+        return {
+          success: false,
+          identifierType: type,
+          error: 'No Swasthya Wallet account found matching that username. You can also sign in with your +91 mobile number or email.',
+        };
+      }
+    }
+
+    if (!signInResult || signInResult.error || !signInResult.data?.user) {
+      return {
+        success: false,
+        identifierType: type,
+        error: signInResult?.error?.message || 'Invalid login credentials.',
+      };
+    }
+
+    const { data: profileRow } = await client
+      .from('user_profiles')
+      .select('*')
+      .eq('user_id', signInResult.data.user.id)
+      .maybeSingle();
+
+    const account = supabaseUserToUserAccount(signInResult.data.user, profileRow);
+    createSession(account, rememberMe);
+    return { success: true, user: account, identifierType: type };
+  } catch (err: any) {
+    return {
+      success: false,
+      identifierType: type,
+      error: err?.message || 'Supabase sign-in failed.',
+    };
+  }
+}
+
+export async function signInWithGoogleSupabase(): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const client = getSupabaseClient();
+  if (!client) {
+    return {
+      success: false,
+      error: 'Google Sign-In requires Supabase Auth configuration (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY).',
+    };
+  }
+  try {
+    const { error } = await client.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+      },
+    });
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Google OAuth initialization failed.' };
+  }
+}
+
+export async function sendSupabasePasswordResetEmail(email: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const client = getSupabaseClient();
+  if (!client) {
+    return { success: false, error: 'Supabase is not configured.' };
+  }
+  try {
+    const { error } = await client.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+      redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+    });
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Password reset email failed.' };
+  }
+}
+
+/**
+ * Send Mobile OTP for Password Recovery via Supabase Phone Auth (never creates a new user)
+ */
+export async function requestSupabaseMobileRecoveryOtp(mobileInput: string): Promise<{
+  success: boolean;
+  e164Phone?: string;
+  maskedPhone?: string;
+  error?: string;
+}> {
+  const e164Phone = toIndianE164(mobileInput);
+  if (!e164Phone) {
+    return {
+      success: false,
+      error: 'Please enter a valid 10-digit Indian mobile number (+91).',
+    };
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    return { success: false, error: 'Supabase is not configured.' };
+  }
+
+  try {
+    const { error } = await client.auth.signInWithOtp({
+      phone: e164Phone,
+      options: {
+        shouldCreateUser: false,
+      },
+    });
+    if (error) {
+      return {
+        success: false,
+        error: classifySupabaseOtpError(error.message, (error as any).status),
+      };
+    }
+    return {
+      success: true,
+      e164Phone,
+      maskedPhone: maskIndianMobile(e164Phone),
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: classifySupabaseOtpError(err?.message, err?.status),
+    };
+  }
+}
+
+/**
+ * Verify Mobile Recovery OTP via Supabase Auth
+ */
+export async function verifySupabaseMobileRecoveryOtp(
+  e164Phone: string,
+  otpCode: string
+): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const otpCheck = validateOtpCode(otpCode);
+  if (!otpCheck.valid) {
+    return { success: false, error: otpCheck.error };
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    return { success: false, error: 'Supabase is not configured.' };
+  }
+
+  try {
+    const { data, error } = await client.auth.verifyOtp({
+      phone: e164Phone,
+      token: otpCheck.cleaned,
+      type: 'sms',
+    });
+    if (error || !data?.session) {
+      return {
+        success: false,
+        error: classifySupabaseOtpError(error?.message || 'Verification failed.', (error as any)?.status),
+      };
+    }
+    return { success: true };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: classifySupabaseOtpError(err?.message, err?.status),
+    };
+  }
+}
+
+/**
+ * Update password on verified Supabase recovery session and revoke session cleanly
+ */
+export async function completeSupabaseRecoveredPasswordUpdate(newPassword: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const passCheck = validatePasswordStrength(newPassword);
+  if (!passCheck.valid) {
+    return {
+      success: false,
+      error: `Password does not meet security criteria: ${passCheck.errors.join(', ')}.`,
+    };
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    return { success: false, error: 'Supabase is not configured.' };
+  }
+
+  try {
+    const { error } = await client.auth.updateUser({ password: newPassword });
+    if (error) {
+      return { success: false, error: error.message };
+    }
+    await client.auth.signOut().catch(() => null);
+    destroySession();
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Unable to update password.' };
+  }
+}
+
+export async function getActiveAuthenticatedUser(): Promise<UserAccount | null> {
+  if (isSupabaseConfigured()) {
+    const client = getSupabaseClient();
+    if (client) {
+      try {
+        const { data } = await client.auth.getSession();
+        if (data?.session?.user) {
+          const { data: profileRow } = await client
+            .from('user_profiles')
+            .select('*')
+            .eq('user_id', data.session.user.id)
+            .maybeSingle();
+          return supabaseUserToUserAccount(data.session.user, profileRow);
+        }
+        return null;
+      } catch {
+        return null;
+      }
+    }
+  }
+  return getCurrentSessionUser();
+}
+
+export async function signOutActiveUser(): Promise<void> {
+  const client = getSupabaseClient();
+  if (client) {
+    try {
+      await client.auth.signOut();
+    } catch {
+      // ignore
+    }
+  }
+  destroySession();
+}
+

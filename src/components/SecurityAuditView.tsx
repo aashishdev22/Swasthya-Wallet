@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { AuditEvent } from '../data/mockData.ts';
+import { AuditEvent } from '../types/health.ts';
 import { SupportedLanguage, getTranslation } from '../utils/i18n.ts';
 
 interface SecurityAuditViewProps {
@@ -13,7 +13,7 @@ interface SecurityAuditViewProps {
 }
 
 export const SecurityAuditView: React.FC<SecurityAuditViewProps> = ({ auditLogs, currentLang = 'en' }) => {
-  const t = getTranslation(currentLang);
+  const _t = getTranslation(currentLang);
   const [biometricEnabled, setBiometricEnabled] = useState<boolean>(true);
   const [emergencyBreakGlass, setEmergencyBreakGlass] = useState<boolean>(false);
   const [selectedAuditLog, setSelectedAuditLog] = useState<AuditEvent | null>(null);
@@ -25,12 +25,23 @@ export const SecurityAuditView: React.FC<SecurityAuditViewProps> = ({ auditLogs,
   };
 
   const handleCopyKey = () => {
-    navigator.clipboard?.writeText('04e3b149b08f82194c7980e121fa98c081f4a9b9');
-    showToast('Master public key 04e3b1...81f4a9b9 copied to clipboard');
+    const keyFingerprint = 'ABDM-SWASTHYA-AES256-CLIENT-KEY';
+    navigator.clipboard?.writeText(keyFingerprint);
+    showToast('Client enclave key fingerprint copied to clipboard');
   };
 
   const handleDownloadArchive = () => {
-    showToast('Compiling HL7 FHIR archive. Export package queued (ZIP)...');
+    const blob = new Blob(
+      [JSON.stringify({ exportedAt: new Date().toISOString(), auditEvents: auditLogs }, null, 2)],
+      { type: 'application/json' }
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Swasthya_Security_Audit_Ledger_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Security audit archive downloaded (JSON).');
   };
 
   const handlePurgeCache = () => {
@@ -287,6 +298,12 @@ export const SecurityAuditView: React.FC<SecurityAuditViewProps> = ({ auditLogs,
         </div>
 
         <div className="flex flex-col gap-3">
+          {auditLogs.length === 0 && (
+            <div className="bg-surface-container-lowest rounded-2xl p-8 border border-dashed border-outline-variant/40 text-center text-xs text-on-surface-variant">
+              <span className="material-symbols-outlined text-[32px] text-outline/50 mb-2 block">security</span>
+              No security or access audit events recorded yet. Events are automatically logged whenever you upload, share, or verify records.
+            </div>
+          )}
           {auditLogs.map((log) => (
             <div
               key={log.id}

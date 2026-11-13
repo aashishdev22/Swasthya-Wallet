@@ -53,7 +53,7 @@ export function evaluateVerificationState(state: 'verified' | 'invalid' | 'expir
         badgeType: 'success',
         description: 'Cryptographic Attestation Succeeded • Issuer Identity Confirmed',
         latency: '142ms',
-        issuer: 'Northwestern Memorial Hospital PKI Registry',
+        issuer: 'ABDM / National Digital Health PKI Registry',
         digestStatus: 'Matched anchor ledger exactly (0 bytes modified)',
         schemaConformance: 'HL7 FHIR R4 DiagnosticReport Profile',
         revocationStatus: 'OCSP / CRL check returned GOOD (Active & Valid)'
@@ -66,7 +66,7 @@ export function evaluateVerificationState(state: 'verified' | 'invalid' | 'expir
         badgeType: 'error',
         description: 'Signature Mismatch: Hash does not match issuing institution\'s signed digest.',
         latency: '89ms',
-        issuer: 'Northwestern Memorial Hospital PKI Registry',
+        issuer: 'ABDM / National Digital Health PKI Registry',
         digestStatus: 'Hash mismatch observed (Content altered post-issuance)',
         schemaConformance: 'Schema signature verification failed (Error 0x99A)',
         revocationStatus: 'Quarantined from patient timeline'
@@ -77,10 +77,10 @@ export function evaluateVerificationState(state: 'verified' | 'invalid' | 'expir
         title: 'CERTIFICATE EXPIRED',
         badge: 'RE-ATTESTATION REQUIRED',
         badgeType: 'warning',
-        description: 'Document authorization expired on Oct 15, 2024. Issuer requires re-issuance.',
+        description: 'Document authorization certificate validity window lapsed. Issuer requires re-issuance.',
         latency: '112ms',
-        issuer: 'Northwestern Memorial Hospital PKI Registry',
-        digestStatus: 'Authentic hash, but validity window lapsed 19 days ago',
+        issuer: 'ABDM / National Digital Health PKI Registry',
+        digestStatus: 'Authentic hash, but validity window lapsed',
         schemaConformance: 'HL7 FHIR R4 Valid Structure',
         revocationStatus: 'Lapsed certificate validity window (EXP_ERR_410)'
       };
@@ -92,7 +92,7 @@ export function evaluateVerificationState(state: 'verified' | 'invalid' | 'expir
         badgeType: 'neutral',
         description: 'Issuing hospital registry endpoint timed out. Unable to establish trust anchor link.',
         latency: '5004ms',
-        issuer: 'pki.nm.org/fhir/.well-known/jwks.json',
+        issuer: 'pki.abdm.gov.in/fhir/.well-known/jwks.json',
         digestStatus: 'Local SHA-256 generated, but public key could not be cross-checked',
         schemaConformance: 'HL7 FHIR Bundle Unverified',
         revocationStatus: 'Network endpoint unreachable (HTTP 504)'
@@ -252,19 +252,19 @@ export function generateEncryptedQrPayload(params: {
     category: params.record.category || 'medical-report',
     code: params.record.code || 'LOINC-24323-8',
     patient: {
-      name: params.patientName || 'Aarav Sharma',
-      abhaId: params.abhaId || '14-8842-9914-2024',
-      dob: '14/03/1990',
+      name: params.patientName || 'Swasthya Citizen',
+      abhaId: params.abhaId || 'Not linked',
+      dob: '',
     },
     issuer: {
-      hospital: params.record.hospital || 'AIIMS Central Pathology Lab, New Delhi',
-      clinician: params.record.clinician || 'Dr. Ananya Iyer, MD',
+      hospital: params.record.hospital || 'Health Facility',
+      clinician: params.record.clinician || 'Attending Clinician',
     },
     encryption: {
       cipher: 'AES-256-GCM',
       ephemeralKeyId: `K-EPH-${Math.floor(1000 + Math.random() * 9000)}`,
       nonce: '0x' + Array.from({ length: 12 }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
-      recordSha256: params.record.sha256 || '8F4E6B2A99C048DF72E3108B3492C91A04EF52A807BC4D9284D76E2A1019CFB5',
+      recordSha256: params.record.sha256 || '0'.repeat(64),
       signature: 'ED25519-SIG-' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
     },
     accessControl: {
@@ -276,7 +276,7 @@ export function generateEncryptedQrPayload(params: {
     },
     clinicalSummary: {
       title: params.record.title,
-      date: params.record.date || '02/11/2024',
+      date: params.record.date || new Date().toLocaleDateString('en-GB'),
       findingsOrDosage: findingsText,
       verifiedSeal: true,
     },

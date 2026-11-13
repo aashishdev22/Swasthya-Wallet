@@ -4,9 +4,10 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { PatientProfile } from '../data/mockData.ts';
+import { PatientProfile } from '../types/health.ts';
 import { SupportedLanguage, SUPPORTED_LANGUAGES, getTranslation } from '../utils/i18n.ts';
 import { syncEngine, SyncStatusInfo } from '../utils/syncEngine.ts';
+import { AvatarBadge } from './AvatarBadge.tsx';
 
 interface HeaderProps {
   patient: PatientProfile;
@@ -21,6 +22,7 @@ interface HeaderProps {
   onSelectLang?: (lang: SupportedLanguage) => void;
   onLogout?: () => void;
   onOpenStorageSettings?: () => void;
+  onOpenProfileSettings?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -28,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
   searchQuery,
   onSearchChange,
   onOpenNotifications,
-  unreadCount = 2,
+  unreadCount = 0,
   viewMode,
   onToggleViewMode,
   onOpenAuthGate,
@@ -36,6 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectLang,
   onLogout,
   onOpenStorageSettings,
+  onOpenProfileSettings,
 }) => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement>(null);
@@ -299,29 +302,33 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Patient Profile Chip */}
             <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-              <div className="text-right hidden sm:block">
-                <div className="flex items-center gap-1 justify-end">
-                  <span className="text-xs text-slate-900 font-bold leading-tight">
-                    {patient.name}
-                  </span>
-                  <span className="px-1.5 py-0.2 rounded text-[10px] bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
-                    {t.verifiedBadge}
-                  </span>
+              <button
+                type="button"
+                onClick={onOpenProfileSettings || onOpenStorageSettings}
+                className="flex items-center gap-2 text-left rounded-xl hover:bg-slate-50 px-1.5 py-1 transition-colors cursor-pointer"
+                title="Open Citizen Profile & Photo Settings"
+              >
+                <div className="text-right hidden sm:block">
+                  <div className="flex items-center gap-1 justify-end">
+                    <span className="text-xs text-slate-900 font-bold leading-tight">
+                      {patient.name}
+                    </span>
+                    <span className="px-1.5 py-0.2 rounded text-[10px] bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
+                      {t.verifiedBadge}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-500 font-medium">
+                    {patient.age > 0 ? `${patient.age} ${t.years} • ` : ''}ABHA: {patient.mrn}
+                  </div>
                 </div>
-                <div className="text-[11px] text-slate-500 font-medium">
-                  {patient.age} {t.years} • ABHA: {patient.mrn}
-                </div>
-              </div>
-              <div className="hidden sm:flex w-8 h-8 rounded-full bg-blue-900 items-center justify-center overflow-hidden ring-2 ring-slate-100">
-                <img
-                  src={patient.avatarUrl}
-                  alt={patient.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
+                <AvatarBadge
+                  name={patient.name}
+                  avatarUrl={patient.avatarUrl}
+                  sizeClass="w-8 h-8"
+                  textSizeClass="text-xs"
+                  className="ring-2 ring-slate-100"
                 />
-              </div>
+              </button>
               {onLogout && (
                 <button
                   type="button"

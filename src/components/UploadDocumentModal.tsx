@@ -4,13 +4,13 @@
  */
 
 import React, { useState, useRef } from 'react';
-import { MedicalRecord } from '../data/mockData.ts';
+import { MedicalRecord } from '../types/health.ts';
 import { SupportedLanguage, getTranslation, formatIndianDate } from '../utils/i18n.ts';
 
 interface UploadDocumentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddRecord: (record: MedicalRecord) => void;
+  onAddRecord: (record: MedicalRecord, rawFile?: File | null) => void;
   currentLang?: SupportedLanguage;
 }
 
@@ -43,13 +43,13 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   const _t = getTranslation(currentLang);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [title, setTitle] = useState<string>('Blood Sugar & Metabolic Panel Report');
+  const [title, setTitle] = useState<string>('');
   const [category, setCategory] = useState<'lab' | 'imaging' | 'prescription' | 'discharge' | 'notes'>('lab');
   const [date, setDate] = useState<string>(formatIndianDate(new Date()));
-  const [facility, setFacility] = useState<string>('AIIMS Central Pathology Lab, New Delhi');
-  const [clinician, setClinician] = useState<string>('Dr. Ananya Iyer, MD');
-  const [notes, setNotes] = useState<string>('Routine 6-month fasting blood panel requested by primary cardiologist.');
-  const [tags, setTags] = useState<string[]>(['Blood Work', 'Metabolic', 'Lipids']);
+  const [facility, setFacility] = useState<string>('');
+  const [clinician, setClinician] = useState<string>('');
+  const [notes, setNotes] = useState<string>('');
+  const [tags, setTags] = useState<string[]>([]);
   const [newTagInput, setNewTagInput] = useState<string>('');
   const [showAddTag, setShowAddTag] = useState<boolean>(false);
   const [computeSha, setComputeSha] = useState<boolean>(true);
@@ -57,6 +57,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   const [grantSync, setGrantSync] = useState<boolean>(true);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [rawFile, setRawFile] = useState<File | null>(null);
 
   const [selectedFileMeta, setSelectedFileMeta] = useState<{
     name: string;
@@ -97,6 +98,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
 
     const imageUrl = await readDataUrl();
 
+    setRawFile(file);
     setSelectedFileMeta({
       name: file.name,
       sizeLabel: formatBytesLabel(file.size),
@@ -106,7 +108,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
       progress: 100,
     });
 
-    if (!title || title === 'Blood Sugar & Metabolic Panel Report') {
+    if (!title.trim()) {
       const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ');
       if (cleanName.trim().length > 2) {
         setTitle(cleanName.trim());
@@ -155,26 +157,26 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
 
     const newRecord: MedicalRecord = {
       id: `rec-${Date.now()}`,
-      title,
+      title: title.trim(),
       category,
       code: category === 'lab' ? 'LOINC 24323-8' : category === 'imaging' ? 'DICOM RAD-10' : 'SNOMED 410604004',
       codeStandard: category === 'lab' ? 'LOINC' : 'FHIR',
       date,
       uploadedAt: new Date().toLocaleString('en-IN'),
-      clinician,
-      hospital: facility,
+      clinician: clinician.trim() || 'Self-Uploaded / Not Specified',
+      hospital: facility.trim() || 'Citizen Personal Upload',
       integrityStatus: computeSha ? 'SHA-256 Valid' : 'Local Staged',
       verified: true,
       sha256: finalSha,
-      fileSize: selectedFileMeta?.sizeLabel || '128 KB',
+      fileSize: selectedFileMeta?.sizeLabel || 'Metadata Only',
       fileFormat: selectedFileMeta?.format || 'FHIR PDF',
       originalDocumentName: selectedFileMeta?.name,
       imageUrl: selectedFileMeta?.imageUrl,
-      indication: notes,
+      indication: notes.trim() || undefined,
     };
 
     setIsUploading(false);
-    onAddRecord(newRecord);
+    onAddRecord(newRecord, rawFile);
     onClose();
   };
 
@@ -292,7 +294,10 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                   </div>
                   <button
                     type="button"
-                    onClick={() => setSelectedFileMeta(null)}
+                    onClick={() => {
+                      setSelectedFileMeta(null);
+                      setRawFile(null);
+                    }}
                     className="text-xs text-rose-600 font-semibold hover:underline cursor-pointer"
                   >
                     Remove
@@ -321,6 +326,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g., Complete Blood Count (CBC) Report"
                   className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface text-xs focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary border border-outline-variant/30"
                   required
                 />
@@ -362,6 +368,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                     type="text"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
+                    placeholder="DD/MM/YYYY"
                     className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface text-xs focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary border border-outline-variant/30"
                     required
                   />
@@ -372,6 +379,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                     type="text"
                     value={facility}
                     onChange={(e) => setFacility(e.target.value)}
+                    placeholder="Hospital, clinic, or diagnostic lab name"
                     className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface text-xs focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary border border-outline-variant/30"
                   />
                 </div>
@@ -383,6 +391,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                   type="text"
                   value={clinician}
                   onChange={(e) => setClinician(e.target.value)}
+                  placeholder="Doctor or lab specialist name (optional)"
                   className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-on-surface text-xs focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary border border-outline-variant/30"
                 />
               </div>
@@ -392,6 +401,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Optional clinical context or visit notes"
                   rows={2}
                   className="w-full p-2.5 rounded-lg bg-surface-container-low text-on-surface text-xs focus:bg-surface-container-lowest focus:ring-1 focus:ring-secondary border border-outline-variant/30 resize-none"
                 />

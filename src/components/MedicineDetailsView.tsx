@@ -7,24 +7,29 @@
 
 import React, { useState } from 'react';
 import { MedicineItem } from '../data/medicineDatabase.ts';
+import { UserMedicine } from '../types/health.ts';
 import { SupportedLanguage, formatIndianCurrency } from '../utils/i18n.ts';
 import { MedicineCategoryIcon } from './CategoryIcon.tsx';
 
 interface MedicineDetailsViewProps {
   medicine: MedicineItem;
+  userMedicine?: UserMedicine | null;
   currentLang?: SupportedLanguage;
   onBack: () => void;
   onViewOriginalPrescription?: (recordId?: string) => void;
   onFindAlternatives?: (med: MedicineItem) => void;
+  onSaveToMyMedicines?: (med: MedicineItem) => void;
   onViewPharmacyAvailability?: (med: MedicineItem) => void;
 }
 
 export const MedicineDetailsView: React.FC<MedicineDetailsViewProps> = ({
   medicine,
+  userMedicine,
   currentLang: _currentLang = 'en',
   onBack,
   onViewOriginalPrescription,
   onFindAlternatives,
+  onSaveToMyMedicines,
 }) => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -53,14 +58,28 @@ export const MedicineDetailsView: React.FC<MedicineDetailsViewProps> = ({
         </button>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {medicine.linkedRecordId && onViewOriginalPrescription && (
+          {userMedicine?.linkedRecordId && onViewOriginalPrescription && (
             <button
               type="button"
-              onClick={() => onViewOriginalPrescription(medicine.linkedRecordId)}
+              onClick={() => onViewOriginalPrescription(userMedicine.linkedRecordId)}
               className="px-3.5 py-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-[18px]">receipt_long</span>
               <span>View Original Prescription</span>
+            </button>
+          )}
+
+          {!userMedicine && onSaveToMyMedicines && (
+            <button
+              type="button"
+              onClick={() => {
+                onSaveToMyMedicines(medicine);
+                showToast(`"${medicine.name}" added to My Medicines Locker.`);
+              }}
+              className="px-3.5 py-2 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200 hover:bg-emerald-100 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px]">bookmark_add</span>
+              <span>Add to My Medicines</span>
             </button>
           )}
 
@@ -115,9 +134,9 @@ export const MedicineDetailsView: React.FC<MedicineDetailsViewProps> = ({
                   ID: {medicine.id}
                 </span>
 
-                {medicine.prescriptionDate && (
+                {userMedicine?.prescriptionDate && (
                   <span className="text-[11px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                    Prescribed: {medicine.prescriptionDate}
+                    Prescribed: {userMedicine.prescriptionDate}
                   </span>
                 )}
               </div>
@@ -146,7 +165,7 @@ export const MedicineDetailsView: React.FC<MedicineDetailsViewProps> = ({
           <div className="text-left md:text-right bg-slate-50 md:bg-transparent p-3 md:p-0 rounded-2xl border md:border-none border-slate-200">
             <span className="text-xs text-slate-400 font-medium block">Approximate MRP (India)</span>
             <span className="text-2xl font-bold text-slate-900 font-mono">
-              {formatIndianCurrency(medicine.approxMrp)}
+              {medicine.approxMrp > 0 ? formatIndianCurrency(medicine.approxMrp) : 'As Billed'}
             </span>
             <span className="text-[11px] text-slate-500 block mt-0.5">
               Maker: {medicine.manufacturer}
@@ -154,46 +173,42 @@ export const MedicineDetailsView: React.FC<MedicineDetailsViewProps> = ({
           </div>
         </div>
 
-        {/* Extracted Prescription Instructions Banner */}
-        {medicine.prescriptionInstructions && (
+        {/* User-Specific Prescription Instructions Banner (Only when present in citizen locker) */}
+        {userMedicine && (userMedicine.instructions || userMedicine.frequency || userMedicine.duration) && (
           <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border border-amber-200 flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-amber-900 font-bold text-xs sm:text-sm">
                 <span className="material-symbols-outlined text-[20px]">prescriptions</span>
-                <span>Doctor's Prescription Instructions (Patient Specific)</span>
+                <span>Your Prescription Instructions</span>
               </div>
               <span className="text-[10px] bg-amber-200/70 text-amber-950 font-bold px-2 py-0.5 rounded uppercase">
-                Extracted from Rx
+                From Your Locker
               </span>
             </div>
 
-            <p className="text-xs sm:text-sm text-amber-950 font-medium leading-relaxed">
-              "{medicine.prescriptionInstructions}"
-            </p>
+            {userMedicine.instructions && (
+              <p className="text-xs sm:text-sm text-amber-950 font-medium leading-relaxed">
+                "{userMedicine.instructions}"
+              </p>
+            )}
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-amber-200/70 text-xs text-amber-900">
-              {medicine.prescriptionDosage && (
-                <div>
-                  <span className="text-[10px] text-amber-700 block">Dosage:</span>
-                  <span className="font-bold">{medicine.prescriptionDosage}</span>
-                </div>
-              )}
-              {medicine.frequency && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-amber-200/70 text-xs text-amber-900">
+              {userMedicine.frequency && (
                 <div>
                   <span className="text-[10px] text-amber-700 block">Frequency:</span>
-                  <span className="font-bold">{medicine.frequency}</span>
+                  <span className="font-bold">{userMedicine.frequency}</span>
                 </div>
               )}
-              {medicine.duration && (
+              {userMedicine.duration && (
                 <div>
                   <span className="text-[10px] text-amber-700 block">Duration:</span>
-                  <span className="font-bold">{medicine.duration}</span>
+                  <span className="font-bold">{userMedicine.duration}</span>
                 </div>
               )}
-              {medicine.prescriptionReference && (
+              {userMedicine.prescriberName && (
                 <div className="col-span-2 sm:col-span-1 truncate">
-                  <span className="text-[10px] text-amber-700 block">Reference:</span>
-                  <span className="font-semibold truncate">{medicine.prescriptionReference}</span>
+                  <span className="text-[10px] text-amber-700 block">Prescriber:</span>
+                  <span className="font-semibold truncate">{userMedicine.prescriberName}</span>
                 </div>
               )}
             </div>

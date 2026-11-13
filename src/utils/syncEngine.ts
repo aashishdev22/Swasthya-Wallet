@@ -14,7 +14,7 @@ import {
   getDriveFileId,
 } from './googleDrive.ts';
 import { saveRecordToSupabase, deleteRecordFromSupabase, isSupabaseConfigured } from './supabase.ts';
-import { MedicalRecord } from '../data/mockData.ts';
+import { MedicalRecord } from '../types/health.ts';
 
 export type SyncStatusState =
   | 'Saved on Device'
@@ -95,6 +95,11 @@ class BackgroundSyncEngine {
   private retryAttempt: number = 0;
   private lastErrorMessage: string | undefined = undefined;
   private lastPatientName: string = 'Swasthya Citizen';
+  private activeUserId: string | null = null;
+
+  public setActiveUserId(userId: string | null) {
+    this.activeUserId = userId;
+  }
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -219,7 +224,7 @@ class BackgroundSyncEngine {
    */
   public async autoSaveRecord(
     record: MedicalRecord,
-    patientName: string = 'Aarav Sharma'
+    patientName: string = 'Swasthya Citizen'
   ): Promise<{ localSuccess: boolean; cloudSuccess: boolean; versionedRecord: MedicalRecord }> {
     this.lastPatientName = patientName;
     const versionedRecord: MedicalRecord = {
@@ -238,10 +243,10 @@ class BackgroundSyncEngine {
       console.error('[SyncEngine] Local save failed:', err);
     }
 
-    // 2. Check online state & Supabase
-    let supabaseOk = true;
-    if (this.isOnline && isSupabaseConfigured()) {
-      supabaseOk = await saveRecordToSupabase(versionedRecord, 'current_user');
+    // 2. Check online state & Supabase (only sync when configured AND authenticated userId present)
+    let supabaseOk = !isSupabaseConfigured();
+    if (this.isOnline && isSupabaseConfigured() && this.activeUserId) {
+      supabaseOk = await saveRecordToSupabase(versionedRecord, this.activeUserId);
     } else if (!this.isOnline && isSupabaseConfigured()) {
       supabaseOk = false;
     }
@@ -356,7 +361,7 @@ class BackgroundSyncEngine {
   /**
    * Process pending sync queue idempotently without duplicating records.
    */
-  public async processPendingQueue(patientName: string = 'Aarav Sharma'): Promise<number> {
+  public async processPendingQueue(patientName: string = 'Swasthya Citizen'): Promise<number> {
     if (this.isSyncing || !this.isOnline) return 0;
     this.lastPatientName = patientName;
     this.isSyncing = true;
@@ -410,9 +415,10 @@ class BackgroundSyncEngine {
             lastErr = driveDel.error || 'Pending deletion failed';
           }
         } else {
-          const supaOk = isSupabaseConfigured()
-            ? await saveRecordToSupabase(entry.payload, 'current_user')
-            : true;
+          const supaOk =
+            isSupabaseConfigured() && this.activeUserId
+              ? await saveRecordToSupabase(entry.payload, this.activeUserId)
+              : !isSupabaseConfigured();
           const driveRes = await upsertRecordToDrive(entry.payload, patientName);
           if (driveRes.success && supaOk) {
             if (driveRes.fileId) {
@@ -457,7 +463,7 @@ class BackgroundSyncEngine {
   /**
    * Trigger manual encrypted backup & retry sync (used in Settings).
    */
-  public async triggerManualSync(allRecords: MedicalRecord[], patientName: string = 'Aarav Sharma'): Promise<boolean> {
+  public async triggerManualSync(allRecords: MedicalRecord[], patientName: string = 'Swasthya Citizen'): Promise<boolean> {
     this.lastPatientName = patientName;
     if (!getDriveStatus().isConnected) {
       this.setSyncState('Saved on Device', 'Connect Google Drive to back up encrypted records to cloud.');

@@ -124,8 +124,6 @@ export const INDIAN_MEDICINE_CATALOG: MedicineItem[] = [
     prescriptionReference: 'Prescription RxNorm #313782 • Dr. Ananya Iyer, MD',
     knownSafetyInfo: 'Do not take concurrently with other paracetamol-containing combination syrups.',
     drugInteractions: ['Warfarin (mild increase in INR with prolonged use)', 'Alcohol (hepatic stress)'],
-    prescriptionDate: '02/11/2024',
-    linkedRecordId: 'rec-1',
   },
   {
     id: 'allo-2',
@@ -164,8 +162,6 @@ export const INDIAN_MEDICINE_CATALOG: MedicineItem[] = [
     prescriptionReference: 'RxNorm #409121 • Dr. Rajesh Sharma, MD (Cardiology)',
     knownSafetyInfo: 'Contraindicated in pregnancy. Regular serum potassium & creatinine checks advised.',
     drugInteractions: ['Potassium-sparing diuretics', 'NSAIDs (ibuprofen, diclofenac)'],
-    prescriptionDate: '04/10/2024',
-    linkedRecordId: 'rec-4',
   },
   {
     id: 'allo-3',
@@ -281,8 +277,6 @@ export const INDIAN_MEDICINE_CATALOG: MedicineItem[] = [
     ayushLicenceInfo: 'AYUSH-DL-0248-AFI/2021 (Govt. of India Certified AYUSH Formulation)',
     prescriptionInstructions: 'Mix 1 teaspoon in warm cow milk with a pinch of cardamom. Consume 30 mins before bed.',
     knownSafetyInfo: 'Safe for long-term usage under supervision. Avoid in acute hyperthyroid states.',
-    prescriptionDate: '15/08/2024',
-    linkedRecordId: 'rec-3',
   },
   {
     id: 'ayur-2',
@@ -401,8 +395,6 @@ export const INDIAN_MEDICINE_CATALOG: MedicineItem[] = [
     motherTinctureInfo: 'Ø Mother Tincture is prepared from whole flowering plant for external sprains',
     prescriptionInstructions: 'Administer 4 sugar globules under the tongue 3 times daily. Keep mouth clean of strong flavors.',
     knownSafetyInfo: 'Safe and non-toxic in micro-dilution potencies. Do not apply mother tincture to open wounds.',
-    prescriptionDate: '12/09/2024',
-    linkedRecordId: 'rec-2',
   },
   {
     id: 'hom-2',

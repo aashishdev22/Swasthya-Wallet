@@ -15,7 +15,12 @@ interface FullScreenQrShareViewProps {
   patient: PatientProfile;
   currentLang?: SupportedLanguage;
   onBackToDashboard: () => void;
-  onPreviewRecipientView: (shareUrl: string, scopeName: string, records: MedicalRecord[]) => void;
+  onPreviewRecipientView: (
+    shareUrl: string,
+    scopeName: string,
+    records: MedicalRecord[],
+    pinCode?: string
+  ) => void;
 }
 
 export type ShareScopeType =
@@ -40,14 +45,12 @@ export const FullScreenQrShareView: React.FC<FullScreenQrShareViewProps> = ({
   const [customHours, setCustomHours] = useState<number>(48);
   const [recipientNote, setRecipientNote] = useState<string>('Dr. Consultation Access');
   const [isPinProtected, setIsPinProtected] = useState<boolean>(true);
-  const [securityPin, setSecurityPin] = useState<string>('4912');
+  const [securityPin, setSecurityPin] = useState<string>(() => String(Math.floor(1000 + Math.random() * 9000)));
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
   const [shareableUrl, setShareableUrl] = useState<string>('');
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [isRevoked, setIsRevoked] = useState<boolean>(false);
-  const [accessLogs, setAccessLogs] = useState<Array<{ time: string; doctor: string; ip: string }>>([
-    { time: '10 mins ago', doctor: 'Dr. Ananya Iyer, MD (AIIMS)', ip: '103.21.124.9' },
-  ]);
+  const [accessLogs] = useState<Array<{ time: string; doctor: string; ip: string }>>([]);
 
   // Compute records filtered by scope
   const getScopedRecords = (): MedicalRecord[] => {
@@ -163,8 +166,16 @@ export const FullScreenQrShareView: React.FC<FullScreenQrShareViewProps> = ({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => onPreviewRecipientView(shareableUrl, shareScope, scopedRecords)}
-            className="px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            disabled={scopedRecords.length === 0 || isRevoked}
+            onClick={() =>
+              onPreviewRecipientView(
+                shareableUrl,
+                shareScope,
+                scopedRecords,
+                isPinProtected ? securityPin : undefined
+              )
+            }
+            className="px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-[16px]">visibility</span>
             <span>Doctor View Preview</span>
@@ -210,28 +221,38 @@ export const FullScreenQrShareView: React.FC<FullScreenQrShareViewProps> = ({
                 </p>
 
                 {/* Big QR Code Card */}
-                <div className="p-4 sm:p-6 bg-white rounded-2xl border-2 border-blue-600/30 shadow-md flex flex-col items-center relative group">
-                  {qrCodeDataUrl ? (
-                    <img
-                      src={qrCodeDataUrl}
-                      alt="Full-Screen Health Sharing QR Code"
-                      className="w-64 h-64 sm:w-80 sm:h-80 object-contain rounded-xl select-none"
-                    />
-                  ) : (
-                    <div className="w-64 h-64 sm:w-80 sm:h-80 flex items-center justify-center text-slate-400">
-                      <span className="material-symbols-outlined text-[48px] animate-spin">refresh</span>
-                    </div>
-                  )}
-
-                  {/* Watermark Details Below QR */}
-                  <div className="mt-3 text-[11px] text-slate-600 font-mono font-medium flex items-center gap-2">
-                    <span>{patient.name}</span>
-                    <span>•</span>
-                    <span className="text-blue-700 font-bold">{scopedRecords.length} Records</span>
-                    <span>•</span>
-                    <span className="text-emerald-700 font-semibold">{expiryOption.toUpperCase()} Expiry</span>
+                {scopedRecords.length === 0 ? (
+                  <div className="w-full p-8 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-center">
+                    <span className="material-symbols-outlined text-[40px] text-slate-300 mb-2 block">qr_code_2</span>
+                    <p className="text-sm font-bold text-slate-800">No health records selected</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Upload at least one health record in Medical Records or switch scope before presenting a QR pass.
+                    </p>
                   </div>
-                </div>
+                ) : (
+                  <div className="p-4 sm:p-6 bg-white rounded-2xl border-2 border-blue-600/30 shadow-md flex flex-col items-center relative group">
+                    {qrCodeDataUrl ? (
+                      <img
+                        src={qrCodeDataUrl}
+                        alt="Full-Screen Health Sharing QR Code"
+                        className="w-64 h-64 sm:w-80 sm:h-80 object-contain rounded-xl select-none"
+                      />
+                    ) : (
+                      <div className="w-64 h-64 sm:w-80 sm:h-80 flex items-center justify-center text-slate-400">
+                        <span className="material-symbols-outlined text-[48px] animate-spin">refresh</span>
+                      </div>
+                    )}
+
+                    {/* Watermark Details Below QR */}
+                    <div className="mt-3 text-[11px] text-slate-600 font-mono font-medium flex items-center gap-2">
+                      <span>{patient.name}</span>
+                      <span>•</span>
+                      <span className="text-blue-700 font-bold">{scopedRecords.length} Records</span>
+                      <span>•</span>
+                      <span className="text-emerald-700 font-semibold">{expiryOption.toUpperCase()} Expiry</span>
+                    </div>
+                  </div>
+                )}
 
                 {/* PIN Reminder Pill */}
                 {isPinProtected && (
@@ -434,15 +455,21 @@ export const FullScreenQrShareView: React.FC<FullScreenQrShareViewProps> = ({
             <p className="text-xs text-slate-500 mb-3">Audit trail of who viewed your records via QR code.</p>
 
             <div className="flex flex-col gap-2">
-              {accessLogs.map((log, index) => (
-                <div key={index} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="font-semibold text-slate-900 block">{log.doctor}</span>
-                    <span className="text-[10px] text-slate-500 font-mono">IP: {log.ip} • Read-only viewer</span>
-                  </div>
-                  <span className="text-[11px] text-slate-600 font-medium">{log.time}</span>
+              {accessLogs.length === 0 ? (
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-center text-xs text-slate-500">
+                  No clinician scans recorded yet for this active QR token.
                 </div>
-              ))}
+              ) : (
+                accessLogs.map((log, index) => (
+                  <div key={index} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="font-semibold text-slate-900 block">{log.doctor}</span>
+                      <span className="text-[10px] text-slate-500 font-mono">IP: {log.ip} • Read-only viewer</span>
+                    </div>
+                    <span className="text-[11px] text-slate-600 font-medium">{log.time}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

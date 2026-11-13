@@ -22,6 +22,13 @@ import {
   createSession,
   getCurrentSessionUser,
   destroySession,
+  toIndianE164,
+  maskIndianMobile,
+  validateOtpCode,
+  getOtpResendCooldown,
+  classifySupabaseOtpError,
+  registerWithSupabasePhoneStart,
+  verifySupabasePhoneSignupOtp,
 } from './auth.ts';
 
 describe('Swasthya Wallet Authentication Engine Tests', () => {
@@ -250,4 +257,99 @@ describe('Swasthya Wallet Authentication Engine Tests', () => {
     const afterLogout = getCurrentSessionUser();
     assert.equal(afterLogout, null);
   });
+
+  test('Indian E.164 formatting and masked phone display work accurately', () => {
+    assert.equal(toIndianE164('9876543210'), '+919876543210');
+    assert.equal(toIndianE164('+91 98765 43210'), '+919876543210');
+    assert.equal(toIndianE164('09876543210'), '+919876543210');
+    assert.equal(toIndianE164('1234567890'), null);
+    assert.equal(toIndianE164('98765'), null);
+
+    assert.equal(maskIndianMobile('9876543210'), '+91 ******3210');
+    assert.equal(maskIndianMobile('+919876543210'), '+91 ******3210');
+    assert.equal(maskIndianMobile('invalid'), '+91 **********');
+  });
+
+  test('validateOtpCode enforces strict 6-digit numeric OTPs', () => {
+    assert.equal(validateOtpCode('123456').valid, true);
+    assert.equal(validateOtpCode(' 654321 ').cleaned, '654321');
+    assert.equal(validateOtpCode('12345').valid, false);
+    assert.equal(validateOtpCode('1234567').valid, false);
+    assert.equal(validateOtpCode('12ab56').valid, false);
+    assert.equal(validateOtpCode('').valid, false);
+  });
+
+  test('getOtpResendCooldown enforces progressive cooldowns and resend cap', () => {
+    const t0 = 1_700_000_000_000;
+    const immediate = getOtpResendCooldown(0, null, t0);
+    assert.equal(immediate.canResend, true);
+    assert.equal(immediate.lockedOut, false);
+
+    const waiting = getOtpResendCooldown(1, t0, t0 + 15_000);
+    assert.equal(waiting.canResend, false);
+    assert.equal(waiting.secondsRemaining, 45);
+    assert.equal(waiting.lockedOut, false);
+
+    const readyAgain = getOtpResendCooldown(2, t0, t0 + 65_000);
+    assert.equal(readyAgain.canResend, true);
+    assert.equal(readyAgain.secondsRemaining, 0);
+
+    const maxedOut = getOtpResendCooldown(3, t0, t0 + 120_000);
+    assert.equal(maxedOut.canResend, false);
+    assert.equal(maxedOut.lockedOut, true);
+  });
+
+  test('classifySupabaseOtpError identifies provider-disabled, expired, invalid, and rate-limited errors', () => {
+    const disabled = classifySupabaseOtpError('Phone signups are disabled');
+    assert.match(disabled, /Phone OTP \/ SMS provider is not enabled/i);
+
+    const expired = classifySupabaseOtpError('OTP expired');
+    assert.match(expired, /expired/i);
+
+    const invalid = classifySupabaseOtpError('Invalid OTP code entered');
+    assert.match(invalid, /Invalid or expired OTP/i);
+
+    const rateLimited = classifySupabaseOtpError('For security purposes, you can only request this after 45 seconds', 429);
+    assert.match(rateLimited, /Too many OTP attempts/i);
+  });
+
+  test('registerWithSupabasePhoneStart & verifySupabasePhoneSignupOtp validate fields and never fake OTPs', async () => {
+    const badMobile = await registerWithSupabasePhoneStart({
+      fullName: 'Kavita Deshmukh',
+      dob: '14/05/1991',
+      mobileNumber: '1234567890',
+      email: 'kavita@example.com',
+      password: 'SwasthyaKey_2026!Kavita',
+      confirmPassword: 'SwasthyaKey_2026!Kavita',
+    });
+    assert.equal(badMobile.success, false);
+    assert.match(badMobile.error || '', /10-digit Indian mobile/i);
+
+    const pendingSample = {
+      fullName: 'Kavita Deshmukh',
+      dob: '14/05/1991',
+      mobileNumber: '9876543210',
+      e164Phone: '+919876543210',
+      maskedPhone: '+91 ******3210',
+      email: 'kavita@example.com',
+      suggestedUsername: 'kavitadeshmukh9876',
+      enrollBiometrics: false,
+    };
+
+    const badOtp = await verifySupabasePhoneSignupOtp({
+      pending: pendingSample,
+      otpCode: '123',
+    });
+    assert.equal(badOtp.success, false);
+    assert.match(badOtp.error || '', /6-digit/i);
+
+    // Without VITE_SUPABASE_URL/ANON_KEY in unit-test node env, verifySupabasePhoneSignupOtp must fail explicitly (no simulated SMS OTP)
+    const noConfigOtp = await verifySupabasePhoneSignupOtp({
+      pending: pendingSample,
+      otpCode: '123456',
+    });
+    assert.equal(noConfigOtp.success, false);
+    assert.match(noConfigOtp.error || '', /Supabase/i);
+  });
 });
+

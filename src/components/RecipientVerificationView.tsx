@@ -6,10 +6,12 @@
  */
 
 import React, { useState } from 'react';
-import { MedicalRecord } from '../data/mockData.ts';
+import { MedicalRecord, PatientProfile } from '../types/health.ts';
 
 interface RecipientVerificationViewProps {
   patientName: string;
+  patient?: PatientProfile;
+  expectedPin?: string;
   scopeName: string;
   records: MedicalRecord[];
   onClose: () => void;
@@ -17,22 +19,24 @@ interface RecipientVerificationViewProps {
 
 export const RecipientVerificationView: React.FC<RecipientVerificationViewProps> = ({
   patientName,
+  patient,
+  expectedPin,
   scopeName,
   records,
   onClose,
 }) => {
   const [pinInput, setPinInput] = useState<string>('');
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(!expectedPin);
   const [pinError, setPinError] = useState<string | null>(null);
   const [selectedRecord, setSelectedRecord] = useState<MedicalRecord | null>(null);
 
   const handleUnlock = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pinInput === '4912' || pinInput.length >= 4) {
+    if (!expectedPin || pinInput === expectedPin) {
       setIsUnlocked(true);
       setPinError(null);
     } else {
-      setPinError('Incorrect 4-digit doctor PIN. Please ask the patient for their security PIN.');
+      setPinError('Incorrect 4-digit security PIN. Please check the PIN displayed on the patient QR screen.');
     }
   };
 
@@ -97,10 +101,6 @@ export const RecipientVerificationView: React.FC<RecipientVerificationViewProps>
                 >
                   Verify PIN & Decrypt Records
                 </button>
-
-                <p className="text-[11px] text-slate-400">
-                  Demo hint: Default security PIN is <strong className="text-slate-600 font-mono">4912</strong>
-                </p>
               </form>
             </div>
           ) : (
@@ -111,7 +111,12 @@ export const RecipientVerificationView: React.FC<RecipientVerificationViewProps>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-sm text-slate-900">{patientName}</span>
-                    <span className="text-[11px] text-slate-500">• 34 Y / Male • B+</span>
+                    {patient && (
+                      <span className="text-[11px] text-slate-500">
+                        {patient.age > 0 ? `• ${patient.age} Y` : ''}
+                        {patient.bloodType && patient.bloodType !== 'Not specified' ? ` • ${patient.bloodType}` : ''}
+                      </span>
+                    )}
                   </div>
                   <span className="text-xs text-blue-700 font-medium block">
                     Share Scope: <strong className="uppercase">{scopeName.replace('_', ' ')}</strong>
@@ -119,7 +124,7 @@ export const RecipientVerificationView: React.FC<RecipientVerificationViewProps>
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                   <span className="material-symbols-outlined text-[16px]">schedule</span>
-                  <span>Expires in 23 hrs 48 mins</span>
+                  <span>Temporary Clinician Session</span>
                 </div>
               </div>
 
@@ -128,6 +133,12 @@ export const RecipientVerificationView: React.FC<RecipientVerificationViewProps>
                 <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Authorized Clinical Records ({records.length})
                 </h4>
+
+                {records.length === 0 && (
+                  <div className="p-6 text-center text-xs text-slate-500 bg-slate-50 rounded-2xl border border-slate-200">
+                    No records included in this share scope.
+                  </div>
+                )}
 
                 {records.map((rec) => (
                   <div
